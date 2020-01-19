@@ -1,14 +1,14 @@
 <template>
   <div class="Page" v-if="shown">
-    <site-header></site-header>
-    <storage-site-body></storage-site-body>
-
+    <site-header/>
+    <storage-site-body/>
   </div>
 </template>
 
 <script>
   import SiteHeader from "~/components/shared/SiteHeader";
   import StorageSiteBody from "../components/unit-storage/StorageSiteBody";
+
   export default {
     name: "NewPage",
     components: {
