@@ -65,6 +65,7 @@
     width: 1010px
     height: 710px
     font-family: Philosopher
+    font-size: 18px
     z-index: 2
     .content
       margin-top: 108px
@@ -73,14 +74,14 @@
         //margin-top: 160px
         width: 684px
         height: 192px
-        font-size: 21px
+        //font-size: 21px
 
       .PriceList
         //padding: 50px
         //margin-left: 160px
         font-family: Tahoma
         margin-left: 35px
-        font-size: 21px
+        //font-size: 21px
         margin-bottom: 100px
         .Offer
           input

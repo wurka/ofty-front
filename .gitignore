@@ -10,3 +10,12 @@ npm-debug.log
 # Nuxt generate
 dist
 /.idea/
+/static/README.md
+/README.md
+/assets/README.md
+/components/README.md
+/layouts/README.md
+/middleware/README.md
+/pages/README.md
+/plugins/README.md
+/store/README.md

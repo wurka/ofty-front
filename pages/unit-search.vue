@@ -1,18 +1,18 @@
 <template>
   <div class="Page">
     <site-header></site-header>
-    <!--<search-site-body></search-site-body>-->
+    <search-site-body></search-site-body>
 
   </div>
 </template>
 
 <script>
   import SiteHeader from "~/components/shared/SiteHeader";
-  //import SearchSiteBody from "../components/unit-search/SearchSiteBody";
+  import SearchSiteBody from "../components/unit-search/SearchSiteBody";
   export default {
     name: "NewPage",
     components: {
-      //SearchSiteBody,
+      SearchSiteBody,
       SiteHeader},
     data:function () {
       return{

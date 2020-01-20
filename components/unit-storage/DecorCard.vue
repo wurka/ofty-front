@@ -3,10 +3,10 @@
       <div class="PicPanel">
         <img class="BigImg" :src="params.photo1 ? params.photo1 : host+'/static/img/grouppreview/noimage.png'"/>
         <div class="smallPanel">
-          <img class="SmallImg" :src="params.photo2 ? params.photo2 : host+'/static/img/grouppreview/noimage.png'"/>
-          <img class="SmallImg" :src="params.photo3 ? params.photo3 : host+'/static/img/grouppreview/noimage.png'"/>
-          <img class="SmallImg" :src="params.photo4 ? params.photo4 : host+'/static/img/grouppreview/noimage.png'"/>
-          <img class="SmallImg" :src="params.photo5 ? params.photo5 : host+'/static/img/grouppreview/noimage.png'"/>
+          <img class="SmallImg" :src="params.photo2 ? params.photo2 : host+'/static/img/shared/no_img.png'"/>
+          <img class="SmallImg" :src="params.photo3 ? params.photo3 : host+'/static/img/shared/no_img.png'"/>
+          <img class="SmallImg" :src="params.photo4 ? params.photo4 : host+'/static/img/shared/no_img.png'"/>
+          <img class="SmallImg" :src="params.photo5 ? params.photo5 : host+'/static/img/shared/no_img.png'"/>
         </div>
 
       </div>
@@ -256,12 +256,8 @@
           width: 53px
 
     .PicPanel
-      //background-color: lightgreen
       margin: 9px 0 0 11px
       display: inline-block
-      img
-        background-color: lightgrey
-        //border: solid  1px
       .BigImg
         width: 186px
         height: 186px

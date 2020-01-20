@@ -11,7 +11,7 @@
       </div>
       <div class="PicPanel" :class="[isEdit ? 'disabled':'']">
         <div class="Pic" v-for="(pic, index) in pics"  :key="index">
-          <img class="picImg" :src="pic ? pic : host+'/static/img/grouppreview/noimage.png'" @click="$refs.input[index].click()"/>
+          <img class="picImg" :src="pic ? pic : host+'/static/img/shared/no_img.png'" @click="$refs.input[index].click()"/>
           <input class='hidden' type="file" :ref="'input'" :file="pic" @change="updatePics($event,index)">
         </div>
       </div>
@@ -19,15 +19,15 @@
         <div class="TopPanel">
           <div class="GenParams">
             <div class="GenParam" v-for="param in genParams"  :key="param.id">
-              <div class="ParamName">{{param.name}}</div>
+              <div class="ParamName">{{param.name}}<img v-if="param.info" class="paramInfo" :src="host+'/static/img/shared/info.png'" :title="param.info"/></div>
               <div v-if="param.name=='Цвет'" :class="['bar', colorArr.length ? '' : 'border']" @click="$refs.colorPicker.show(colorArr)">
                 <div class="color" v-for="c in colorArr"  :key="c.id" :style="'background-image: url('+c.texture+'); background-color: #'+c.rgb_hex+'; width: ' + (155-(colorArr.length+1)*0.8)/colorArr.length+'px;'"></div>
                 <!--<img v-if="colorArr.length==0" :src="host+'/static/img/shared/color-field.png'" class="colorImg" @click="showColorPicker=true"/>-->
-                <span v-if="colorArr.length==0" class="placeholder">до {{colorLim}} цветов</span>
+                <!--<span v-if="colorArr.length==0" class="placeholder">до {{colorLim}} цветов</span>-->
               </div>
               <div v-if="param.name=='Материал'" :class="['bar', 'border']" @click="$refs.pickBar.show(editParams['unit-materials'])">
                 <span v-if="matStr">{{matStr}}</span>
-                <span v-else class="placeholder">до {{matPickLim}} материалов</span>
+                <!--<span v-else class="placeholder">до {{matPickLim}} материалов</span>-->
               </div>
               <input :class="[['Цвет','Материал'].includes(param.name) ? 'hidden' : '', param.valid ? '' : 'invalid']" v-model="addDict[param['alias']]" @change="validateChange($event, param);" @input="validateInput($event, param)"/>
             </div>
@@ -68,8 +68,8 @@
         <div class="BotPanel">
           <div class="btn" @click="showAddFill=true">Заполнить за меня</div>
           <div class="BotParam">
-            <div class="ParamName" >{{botParams[0].name}}</div>
-            <input v-model="addDict[botParams[0]['alias']]" placeholder="добавьте слова через пробел" :class="[botParams[0].valid ? '' : 'invalid']" @change="validateChange($event, botParams[0]);" @input="validateInput($event, botParams[0])"/>
+            <div class="ParamName" >{{botParams[0].name}}<img v-if="botParams[0].info" class="paramInfo" :src="host+'/static/img/shared/info.png'" :title="botParams[0].info"/></div>
+            <input v-model="addDict[botParams[0]['alias']]" :class="[botParams[0].valid ? '' : 'invalid']" @change="validateChange($event, botParams[0]);" @input="validateInput($event, botParams[0])"/>
           </div>
           <div class="BotParam">
             <div class="ParamName" >{{botParams[1].name}}</div>
@@ -104,16 +104,22 @@
               pics:['','','','',''],
               groupOptions:{},
               genParams:[
-                {'name':'Материал', 'alias':'unit-materials', 'valid':true, 'type':''}, {'name':'Цвет', 'alias':'unit-colors', 'valid':true, 'type':''},
-                {'name':'Вес, кг', 'alias':'weight', 'valid':true, 'type':'float'}, {'name':'Количество, шт', 'alias':'count', 'valid':true, 'type':'int'}, {'name':'Минимальный срок аренды, сут', 'alias':'rent-min-days', 'valid':true, 'type':'int'},
-                {'name':'Стоимость для первого дня, р/сут', 'alias':'first-day-cost', 'valid':true, 'type':'float'}, {'name':'Стоимость для последующих дней, р/сут', 'alias':'day-cost', 'valid':true, 'type':'float'},
-                {'name':'Залог, р', 'alias':'bail', 'valid':true, 'type':'float'}, {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
+                {'name':'Материал', 'alias':'unit-materials', 'valid':true, 'type':'', 'info': 'до 5 материалов'},
+                {'name':'Цвет', 'alias':'unit-colors', 'valid':true, 'type':'', 'info': 'до 5 цветов'},
+                {'name':'Вес, кг', 'alias':'weight', 'valid':true, 'type':'float'},
+                {'name':'Количество, шт', 'alias':'count', 'valid':true, 'type':'int'},
+                {'name':'Минимальный срок аренды, сут', 'alias':'rent-min-days', 'valid':true, 'type':'int'},
+                {'name':'Стоимость для первого дня, р/сут', 'alias':'first-day-cost', 'valid':true, 'type':'float'},
+                {'name':'Стоимость для последующих дней, р/сут', 'alias':'day-cost', 'valid':true, 'type':'float'},
+                {'name':'Залог, р', 'alias':'bail', 'valid':true, 'type':'float'},
+                {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
                 //{'name':'Коллекции', 'alias':'sets', 'valid':true, 'type':''},
               ],
               groups:['root'], //выбранная ветка
               params:{}, //индивидуальные параметры последней подгруппы
               groupParams:{}, //полный словарь загруженных индивидуальных параметров
-              botParams:[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words'}, {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}],
+              botParams:[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
+                {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}],
               showAddFill: false,
               showColorPicker: 0,
               host:this.$store.state.host,
@@ -442,17 +448,23 @@
               'title':'', 'sets':'[]','first-day-cost':'','rent-min-days':'','day-cost':'','unit-group':'','unit-colors':'[]','parameters':{}, 'keywords':'', 'description':'', 'published':true};
             this.pics=['','','','',''];
             this.genParams=[
-              {'name':'Материал', 'alias':'unit-materials', 'valid':true, 'type':''}, {'name':'Цвет', 'alias':'unit-colors', 'valid':true, 'type':''},
-              {'name':'Вес, кг', 'alias':'weight', 'valid':true, 'type':'float'}, {'name':'Количество, шт', 'alias':'count', 'valid':true, 'type':'int'},
+              {'name':'Материал', 'alias':'unit-materials', 'valid':true, 'type':'', 'info': 'до 5 материалов'},
+              {'name':'Цвет', 'alias':'unit-colors', 'valid':true, 'type':'', 'info': 'до 5 цветов'},
+              {'name':'Вес, кг', 'alias':'weight', 'valid':true, 'type':'float'},
+              {'name':'Количество, шт', 'alias':'count', 'valid':true, 'type':'int'},
               {'name':'Минимальный срок аренды, сут', 'alias':'rent-min-days', 'valid':true, 'type':'int'},
               {'name':'Стоимость для первого дня, р/сут', 'alias':'first-day-cost', 'valid':true, 'type':'float'},
               {'name':'Стоимость для последующих дней, р/сут', 'alias':'day-cost', 'valid':true, 'type':'float'},
-              {'name':'Залог, р', 'alias':'bail', 'valid':true, 'type':'float'}, {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
+              {'name':'Залог, р', 'alias':'bail', 'valid':true, 'type':'float'},
+              {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
               //{'name':'Коллекции', 'alias':'sets', 'valid':true, 'type':''},
             ];
             this.groups=['root'];
             this.params={};
-            this.botParams=[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words'}, {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}];
+            this.botParams=[
+              {'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
+              {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}
+              ];
             this.colorArr=[];
             this.editParams={};
           },
@@ -566,7 +578,6 @@
             height: 40px
             width: 40px
             margin: 8px 8px 0 0
-            background-color: lightgrey
             vertical-align: top
           &:first-child
             display: block
@@ -603,9 +614,11 @@
       .RightPanel
         display: inline-block
         vertical-align: top
-        font-size: 18px
+        font-size: 14px
         margin-top: 28px
         //margin-left:
+        .paramInfo
+          margin-left: 5px
         .invalid
           border-color: $myred
           outline-color: $myred
@@ -619,7 +632,6 @@
           .GenParams
             //text-align: right
             display: inline-block
-
             .bar
               vertical-align: middle
               width: 157px

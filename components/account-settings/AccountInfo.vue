@@ -18,12 +18,12 @@
         <div class="line">
           <div class="label">Новый пароль</div>
           <input :type="showPswd[0] ? 'text' : 'password'" class="text pswd" v-model="passwords[0]" />
-          <img :src="showPswd[0] ? host+'/static/img/shared/minus.png' : host+'/static/img/shared/plus.png'" class="eye" @click="showPswd[0]=1-showPswd[0]; $forceUpdate();"/>
+          <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=1-showPswd[0]; $forceUpdate();"/>
         </div>
         <div class="line">
           <div class="label">Пароль еще раз</div>
           <input :type="showPswd[1] ? 'text' : 'password'" class="text pswd" v-model="passwords[1]" />
-          <img :src="showPswd[1] ? host+'/static/img/shared/minus.png' : host+'/static/img/shared/plus.png'" class="eye" @click="showPswd[1]=1-showPswd[1]; $forceUpdate();"/>
+          <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=1-showPswd[1]; $forceUpdate();"/>
         </div>
         <div class="warning"><span >{{errMsg.pswd}}</span></div>
         <div class="btn" @click="savePassword">Сменить пароль</div>
@@ -78,14 +78,14 @@
               <span>с</span>
               <div class="time">
                 <input class="text" v-model="workTime[i.key]['start-h']"/>
-                <span>:</span>
                 <input class="text" v-model="workTime[i.key]['start-m']"/>
+                <div class="dots">:</div>
               </div>
               <span>до</span>
               <div class="time">
                 <input class="text" v-model="workTime[i.key]['fin-h']"/>
-                <span>:</span>
                 <input class="text" v-model="workTime[i.key]['fin-m']"/>
+                <div class="dots">:</div>
               </div>
             </div>
           </div>
@@ -548,7 +548,7 @@
         box-shadow: $shadow
         width: 150px
         font-family: Philosopher
-        margin-left: 300px
+        margin-left: 345px
         margin-top: 35px
       .line
         margin-bottom: 15px
@@ -590,7 +590,7 @@
         background-color: gray
         height: 170px
         width: 170px
-        margin-left: 300px
+        margin-left: 345px
       .small
         display: inline-block
         vertical-align: top
@@ -639,21 +639,34 @@
             height: 27px
     .workTime
       .line
+        .label
+          width: 340px
+          margin-right: 55px
         span
           vertical-align: top
         .midTime
           display: inline-block
-          width: 224px
+          width: 263px
         .time
-          margin-right: 20px
-          margin-left: 10px
+          margin-right: 15px
+          margin-left: 15px
           background-color: white
           border: gray 1px solid
           height: 24px
           display: inline-block
-          padding-right: 5px
+          padding-left: 5px
+          width: 70px
+
           //span
             margin-right: -15px
+          .text
+            margin: 1px
+            width: 28px
+            text-align: center
+            //background-color: orangered
+          .dots
+            display: inline-block
+            margin-left: -40px
         input
           vertical-align: top
           width: 20px
@@ -663,7 +676,7 @@
           //margin-left: 10px
           text-align: right
         .cb
-          margin-left: -5px
+          margin-left: 25px
           margin-right: 15px
           width: 27px
     .notifications
