@@ -86,7 +86,7 @@
             alert('Допустимо не более '+this.pickLim+' позиций!');
             return
           }
-          let buf = this.arr.filter(variant=>word==variant.name);
+          let buf = this.arr.filter(variant=>word===variant.name);
           if (buf.length != 1) {
             console.error('Unknown variant is picked /clone in db');
             return

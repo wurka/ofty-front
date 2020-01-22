@@ -20,12 +20,10 @@
           <div class="GenParams">
             <div class="GenParam" v-for="param in genParams"  :key="param.id">
               <div class="ParamName">{{param.name}}<img v-if="param.info" class="paramInfo" :src="host+'/static/img/shared/info.png'" :title="param.info"/></div>
-              <div v-if="param.name=='Цвет'" :class="['bar', colorArr.length ? '' : 'border']" @click="$refs.colorPicker.show(colorArr)">
+              <div v-if="param.name==='Цвет'" :class="['bar', colorArr.length ? '' : 'border']" @click="$refs.colorPicker.show(colorArr)">
                 <div class="color" v-for="c in colorArr"  :key="c.id" :style="'background-image: url('+c.texture+'); background-color: #'+c.rgb_hex+'; width: ' + (155-(colorArr.length+1)*0.8)/colorArr.length+'px;'"></div>
-                <!--<img v-if="colorArr.length==0" :src="host+'/static/img/shared/color-field.png'" class="colorImg" @click="showColorPicker=true"/>-->
-                <!--<span v-if="colorArr.length==0" class="placeholder">до {{colorLim}} цветов</span>-->
               </div>
-              <div v-if="param.name=='Материал'" :class="['bar', 'border']" @click="$refs.pickBar.show(editParams['unit-materials'])">
+              <div v-if="param.name==='Материал'" :class="['bar', 'border']" @click="$refs.pickBar.show(editParams['unit-materials'])">
                 <span v-if="matStr">{{matStr}}</span>
                 <!--<span v-else class="placeholder">до {{matPickLim}} материалов</span>-->
               </div>
@@ -63,7 +61,7 @@
             </div>
           </div>
           <img class="GroupImg" v-if="groupParams[groups[groups.length-1]]" :src="groupParams[groups[groups.length-1]]['picture']"/>
-          <!--<img class="GroupImg" v-if="isEdit" :src="editParams['group-info'].pic"/>-->
+          <img class="GroupImg" v-if="isEdit" :src="editParams['group-info']['group-image']"/>
         </div>
         <div class="BotPanel">
           <div class="btn" @click="showAddFill=true">Заполнить за меня</div>
@@ -144,7 +142,7 @@
             //console.log(this.addDict['unit-materials']);
             let idArr=JSON.parse(this.addDict['unit-materials']);
             for (let i in idArr){
-              let mat = this.matData.filter(m => m.id==idArr[i]);
+              let mat = this.matData.filter(m => m.id===idArr[i]);
               ansArr.push(mat[0].name);
             }
             let ans = ansArr.join(', ');
@@ -192,8 +190,9 @@
 
             let val = e.target.value;
             if (!type) type=param.type;
-            if (type=='float') {
+            if (type==='float') {
               val = val.replace(/,/g,'.');
+              val = val.replace(',','.');
               /*e.target.value = val;
               this.$forceUpdate();*/
             }
@@ -207,13 +206,19 @@
             //console.log('aw');
             let val = e.target.value;
             if (!type) type=param.type;
-            if (type=='float') {
+            if (type==='float') {
               val = val.replace(/,/g,'.');
               //e.target.value = val;
             }
             let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]+$/gi};
             if (Re[type].exec(val)) param.valid=true;
             else param.valid=false;
+            if (type==='float') {
+              //val = val.replace(/,/g,'.');
+              e.target.value = val.replace(',','.');
+              /*e.target.value = val;
+              this.$forceUpdate();*/
+            }
           },
           checkValid:function(){
             let arr = this.genParams.concat(this.botParams);
