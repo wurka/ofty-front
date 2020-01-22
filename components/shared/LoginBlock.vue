@@ -39,7 +39,7 @@
             <input type="password" v-model="rePassword"/>
           </div>
           <div class="line">
-            <div class="label">Имя пользователя</div>
+            <div class="label">Имя пользователя <img :src="host+'/static/img/shared/info.png'" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
             <input v-model="username" />
           </div>
           <div class="captcha">
@@ -48,7 +48,7 @@
           </div>
           <div :class="['btns', 'reg']">
             <div class="btn" @click="hide()">Отмена</div>
-            <div class="btn" @click="login()">Войти</div>
+            <div class="btn" @click="register()">Войти</div>
           </div>
         </div>
 
@@ -84,7 +84,7 @@
             </div>
             <div :class="['btns', 'reg']">
               <div class="btn " @click="refreshForm">Отмена</div>
-              <div class="btn " @click="shown=1">Войти</div>
+              <div class="btn " @click="register">Войти</div>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@
         props: [],
         data: function () {
             return {
-              shown: true,
+              shown: false,
               host:this.$store.state.host,
               warning: 'Неправильный логин или пароль',
               guest: false,
@@ -146,7 +146,7 @@
             //this.$forceUpdate();
           },
           login: function () {
-            if (this.guest) return;
+            //if (this.guest) return;
             var vm=this;
             ax.get("/shared/get-csrf-token")
               .then(function (data1) {
@@ -187,7 +187,10 @@
           },
           register: function () {
             var vm=this;
-            if (!this.pswdIsValid) return;
+            if (!this.pswdIsValid) {
+              console.warn('invalid passwords')
+              return;
+            }
             ax.get("/shared/get-csrf-token")
               .then(function (data1) {
                   console.log(data1.data);
@@ -195,6 +198,7 @@
                   fd.append('csrfmiddlewaretoken', data1.data);
                   fd.append('login', vm.mail);
                   fd.append('password', vm.password);
+                  fd.append('username', vm.username);
                   ax.post("/account/new-account", fd, {
                     headers: {
                       'X-CSRFToken': data1.data,
@@ -203,9 +207,9 @@
                   })
                     .then(function (data) {
                         console.log(data.data);
-                        vm.shown=false;
-                        vm.guest=false;
                         vm.login();
+                        vm.refreshForm();
+                        vm.hide();
                         console.log('done?');
                       }
                     )
