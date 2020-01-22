@@ -6,19 +6,19 @@
       <div class="content">
 
         <div class="line">
-          <div class="bar1 bar" v-for="b in colorData['group1']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="pickedIdArr.includes(b.id) ? '' : 'hidden'" :src="host+'/static/img/units/border_38_112_2.png'"/></div>
+          <div class="bar1 bar" v-for="b in colorData['group1']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="['border1',pickedIdArr.includes(b.id) ? '' : 'hidden']" :src="host+'/static/img/units/border_38_112_2.png'"/></div>
         </div>
         <div class="line">
-          <div class="bar1 bar" v-for="b in colorData['group2']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="pickedIdArr.includes(b.id) ? '' : 'hidden'" :src="host+'/static/img/units/border_38_112_2.png'"/></div>
+          <div class="bar1 bar" v-for="b in colorData['group2']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="['border1',pickedIdArr.includes(b.id) ? '' : 'hidden']" :src="host+'/static/img/units/border_38_112_2.png'"/></div>
         </div>
         <div class="line">
-          <div class="bar2 bar" v-for="b in colorData['group3']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="pickedIdArr.includes(b.id) ? '' : 'hidden'" :src="host+'/static/img/units/border_182_38_2.png'"/></div>
+          <div class="bar2 bar" v-for="b in colorData['group3']" :key="b.id" :style="'background-color: #'+b.rgb_hex" @click="pick(b)"><img :class="['border2',pickedIdArr.includes(b.id) ? '' : 'hidden']" :src="host+'/static/img/units/border_182_38_2.png'"/></div>
         </div>
         <div class="line">
-          <div class="bar3 bar" v-for="b in colorData['group4']" :key="b.id" :style="'background-image: url('+b.texture+');'" @click="pick(b)"><img :class="pickedIdArr.includes(b.id) ? '' : 'hidden'" :src="host+'/static/img/units/border_86_112_2.png'"/></div>
+          <div class="bar3 bar" v-for="b in colorData['group4']" :key="b.id" :style="'background-image: url('+b.texture+');'" @click="pick(b)"><img :class="['border3',pickedIdArr.includes(b.id) ? '' : 'hidden']" :src="host+'/static/img/units/border_86_112_2.png'"/></div>
         </div>
         <div class="line">
-          <div class="bar3 bar" v-for="b in colorData['group5']" :key="b.id" :style="'background-image: url('+b.texture+');'" @click="pick(b)"><img :class="pickedIdArr.includes(b.id) ? '' : 'hidden'" :src="host+'/static/img/units/border_86_112_2.png'"/></div>
+          <div class="bar3 bar" v-for="b in colorData['group5']" :key="b.id" :style="'background-image: url('+b.texture+');'" @click="pick(b)"><img :class="['border3',pickedIdArr.includes(b.id) ? '' : 'hidden']" :src="host+'/static/img/units/border_86_112_2.png'"/></div>
         </div>
         <div class="btns">
           <div class="btn" @click="picked=applied.slice(); $emit('hideColorPicker',applied); hide(); ">Отмена</div>
@@ -113,9 +113,9 @@
     //border: solid lightgray 1px
     box-shadow: $shadow
     height: 710px
-    width: 1010px
+    width: 800px
     position: absolute
-    margin: -5px 0px 0px 40px
+    margin: -5px 0px 0px 220px
     z-index: 2
     .count
       //position: fixed
@@ -137,26 +137,35 @@
           box-shadow: $shadow
         .bar1
           height: 112px
-          width: 38px
+          width: 28px
         .bar2
           height: 38px
-          width: 182px
+          width: 142px
         .bar3
           height: 112px
-          width: 86px
+          width: 66px
+        .border1
+          height: 112px
+          width: 28px
+        .border2
+          height: 38px
+          width: 142px
+        .border3
+          height: 112px
+          width: 66px
       .btns
         text-align: center
-        margin-top: 35px
+        margin-top: 30px
         .btn
           text-align: center
           display: inline-block
           margin-right: 45px
-          padding-top: 8px
+          padding-top: 9px
           font-family: Philosopher
           font-size: 18px
           box-shadow: $shadow
-          height: 30px
-          width: 200px
+          height: 28px
+          width: 160px
 
 
 

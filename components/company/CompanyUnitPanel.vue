@@ -9,10 +9,10 @@
     </div>
     <div class="body">
       <div v-if="!cardArr" class="zeroResult">Ничего не найдено. Измените параметры для поиска. </div>
-      <div v-else v-for="card in cardArr" :key="card.id" :class="[(card.type=='unit') ? 'inline' : '']">
-        <div v-if="card.type=='header1'" class="group">{{card.text}}</div>
-        <div v-if="card.type=='header2'" class="subgroup">{{card.text}}</div>
-        <div v-if="card.type=='unit'"  class="unitCard">
+      <div v-else v-for="card in cardArr" :key="card.id" :class="[(card.type==='unit') ? 'inline' : '']">
+        <div v-if="card.type==='header1'" class="group">{{card.text}}</div>
+        <div v-if="card.type==='header2'" class="subgroup">{{card.text}}</div>
+        <div v-if="card.type==='unit'"  class="unitCard">
           <img class="photo" :src="card.photo"/>
           <div class="dayCost text">{{card['day-cost']}}, р/сут</div>
         </div>

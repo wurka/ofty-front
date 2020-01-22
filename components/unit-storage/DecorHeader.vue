@@ -70,7 +70,7 @@
         },
         showAddDecor:function () {
           if (this.showAddDecor)
-            if (this.mine == this.all ) {
+            if (this.mine === this.all ) {
               alert('Купите место!');
               this.showAddDecor = false;
             }

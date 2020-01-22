@@ -18,7 +18,7 @@
       },
       methods:{
         onSubmit:function () {
-          //if (this.val=='') return;
+          //if (this.val==='') return;
           console.log('search');
           this.$emit('search', this.val);
         }

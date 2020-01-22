@@ -33,7 +33,7 @@
         <div class="label1">Доп. информация</div>
         <div v-for="i in infoKeys" :key=i.id class="line">
           <div class="label">{{i.label}}</div>
-          <textarea v-if="i.label=='О компании'" v-model="alterInfo[i.key]"></textarea>
+          <textarea v-if="i.label==='О компании'" v-model="alterInfo[i.key]"></textarea>
           <input v-else class="text" v-model="alterInfo[i.key]"/>
         </div>
         <div class="warning"><span >{{errMsg.info}}</span></div>
@@ -327,7 +327,7 @@
             vm.startWaiting();
 
             for ( let key in vm.rentInfo ) {
-              if (key=='delivery') fd.set(key, JSON.stringify(vm.rentInfo[key]));
+              if (key==='delivery') fd.set(key, JSON.stringify(vm.rentInfo[key]));
               else fd.set(key, vm.rentInfo[key]);
               /*console.log(key);
               console.log(vm.rentInfo[key]);*/
@@ -549,7 +549,7 @@
         width: 150px
         font-family: Philosopher
         margin-left: 345px
-        margin-top: 35px
+        //margin-top: 35px
       .line
         margin-bottom: 15px
         .label
@@ -578,23 +578,24 @@
         margin-left: 50px
         margin-bottom: 20px
       .warning
-        margin-bottom: -30px
+        margin-top: -15px
         text-align: center
-        padding: 8px
-        height: 20px
+        //padding: 8px
+        height: 30px
         display: block
         color: $myred
+        span
+          margin-top: 23px
+          display: block
     .addAvatar
       .big
         display: inline-block
-        background-color: gray
         height: 170px
         width: 170px
         margin-left: 345px
       .small
         display: inline-block
         vertical-align: top
-        background-color: gray
         height: 71px
         width: 71px
         margin-left: 15px

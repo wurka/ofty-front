@@ -3,9 +3,9 @@
       <div class="btn minimize" @click="detalized=!detalized">{{btnName}}</div>
       <div v-if="!cardArr" class="text">Это Ваш личный склад, Вы можете <span @click="$emit('add-decor-click')">добавлять</span> сюда предметы.</div>
       <div v-else v-for="card in cardArr" :key="card.id" :class="[(!detalized && card.type=='unit') ? 'inline' : '']">
-        <div v-if="card.type=='header1'" class="group">{{card.text}}</div>
-        <div v-if="card.type=='header2'" class="subgroup">{{card.text}}</div>
-        <decor-card  v-if="card.type=='unit'" @edit-decor="editDecor" :params="card" :class="[detalized ? '' : 'min']"></decor-card>
+        <div v-if="card.type==='header1'" class="group">{{card.text}}</div>
+        <div v-if="card.type==='header2'" class="subgroup">{{card.text}}</div>
+        <decor-card  v-if="card.type==='unit'" @edit-decor="editDecor" :params="card" :class="[detalized ? '' : 'min']"></decor-card>
       </div>
 
     </div>
