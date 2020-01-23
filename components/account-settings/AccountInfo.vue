@@ -544,8 +544,6 @@
         text-align: center
         display: block
         padding: 8px 5px 8px 10px
-        background-color: white
-        box-shadow: $shadow
         width: 150px
         font-family: Philosopher
         margin-left: 345px
@@ -559,18 +557,23 @@
           text-align: right
           vertical-align: top
         input
-          width: 165px
+          padding-left: 10px
+          padding-right: 10px
+          width: 145px
           height: 20px
+          vertical-align: top
         textarea
+          padding-left: 10px
+          padding-right: 10px
           height: 80px
-          width: 400px
+          width: 380px
           resize: none
         .pswd
-          width: 145px
-          padding-right: 20px
+          width: 130px
+          padding-right: 25px
         .eye
-          margin-left: -25px
-          width: 15px
+          margin-left: -32px
+          //width: 15px
           cursor: pointer
       .label1
         font-size: 21px
@@ -609,7 +612,7 @@
       .line
 
         input
-          width: 402px
+          width: 378px
         .delivery
           display: inline-block
           width: 410px
@@ -627,7 +630,7 @@
             margin-right: 10px
           input
             width: 125px
-            padding-left: 15px
+            //padding-left: 15px
             vertical-align: top
           .rBtn
             width: 27px
@@ -673,8 +676,7 @@
           width: 20px
           border: none
           outline: none
-          //margin-right: 20px
-          //margin-left: 10px
+          padding: 0 0 0 0
           text-align: right
         .cb
           margin-left: 25px
@@ -685,6 +687,7 @@
         input
           width: 27px
           margin-left: 250px
+          padding: 0 0 0 0
         .label
           margin-left: 30px
           text-align: left

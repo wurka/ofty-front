@@ -97,9 +97,7 @@
       vertical-align: top
     .btn
       display: inline-block
-      background-color: white
       padding: 8px 0 8px 0
-      box-shadow: $shadow
       text-align: center
       font-size: 18px
       width: 170px

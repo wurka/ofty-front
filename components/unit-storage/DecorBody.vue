@@ -118,13 +118,11 @@
           cursor: pointer
           color: $myblue
       .btn
-        background-color: white
         padding: 10px 0 10px 0
         height: 17px
         width: 143px
         font-size: 15.5px
         text-align: center
-        box-shadow: $shadow
       .minimize
         float: right
         margin-right: 48px

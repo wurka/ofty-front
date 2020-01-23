@@ -2,8 +2,8 @@
   <div class="UserBar">
     <span v-if="!$store.state.anonymous" class="username" @click="showOptions=true; myScroll();">{{$store.state.username}}</span>
     <span v-else >
-      <span class="username" @click="$refs.loginBlock.show(false);">Вход/</span>
-      <span class="username" @click="$refs.loginBlock.show(true);">Регистрация</span>
+      <span class="username" @click="$refs.loginBlock.show(false);">Вход</span>
+      <!--<span class="username" @click="$refs.loginBlock.show(true);">/Регистрация</span>-->
     </span>
     <div v-if="showOptions" class="options">
       <div class="bg" @click="showOptions=false"></div>

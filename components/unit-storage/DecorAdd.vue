@@ -15,6 +15,11 @@
           <input class='hidden' type="file" :ref="'input'" :file="pic" @change="updatePics($event,index)">
         </div>
       </div>
+      <div class="alterPicPanel PicPanel" :class="['disabled']">
+        <div class="Pic" v-for="(pic, index) in pics"  :key="index">
+          <img class="picImg" :src="pic ? pic : host+'/static/img/shared/no_img.png'"/>
+        </div>
+      </div>
       <div class="RightPanel">
         <div class="TopPanel">
           <div class="GenParams">
@@ -558,11 +563,8 @@
         border: thin solid darkgray
       .btn
         display: inline-block
-        background-color: white
-        box-shadow: $shadow
         text-align: center
         font-family: Philosopher
-
       .DecorAddFill
         z-index: 2
       .ColorPicker
@@ -595,6 +597,10 @@
           display: block
       .PicPanel.disabled
         pointer-events: none
+      .alterPicPanel
+        margin: 28px 10px 0 -207px
+        position: absolute
+        z-index: 3
       .validAlert
         position: absolute
         width: 628px
@@ -731,10 +737,8 @@
         .BotPanel
           .btn
             display: inline-block
-            background-color: white
             padding: 23px 0 23px 0
             font-size: 21px
-            box-shadow: $shadow
             text-align: center
             position: absolute
             margin: 105px 0 0 -200px

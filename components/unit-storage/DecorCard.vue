@@ -323,12 +323,10 @@
         margin-right: 15px
         .btn
           display: block
-          background-color: white
           border: solid lightgrey 1px
           padding: 10px 0px 10px 0px
           margin-bottom: 10px
           text-align: center
-          box-shadow: $shadow
           width: 171px
         .status
           text-align: right

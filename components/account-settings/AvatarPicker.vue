@@ -153,8 +153,6 @@
       text-align: center
       display: inline-block
       padding: 8px 5px 8px 10px
-      background-color: white
-      box-shadow: $shadow
       width: 155px
       font-family: Philosopher
     .b1

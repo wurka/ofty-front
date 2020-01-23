@@ -27,24 +27,32 @@
 </script>
 
 <style lang="sass" scoped>
-  $lgray: #f6f6f6
   .SiteHeader
-    //background: $lgray
-    //text-align: right
-    //height: 100px
     padding-left: 18px
     padding-top: 19px
     height: 102px
     .HeaderLogo
-      //background: white
       margin-top: 2px
-      //float: left
     .rightPanel
-      //margin-left: 67px
       display: inline-block
       vertical-align: top
       width: 928px
     .SearchBar
       margin-top: 20px
       margin-left: 308px
+</style>
+
+<style lang="sass" >
+  $shadow: 0px 2px 5px rgba(0, 0, 0, 0.5)
+
+  .btn
+    box-shadow: $shadow
+    background-color: white
+    //border: white solid 0.1px
+    &:hover
+      background-color: #f5f5f5
+    &:active
+      transform: scale(0.99)
+      //border: gray solid 0.1px
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5)
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="LoginBlock" v-if="shown">
-      <div class="switch btn" @click="guest=!guest">
+      <div class="switch" @click="guest=!guest">
         <span v-if="guest">Войти</span>
         <span v-else>Зарегистрироваться</span>
       </div>
@@ -11,14 +11,14 @@
         <div class="contentForm" v-if="contentType==='common'">
           <div class="line">
             <div class="label">Почта</div>
-            <input v-model="mail" />
+            <input v-model="mail.value" />
           </div>
           <div class="line">
             <div class="label">Пароль</div>
-            <input type="password" v-model="password" @keyup.enter="login()"/>
+            <input type="password" v-model="password.value" @keyup.enter="login()"/>
           </div>
           <div :class="['btns']">
-            <div class="remind" @click="sendNewPswd=!sendNewPswd">Напомнить пароль</div>
+            <div class="remind" @click="sendNewPswd=!sendNewPswd">Забыли пароль?</div>
             <div class="btn" @click="hide()">Отмена</div>
             <div class="btn" @click="login()">Войти</div>
           </div>
@@ -28,19 +28,19 @@
         <div class="contentForm" v-if="contentType==='register'">
           <div class="line">
             <div class="label">Почта</div>
-            <input v-model="mail" />
+            <input v-model="mail.value" />
           </div>
           <div class="line">
             <div class="label">Пароль</div>
-            <input type="password" v-model="password"/>
+            <input type="password" v-model="password.value"/>
           </div>
           <div class="line">
             <div class="label">Пароль еще раз</div>
-            <input type="password" v-model="rePassword"/>
+            <input type="password" v-model="rePassword.value"/>
           </div>
           <div class="line">
             <div class="label">Имя пользователя <img :src="host+'/static/img/shared/info.png'" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
-            <input v-model="username" />
+            <input v-model="username.value" />
           </div>
           <div class="captcha">
             <img :src="host+'/static/img/shared/uriy.svg'"/>
@@ -56,7 +56,7 @@
         <div class="contentForm" v-if="contentType==='remind'">
           <div v-if="codeStatus!='confirmed'" class="line">
             <div class="label">Почта</div>
-            <input v-model="mail" />
+            <input v-model="mail.value" />
           </div>
           <div :class="['btns']">
             <div v-if="!codeStatus" class="btn small" @click="refreshForm">Отмена</div>
@@ -76,11 +76,11 @@
           <div v-if="codeStatus==='confirmed'">
             <div class="line">
               <div class="label">Новый пароль</div>
-              <input type="password" v-model="password"/>
+              <input type="password" v-model="password.value"/>
             </div>
             <div class="line">
               <div class="label">Пароль еще раз</div>
-              <input type="password" v-model="rePassword"/>
+              <input type="password" v-model="rePassword.value"/>
             </div>
             <div :class="['btns', 'reg']">
               <div class="btn " @click="refreshForm">Отмена</div>
@@ -101,25 +101,24 @@
         props: [],
         data: function () {
             return {
-              shown: false,
+              shown: true,
               host:this.$store.state.host,
-              warning: 'Неправильный логин или пароль',
+              warning: '',
               guest: false,
               sendNewPswd: false,
               codeStatus: false,
-              shop: false,
-              mail:'',
-              username:'',
-              password:'',
-              rePassword:'',
-              //content:'register',
+              //shop: false,
+              mail:{value:'', type:'mail', valid:'false'},
+              username:{value:'', type:'mail', valid:'false'},
+              password:{value:'', type:'mail', valid:'false'},
+              rePassword:{value:'', type:'mail', valid:'false'},
               capt:'',
               code:'',
             }
         },
         computed:{
           pswdIsValid: function () {
-            if (this.password===this.rePassword) return true;
+            if (this.password.value===this.rePassword.value) return true;
             else return false;
           },
           contentType: function () {
@@ -153,8 +152,8 @@
                   console.log(data1.data);
                   var fd = new FormData;
                   fd.append('csrfmiddlewaretoken', data1.data);
-                  fd.append('user', vm.mail);
-                  fd.append('password', vm.password);
+                  fd.append('user', vm.mail.value);
+                  fd.append('password', vm.password.value);
                   ax.post("/account/login", fd, {
                     headers: {
                       'X-CSRFToken': data1.data,
@@ -189,6 +188,7 @@
             var vm=this;
             if (!this.pswdIsValid) {
               console.warn('invalid passwords')
+              vm.warning='Пароли не совпадают';
               return;
             }
             ax.get("/shared/get-csrf-token")
@@ -196,9 +196,9 @@
                   console.log(data1.data);
                   var fd = new FormData;
                   fd.append('csrfmiddlewaretoken', data1.data);
-                  fd.append('login', vm.mail);
-                  fd.append('password', vm.password);
-                  fd.append('username', vm.username);
+                  fd.append('login', vm.mail.value);
+                  fd.append('password', vm.password.value);
+                  fd.append('username', vm.username.value);
                   ax.post("/account/new-account", fd, {
                     headers: {
                       'X-CSRFToken': data1.data,
@@ -232,6 +232,41 @@
                 }
               )
           },
+          validateInput:function(e,param, type){
+            //console.log(e);
+
+            let val = e.target.value;
+            if (!type) type=param.type;
+            if (type==='float') {
+              val = val.replace(/,/g,'.');
+              val = val.replace(',','.');
+              /*e.target.value = val;
+              this.$forceUpdate();*/
+            }
+            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+
+            if (Re[type].exec(val)) param.valid=true;
+            else param.valid=false;
+            //console.log(param);
+          },
+          validateChange:function(e,param, type){
+            //console.log('aw');
+            let val = e.target.value;
+            if (!type) type=param.type;
+            if (type==='float') {
+              val = val.replace(/,/g,'.');
+              //e.target.value = val;
+            }
+            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            if (Re[type].exec(val)) param.valid=true;
+            else param.valid=false;
+            if (type==='float') {
+              //val = val.replace(/,/g,'.');
+              e.target.value = val.replace(',','.');
+              /*e.target.value = val;
+              this.$forceUpdate();*/
+            }
+          },
         },
 
         created:function () {
@@ -253,6 +288,7 @@
     font-size: 18px
     .switch
       margin: 20px
+      cursor: pointer
     .content
       //padding: 30px 150px 50px 70px
       //width: 550px
@@ -260,21 +296,21 @@
       .warning
         height: 20px
         width: 360px
-        text-align: right
+        text-align: center
         display: inline-block
         .redtext
           color: darkred
-          text-align: center
-
+          display: inline-block
       .line
         margin-top: 20px
         .label
           display: inline-block
         input
-          width: 360px
+          width: 350px
           height: 37px
           margin-left: 30px
-
+          padding-left: 10px
+          font-family: Philosopher
       .captcha
         margin-top: 30px
         img
@@ -288,6 +324,7 @@
           font-size: 18px
           padding-left: 20px
           width: 145px
+          font-family: Philosopher
       .check
         margin-top: 20px
         margin-right: 115px

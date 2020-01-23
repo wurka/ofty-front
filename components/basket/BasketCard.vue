@@ -94,8 +94,6 @@
     //background-color: lightgray
     margin: 20px 15px 0 30px
     .btn
-      background-color: white
-      box-shadow: $shadow
       text-align: center
       width: 190px
       padding: 10px 0 10px 0

@@ -1,6 +1,6 @@
 <template>
     <div class="BtnBar">
-      <div class="btn" v-for="btn in btns" :key="btn.id">
+      <div class="button" v-for="btn in btns" :key="btn.id">
         <span class="name">{{btn.text}}</span>
         <span class="counter">{{btn.counter}}</span>
       </div>
@@ -37,11 +37,8 @@
     box-shadow: $shadow
     //text-shadow: 0px 4px 8px gray
     margin-left: 18px
-    .btn
+    .button
       display: block
-      //background-color: white
-      //border: solid black 1px
-      //padding: 5px 5px 5px 10px
       height: 24px
       padding: 8px 15px 8px 15px
       font-size: 18px

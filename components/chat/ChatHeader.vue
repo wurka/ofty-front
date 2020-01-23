@@ -22,11 +22,9 @@
     //text-align: right
     .btn
       display: inline-block
-      background-color: white
       //border: solid $lgray 1px
       padding: 8px 0 8px 20px
       //margin: 5px
-      box-shadow: $shadow
       font-size: 18px
       width: 210px
     .SearchBar
