@@ -114,6 +114,7 @@
               rePassword:{value:'', type:'pass', valid:true},
               capt:'',
               code:'',
+              newCode:'',
             }
         },
         computed:{
@@ -287,6 +288,9 @@
                   })
                     .then(function (data) {
                         console.log(data.data);
+                        if(data.data.code){
+                          vm.newCode = data.data.code;
+                        } else console.warn('Code Error!');
                         vm.codeStatus='confirmed';
                       }
                     )
@@ -317,10 +321,12 @@
               vm.warning='Пароли не совпадают';
               return;
             }
-            fd.set('password',vm.password.value)
+            fd.set('password',vm.password.value);
+            fd.set('code',vm.newCode);
+            fd.set('email', vm.mail.value);
             ax.get("/shared/get-csrf-token")
               .then(function(data1){
-                  ax.post("/account/password-set", fd,{headers:{'X-CSRFToken':data1.data}})
+                  ax.post("/account/password-set-with-code", fd,{headers:{'X-CSRFToken':data1.data}})
                     .then(function(data){
                         console.log(data.data);
                       }
