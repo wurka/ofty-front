@@ -31,7 +31,6 @@
     display: inline-block
     width: 380px
     input
-      border: solid lightgray 1px
       width: 300px
       height: 37px
       vertical-align: middle

@@ -41,7 +41,6 @@
       display: inline-block
       width: 200px
       input
-        border: solid lightgray 1px
         width: 144px
         height: 37px
         vertical-align: middle

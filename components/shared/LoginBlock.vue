@@ -11,11 +11,11 @@
         <div class="contentForm" v-if="contentType==='common'">
           <div class="line">
             <div class="label">Почта</div>
-            <input v-model="mail.value" />
+            <input :class="[mail.valid?'':'invalid']" v-model="mail.value" @change="validateChange($event, mail);" @input="validateInput($event, mail)"/>
           </div>
           <div class="line">
             <div class="label">Пароль</div>
-            <input type="password" v-model="password.value" @keyup.enter="login()"/>
+            <input type="password" :class="[password.valid?'':'invalid']" v-model="password.value" @keyup.enter="login()"/>
           </div>
           <div :class="['btns']">
             <div class="remind" @click="sendNewPswd=!sendNewPswd">Забыли пароль?</div>
@@ -28,19 +28,19 @@
         <div class="contentForm" v-if="contentType==='register'">
           <div class="line">
             <div class="label">Почта</div>
-            <input v-model="mail.value" />
+            <input :class="[mail.valid?'':'invalid']" v-model="mail.value" />
           </div>
           <div class="line">
             <div class="label">Пароль</div>
-            <input type="password" v-model="password.value"/>
+            <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value"/>
           </div>
           <div class="line">
             <div class="label">Пароль еще раз</div>
-            <input type="password" v-model="rePassword.value"/>
+            <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value"/>
           </div>
           <div class="line">
             <div class="label">Имя пользователя <img :src="host+'/static/img/shared/info.png'" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
-            <input v-model="username.value" />
+            <input :class="[username.valid?'':'invalid']" v-model="username.value" />
           </div>
           <div class="captcha">
             <img :src="host+'/static/img/shared/uriy.svg'"/>
@@ -56,12 +56,12 @@
         <div class="contentForm" v-if="contentType==='remind'">
           <div v-if="codeStatus!='confirmed'" class="line">
             <div class="label">Почта</div>
-            <input v-model="mail.value" />
+            <input :class="[mail.valid?'':'invalid']" v-model="mail.value" />
           </div>
           <div :class="['btns']">
             <div v-if="!codeStatus" class="btn small" @click="refreshForm">Отмена</div>
-            <div v-if="!codeStatus" class="btn mid" @click="codeStatus='asked'">Получить проверочный код</div>
-            <div v-if="codeStatus==='asked'" class="btn big" @click="codeStatus='asked'">Получить проверочный код еще раз</div>
+            <div v-if="!codeStatus" class="btn mid" @click="getCode">Получить проверочный код</div>
+            <div v-if="codeStatus==='asked'" class="btn big" @click="getCode">Получить проверочный код еще раз</div>
           </div>
           <div v-if="codeStatus==='asked'">
             <div class="line">
@@ -70,21 +70,21 @@
             </div>
             <div :class="['btns', 'reg']">
               <div class="btn " @click="refreshForm">Отмена</div>
-              <div class="btn " @click="codeStatus='confirmed'">Проверить код</div>
+              <div class="btn " @click="setCode">Проверить код</div>
             </div>
           </div>
           <div v-if="codeStatus==='confirmed'">
             <div class="line">
               <div class="label">Новый пароль</div>
-              <input type="password" v-model="password.value"/>
+              <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value"/>
             </div>
             <div class="line">
               <div class="label">Пароль еще раз</div>
-              <input type="password" v-model="rePassword.value"/>
+              <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value"/>
             </div>
             <div :class="['btns', 'reg']">
               <div class="btn " @click="refreshForm">Отмена</div>
-              <div class="btn " @click="register">Войти</div>
+              <div class="btn " @click="setPassword">Войти</div>
             </div>
           </div>
         </div>
@@ -101,17 +101,17 @@
         props: [],
         data: function () {
             return {
-              shown: true,
+              shown: false,
               host:this.$store.state.host,
               warning: '',
               guest: false,
               sendNewPswd: false,
               codeStatus: false,
               //shop: false,
-              mail:{value:'', type:'mail', valid:'false'},
-              username:{value:'', type:'mail', valid:'false'},
-              password:{value:'', type:'mail', valid:'false'},
-              rePassword:{value:'', type:'mail', valid:'false'},
+              mail:{value:'', type:'mail', valid:true},
+              username:{value:'', type:'name', valid:true},
+              password:{value:'', type:'pass', valid:true},
+              rePassword:{value:'', type:'pass', valid:true},
               capt:'',
               code:'',
             }
@@ -232,9 +232,125 @@
                 }
               )
           },
+          getCode: function () {
+            var vm=this;
+            ax.get("/shared/get-csrf-token")
+              .then(function (data1) {
+                  console.log(data1.data);
+                  var fd = new FormData;
+                  fd.append('csrfmiddlewaretoken', data1.data);
+                  fd.append('email', vm.mail.value);
+                  ax.post("/account/generate-verification-password", fd, {
+                    headers: {
+                      'X-CSRFToken': data1.data,
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  })
+                    .then(function (data) {
+                        console.log(data.data);
+                        vm.codeStatus='asked';
+                      }
+                    )
+                    .catch(function (data) {
+                        if(data.response){
+                          console.warn(data.response.data);
+                        }
+                        else
+                          console.warn('no connection')
+                      }
+                    )
+                }
+              )
+              .catch(function (data) {
+                  if(data.response){
+                    console.warn(data.response.data);
+                  }
+                  else
+                    console.warn('no connection')
+                }
+              )
+          },
+          setCode: function () {
+            var vm=this;
+            ax.get("/shared/get-csrf-token")
+              .then(function (data1) {
+                  console.log(data1.data);
+                  var fd = new FormData;
+                  fd.append('csrfmiddlewaretoken', data1.data);
+                  fd.append('email', vm.mail.value);
+                  fd.append('password', vm.code);
+                  ax.post("/account/check-verification-password", fd, {
+                    headers: {
+                      'X-CSRFToken': data1.data,
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  })
+                    .then(function (data) {
+                        console.log(data.data);
+                        vm.codeStatus='confirmed';
+                      }
+                    )
+                    .catch(function (data) {
+                        if(data.response){
+                          console.warn(data.response.data);
+                        }
+                        else
+                          console.warn('no connection')
+                      }
+                    )
+                }
+              )
+              .catch(function (data) {
+                  if(data.response){
+                    console.warn(data.response.data);
+                  }
+                  else
+                    console.warn('no connection')
+                }
+              )
+          },
+          savePassword: function () {
+            var vm = this;
+            var fd = new FormData;
+            if(!vm.pswdIsValid()){
+              console.warn('invalid passwords')
+              vm.warning='Пароли не совпадают';
+              return;
+            }
+            fd.set('password',vm.password)
+            ax.get("/shared/get-csrf-token")
+              .then(function(data1){
+                  ax.post("/account/password-set", fd,{headers:{'X-CSRFToken':data1.data}})
+                    .then(function(data){
+                        vm.goodResult();
+                        console.log(data.data);
+                      }
+                    )
+                    .catch(function(data){
+                      if(data.response) {
+                        console.warn(data.response.data);
+                        //vm.errMsg.pswd = vm.translateErr(data.response.data);
+                      }
+                      else{
+                        console.warn('no connection')
+                        vm.warning = 'Не удалось сохранить изменения из-за проблем со связью';
+                      }
+                    })
+                }
+              )
+              .catch(function(data){
+                vm.badResult();
+                if(data.response)
+                  console.warn(data.response.data);
+                else{
+                  console.warn('no connection')
+                  vm.warning= 'Не удалось сохранить изменения из-за проблем со связью';
+                }
+              })
+          },
           validateInput:function(e,param, type){
             //console.log(e);
-
+            return
             let val = e.target.value;
             if (!type) type=param.type;
             if (type==='float') {
@@ -243,13 +359,18 @@
               /*e.target.value = val;
               this.$forceUpdate();*/
             }
-            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            let ReDict = {'username':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'mail': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            if (!ReDict.contains(type)) {
+              console.warn('Unknown validation type!');
+              return
+            }
 
-            if (Re[type].exec(val)) param.valid=true;
+            if (ReDict[type].exec(val)) param.valid=true;
             else param.valid=false;
             //console.log(param);
           },
           validateChange:function(e,param, type){
+            return
             //console.log('aw');
             let val = e.target.value;
             if (!type) type=param.type;
@@ -257,8 +378,8 @@
               val = val.replace(/,/g,'.');
               //e.target.value = val;
             }
-            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]+$/gi};
-            if (Re[type].exec(val)) param.valid=true;
+            let ReDict = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'mail': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            if (ReDict[type].exec(val)) param.valid=true;
             else param.valid=false;
             if (type==='float') {
               //val = val.replace(/,/g,'.');

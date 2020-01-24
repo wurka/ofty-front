@@ -612,7 +612,7 @@
       .line
 
         input
-          width: 378px
+          width: 380px
         .delivery
           display: inline-block
           width: 410px
@@ -655,7 +655,7 @@
           margin-right: 15px
           margin-left: 15px
           background-color: white
-          border: gray 1px solid
+          border: lightgray thin solid
           height: 24px
           display: inline-block
           padding-left: 5px

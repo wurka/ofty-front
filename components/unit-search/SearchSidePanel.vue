@@ -53,7 +53,6 @@
       margin-top: 20px
       margin-left: 10px
       input
-        border: solid lightgray 1px
         width: 139px
         height: 37px
         vertical-align: middle

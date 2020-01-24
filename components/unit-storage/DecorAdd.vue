@@ -551,7 +551,7 @@
       left: 145px
       top: 120px
       background-color: white
-      border: solid darkgray 1px
+      //border: solid darkgray 1px
       width: 1085px
       text-align: left
       //margin-top: -42px
@@ -573,7 +573,7 @@
         position: fixed
         z-index: 2
         left: 523px
-        top: 149px
+        top: 147px
         width: 460px
       .PicPanel
         display: inline-block
@@ -733,7 +733,7 @@
             height: 145px
             vertical-align: top
             display: inline-block
-            border: solid gray 1px
+            border: solid gray thin
         .BotPanel
           .btn
             display: inline-block

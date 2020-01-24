@@ -44,6 +44,9 @@
 
 <style lang="sass" >
   $shadow: 0px 2px 5px rgba(0, 0, 0, 0.5)
+  $lgray: #f6f6f6
+  $myblue: #182b93
+  $myred: #CA1612
 
   .btn
     box-shadow: $shadow
@@ -55,4 +58,11 @@
       transform: scale(0.99)
       //border: gray solid 0.1px
       box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5)
+  input
+    border: thin solid lightgray
+  textarea
+    border: thin solid lightgray
+  input.invalid
+    border-color: $myred
+    outline-color: $myred
 </style>

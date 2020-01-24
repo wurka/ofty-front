@@ -153,7 +153,7 @@
         width: inherit
         height: inherit
         background-color: white
-        border: black solid 0.1px
+        border: black solid thin
         position: fixed
         z-index: 2
         cursor: text
@@ -183,7 +183,7 @@
             //background-color: lightpink
         .variants
           background-color: white
-          border: black solid 0.1px
+          border: black solid thin
           padding-bottom: 5px
           overflow-y: hidden
           .variant

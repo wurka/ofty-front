@@ -53,7 +53,7 @@
     width: 100vw
     z-index: 2
   .DecorAddFill
-    border: solid darkgray 1px
+    border: solid darkgray thin
     box-shadow: $shadow
     background-color: white
     //height: 110%

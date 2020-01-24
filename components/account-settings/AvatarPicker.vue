@@ -127,7 +127,7 @@
       margin: 30px 0 0 60px
       width: 425px
       height: 550px
-      border: black solid 1px
+      border: black solid thin
       overflow: hidden
       display: inline-block
     .pre
