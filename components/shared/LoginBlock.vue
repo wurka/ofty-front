@@ -84,7 +84,7 @@
             </div>
             <div :class="['btns', 'reg']">
               <div class="btn " @click="refreshForm">Отмена</div>
-              <div class="btn " @click="setPassword">Войти</div>
+              <div class="btn " @click="savePassword">Войти</div>
             </div>
           </div>
         </div>
@@ -312,17 +312,16 @@
           savePassword: function () {
             var vm = this;
             var fd = new FormData;
-            if(!vm.pswdIsValid()){
+            if(!vm.pswdIsValid){
               console.warn('invalid passwords')
               vm.warning='Пароли не совпадают';
               return;
             }
-            fd.set('password',vm.password)
+            fd.set('password',vm.password.value)
             ax.get("/shared/get-csrf-token")
               .then(function(data1){
                   ax.post("/account/password-set", fd,{headers:{'X-CSRFToken':data1.data}})
                     .then(function(data){
-                        vm.goodResult();
                         console.log(data.data);
                       }
                     )
@@ -339,7 +338,6 @@
                 }
               )
               .catch(function(data){
-                vm.badResult();
                 if(data.response)
                   console.warn(data.response.data);
                 else{
