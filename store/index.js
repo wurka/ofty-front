@@ -20,6 +20,11 @@ const store = () => new Vuex.Store({
       username: "anonymous",
       isAnonymous: true
     },
+    captcha: {
+      enable: true,  // использовать ли капчу
+      front: '6LfvotIUAAAAAOuFrracBIL3ZCHNX1sy_UEqaxOj',
+      secret: '6LfvotIUAAAAAJsyumxSe0qTaFyIJA-jcS2gP7T9'
+    }
 
   },
   mutations: {
