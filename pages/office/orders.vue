@@ -99,7 +99,7 @@
           .then((ans) => {
             console.log(ans.data);
             this.$store.state.user.username = ans.data['username'];
-            this.$store.state.user.isAnonymous = ans.data['anonymous'];
+            this.$store.state.user.anonymous = ans.data['anonymous'];
           });
       },
       loginSuccess() {
