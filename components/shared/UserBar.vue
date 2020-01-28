@@ -1,6 +1,6 @@
 <template>
   <div class="UserBar">
-    <span v-if="!$store.state.user.anonymous" class="username" @click="showOptions=true; myScroll();">{{$store.state.username}}</span>
+    <span v-if="!$store.state.user.anonymous" class="username" @click="showOptions=true; myScroll();">{{username}}</span>
     <span v-else >
       <span class="username" @click="$refs.loginBlock.show(false);">Вход</span>
       <!--<span class="username" @click="$refs.loginBlock.show(true);">/Регистрация</span>-->
@@ -78,8 +78,8 @@
       },
       computed:{
         username: function () {
-          //let ans = $store.state.username
-          let ans = "bigFockingSwordOfDeath"
+          let ans = this.$store.state.user.username
+          if (!ans) return 'ERROR';
           if(ans.length>10) return ans.substring(0,10)+'...';
           else return ans;
         }
