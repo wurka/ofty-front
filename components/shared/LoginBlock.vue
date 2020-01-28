@@ -100,7 +100,8 @@
 
 <script>
   //import {ax,host} from "./main.js"
-    var ax;
+    import axios from "axios";
+    let ax;
     export default {
         name: "LoginBlock",
         props: [],
@@ -150,45 +151,76 @@
             this.codeStatus = false;
             //this.$forceUpdate();
           },
-          login: function () {
-            //if (this.guest) return;
-            var vm=this;
-            ax.get("/shared/get-csrf-token")
-              .then(function (data1) {
-                  console.log(data1.data);
-                  var fd = new FormData;
-                  fd.append('csrfmiddlewaretoken', data1.data);
-                  fd.append('user', vm.mail.value);
-                  fd.append('password', vm.password.value);
-                  ax.post("/account/login", fd, {
-                    headers: {
-                      'X-CSRFToken': data1.data,
-                      'Content-Type': 'multipart/form-data'
+          async checkCaptcha() {
+            let vm=this;
+            // проверка капчи (или не проверка, если она не нужна)
+            return new Promise((resolve, reject)=>{
+              if (this.$store.state.captcha.enable) {
+                grecaptcha.execute(vm.$store.state.captcha.front, {'action': 'register'}).then(function(token) {
+                  let fd = new FormData();
+                  fd.set('secret', vm.$store.state.captcha.secret);
+                  fd.set('response', token);
+
+                  axios({
+                    method: 'post',
+                    url: 'https://www.google.com/recaptcha/api/siteverify',
+                    data: fd,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                  }).then((resp)=>{
+                    if ((resp.data.success === true) && (resp.data.score >= 0.5) && (resp.data.action === 'register')) {
+                      resolve(true);
+                    } else {
+                      resolve(false);
                     }
-                  })
-                    .then(function (data) {
-                        window.location.reload();
-                        console.log(data.data);
+                  });
+                });
+              } else {
+                resolve(false);
+              }
+            })
+          },
+          login: function () {
+            this.checkCaptcha().then((result)=>{
+              console.log('captcha passed:' + result);
+
+              let vm=this;
+              ax.get("/shared/get-csrf-token")
+                .then(function (data1) {
+                    console.log(data1.data);
+                    let fd = new FormData;
+                    fd.append('csrfmiddlewaretoken', data1.data);
+                    fd.append('user', vm.mail.value);
+                    fd.append('password', vm.password.value);
+                    ax.post("/account/login", fd, {
+                      headers: {
+                        'X-CSRFToken': data1.data,
+                        'Content-Type': 'multipart/form-data'
                       }
-                    )
-                    .catch(function (data) {
-                        if(data.response){
-                          console.warn(data.response.data);
+                    })
+                      .then(function (data) {
+                          window.location.reload();
+                          console.log(data.data);
                         }
-                        else
-                          console.warn('no connection')
-                      }
-                    )
-                }
-              )
-              .catch(function (data) {
-                  if(data.response){
-                    console.warn(data.response.data);
+                      )
+                      .catch(function (data) {
+                          if(data.response){
+                            console.warn(data.response.data);
+                          }
+                          else
+                            console.warn('no connection')
+                        }
+                      )
                   }
-                  else
-                    console.warn('no connection')
-                }
-              )
+                )
+                .catch(function (data) {
+                    if(data.response){
+                      console.warn(data.response.data);
+                    }
+                    else
+                      console.warn('no connection')
+                  }
+                )
+            });
           },
           register: function () {
             var vm=this;
@@ -342,7 +374,7 @@
                         //vm.errMsg.pswd = vm.translateErr(data.response.data);
                       }
                       else{
-                        console.warn('no connection')
+                        console.warn('no connection');
                         vm.warning = 'Не удалось сохранить изменения из-за проблем со связью';
                       }
                     })
@@ -399,8 +431,14 @@
             }
           },*/
         },
-
-        created:function () {
+        mounted() {
+          if (this.$store.state.captcha.enable) {
+            let script = document.createElement("script");
+            script.src = "https://www.google.com/recaptcha/api.js?render=6LfvotIUAAAAAOuFrracBIL3ZCHNX1sy_UEqaxOj";
+            document.head.appendChild(script);
+          }
+        },
+      created:function () {
           ax = this.$axios.create({  baseURL: this.host});
         }
     }

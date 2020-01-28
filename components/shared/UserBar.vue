@@ -1,6 +1,6 @@
 <template>
   <div class="UserBar">
-    <span v-if="!$store.state.anonymous" class="username" @click="showOptions=true; myScroll();">{{username}}</span>
+    <span v-if="!$store.state.user.anonymous" class="username" @click="showOptions=true; myScroll();">{{$store.state.username}}</span>
     <span v-else >
       <span class="username" @click="$refs.loginBlock.show(false);">Вход</span>
       <!--<span class="username" @click="$refs.loginBlock.show(true);">/Регистрация</span>-->
@@ -10,8 +10,8 @@
       <div class="option" @click="logout(); showOptions=false">Выйти</div>
       <div class="option" @click="$refs.loginBlock.show(false); showOptions=false">Сменить пользователя</div>
     </div>
-    <img v-if="!$store.state.anonymous" :src="host+'/static/img/shared/basket-32.png'" />
-    <img v-if="!$store.state.anonymous" :src="host+'/static/img/shared/star-32.png'"/>
+    <img v-if="!$store.state.user.anonymous" :src="host+'/static/img/shared/basket-32.png'" />
+    <img v-if="!$store.state.user.anonymous" :src="host+'/static/img/shared/star-32.png'"/>
     <login-block ref="loginBlock" ></login-block>
   </div>
 </template>
@@ -91,11 +91,11 @@
         ax.get(this.host + '/account/about-me')
           .then(function (data) {
               console.log(data.data);
-              vm.$store.state.anonymous = data.data.anonymous;
-              if(data.data.anonymous) vm.$store.state.username = '';
-              else vm.$store.state.username = data.data.username;
-              vm.$store.state.stock = data.data['stock-occupied'];
-              vm.$store.state.stockMax = data.data['stock-capacity'];
+              vm.$store.state.user.anonymous = data.data.anonymous;
+              if(data.data.anonymous) vm.$store.state.user.username = '';
+              else vm.$store.state.user.username = data.data.username;
+              vm.$store.state.user.stock = data.data['stock-occupied'];
+              vm.$store.state.user.stockMax = data.data['stock-capacity'];
               //vm.$forceUpdate();
             }
           )
