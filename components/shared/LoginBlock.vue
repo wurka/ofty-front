@@ -1,22 +1,24 @@
 <template>
     <div class="LoginBlock" v-if="shown">
-      <div class="switch" @click="guest=!guest">
-        <span v-if="guest">Войти</span>
-        <span v-else>Зарегистрироваться</span>
+      <div class="switch" >
+        <span v-if="guest" @click="guest=!guest">Войти</span>
+        <span v-else @click="guest=!guest">Зарегистрироваться</span>
       </div>
       <div class="content">
         <div class="warning"><div class="redtext">{{warning}}</div></div>
 
 
         <div class="contentForm" v-if="contentType==='common'">
-          <div class="line">
-            <div class="label">Почта</div>
-            <input :class="[mail.valid?'':'invalid']" v-model="mail.value" @change="validateChange($event, mail);" @input="validateInput($event, mail)"/>
-          </div>
-          <div class="line">
-            <div class="label">Пароль</div>
-            <input type="password" :class="[password.valid?'':'invalid']" v-model="password.value" @keyup.enter="login()"/>
-          </div>
+          <form>
+            <div class="line">
+              <div class="label">Почта</div>
+              <input :class="[mail.valid?'':'invalid']" v-model="mail.value" @change="validateChange($event, mail);"/>
+            </div>
+            <div class="line">
+              <div class="label">Пароль</div>
+              <input type="password" :class="[password.valid?'':'invalid']" v-model="password.value" @keyup.enter="login()"/>
+            </div>
+          </form>
           <div :class="['btns']">
             <div class="remind" @click="sendNewPswd=!sendNewPswd">Забыли пароль?</div>
             <div class="btn" @click="hide()">Отмена</div>
@@ -30,17 +32,20 @@
             <div class="label">Почта</div>
             <input :class="[mail.valid?'':'invalid']" v-model="mail.value" />
           </div>
-          <div class="line">
-            <div class="label">Пароль</div>
-            <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value"/>
-          </div>
-          <div class="line">
-            <div class="label">Пароль еще раз</div>
-            <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value"/>
-          </div>
+          <form>
+            <div class="line">
+              <div class="label">Пароль</div>
+              <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value" @change="validateChange($event, password);"/>
+            </div>
+            <div class="line">
+              <div class="label">Пароль еще раз</div>
+              <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value" @change="validateChange($event, password);"/>
+            </div>
+          </form>
+
           <div class="line">
             <div class="label">Имя пользователя <img :src="host+'/static/img/shared/info.png'" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
-            <input :class="[username.valid?'':'invalid']" v-model="username.value" />
+            <input :class="[username.valid?'':'invalid']" v-model="username.value" @change="validateChange($event, username);"/>
           </div>
           <div class="captcha">
             <img :src="host+'/static/img/shared/uriy.svg'"/>
@@ -101,7 +106,7 @@
         props: [],
         data: function () {
             return {
-              shown: false,
+              shown: true,
               host:this.$store.state.host,
               warning: '',
               guest: false,
@@ -109,9 +114,9 @@
               codeStatus: false,
               //shop: false,
               mail:{value:'', type:'mail', valid:true},
-              username:{value:'', type:'name', valid:true},
-              password:{value:'', type:'pass', valid:true},
-              rePassword:{value:'', type:'pass', valid:true},
+              username:{value:'', type:'username', valid:true},
+              password:{value:'', type:'password', valid:true},
+              rePassword:{value:'', type:'password', valid:true},
               capt:'',
               code:'',
               newCode:'',
@@ -352,28 +357,31 @@
                 }
               })
           },
-          validateInput:function(e,param, type){
+          validateChange:function(e,param){
             //console.log(e);
-            return
+            //return
             let val = e.target.value;
-            if (!type) type=param.type;
-            if (type==='float') {
+            if (param.type==='float') {
               val = val.replace(/,/g,'.');
               val = val.replace(',','.');
               /*e.target.value = val;
               this.$forceUpdate();*/
             }
-            let ReDict = {'username':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'mail': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]+$/gi};
-            if (!ReDict.contains(type)) {
+            let ReDict = {
+              'username':/^[0-9a-zёа-я][0-9a-zёа-я\s]{0,28}[0-9a-zёа-я]$/gi,
+              'mail': /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u,
+              'password':/^\S{4,}$/g,
+            };
+            if (!(param.type in ReDict)) {
               console.warn('Unknown validation type!');
               return
             }
 
-            if (ReDict[type].exec(val)) param.valid=true;
+            if (ReDict[param.type].exec(val)) param.valid=true;
             else param.valid=false;
             //console.log(param);
           },
-          validateChange:function(e,param, type){
+          /*validateChange:function(e,param, type){
             return
             //console.log('aw');
             let val = e.target.value;
@@ -388,10 +396,8 @@
             if (type==='float') {
               //val = val.replace(/,/g,'.');
               e.target.value = val.replace(',','.');
-              /*e.target.value = val;
-              this.$forceUpdate();*/
             }
-          },
+          },*/
         },
 
         created:function () {
@@ -413,7 +419,8 @@
     font-size: 18px
     .switch
       margin: 20px
-      cursor: pointer
+      span
+        cursor: pointer
     .content
       //padding: 30px 150px 50px 70px
       //width: 550px

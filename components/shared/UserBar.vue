@@ -1,6 +1,6 @@
 <template>
   <div class="UserBar">
-    <span v-if="!$store.state.anonymous" class="username" @click="showOptions=true; myScroll();">{{$store.state.username}}</span>
+    <span v-if="!$store.state.anonymous" class="username" @click="showOptions=true; myScroll();">{{username}}</span>
     <span v-else >
       <span class="username" @click="$refs.loginBlock.show(false);">Вход</span>
       <!--<span class="username" @click="$refs.loginBlock.show(true);">/Регистрация</span>-->
@@ -76,7 +76,14 @@
         },
 
       },
-
+      computed:{
+        username: function () {
+          //let ans = $store.state.username
+          let ans = "bigFockingSwordOfDeath"
+          if(ans.length>10) return ans.substring(0,10)+'...';
+          else return ans;
+        }
+      },
       mounted: function () {
         let vm = this;
         this.myScroll();
@@ -145,6 +152,8 @@
       margin-top: 5px
       font-size: 18px
       cursor: pointer
+      max-width: 125px
+      overflow: hidden
       &:hover
         color: $myblue
 </style>

@@ -58,6 +58,9 @@
       transform: scale(0.99)
       //border: gray solid 0.1px
       box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5)
+  .warning
+    font-family: Tahoma
+    color: $myred
   input
     border: thin solid lightgray
   textarea

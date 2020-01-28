@@ -3,6 +3,7 @@
     <div class="bg"></div>
     <div class="ColorPicker">
       <div class="count">{{this.picked.length}}/{{this.lim}}</div>
+      <div class="warning"><span>{{this.warning}}</span></div>
       <div class="content">
 
         <div class="line">
@@ -40,7 +41,8 @@
             picked:[],
             applied:[],
             host:this.$store.state.host,
-            lim:5
+            lim:5,
+            warning:'',
           }
       },
       computed:{
@@ -73,10 +75,14 @@
           this.shown=false;
         },
         pick:function (arg) {
-          if (this.pickedIdArr.includes(arg.id)) this.picked.splice(this.pickedIdArr.indexOf(arg.id),1);
+          if (this.pickedIdArr.includes(arg.id)) {
+            this.picked.splice(this.pickedIdArr.indexOf(arg.id),1);
+            this.warning = '';
+          }
           else {
             if (this.picked.length>this.lim-1) {
-              alert('Допустимо не более '+this.lim+' цветов!');
+              //alert('Допустимо не более '+this.lim+' цветов!');
+              this.warning = 'Допустимо не более '+this.lim+' цветов!';
               return
             }
             this.picked.push(arg);
@@ -117,8 +123,14 @@
     position: absolute
     margin: -5px 0px 0px 220px
     z-index: 2
+    font-family: Tahoma
+    .warning
+      color:
+      text-align: center
+      margin-top: -19.5px
+      height: 19.5px
     .count
-      //position: fixed
+      //display: inline-block
       font-size: 18px
       text-align: right
       margin-top: 12px
