@@ -1,6 +1,9 @@
 <template>
   <div class="SiteHeader">
-    <img class="HeaderLogo" :src="host+'/static/img/shared/logo.png'"/>
+    <a href="/">
+      <img class="HeaderLogo" :src="host+'/static/img/shared/logo.png'" />
+    </a>
+
     <div class="rightPanel">
       <tab-bar></tab-bar>
       <search-bar text="Поиск по сайту"></search-bar>
@@ -23,6 +26,11 @@
             host:this.$store.state.host,
           }
         },
+      methods:{
+        home:function () {
+          document.location='#';
+        }
+      }
     }
 </script>
 

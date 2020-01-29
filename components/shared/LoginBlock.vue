@@ -107,7 +107,7 @@
         props: [],
         data: function () {
             return {
-              shown: true,
+              shown: false,
               host:this.$store.state.host,
               warning: '',
               guest: false,
