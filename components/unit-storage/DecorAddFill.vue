@@ -66,7 +66,7 @@
     height: 710px
     font-family: Philosopher
     font-size: 18px
-    z-index: 2
+    z-index: 3
     .content
       margin-top: 108px
       margin-left: 176px

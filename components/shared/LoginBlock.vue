@@ -64,7 +64,7 @@
             <input :class="[mail.valid?'':'invalid']" v-model="mail.value" />
           </div>
           <div :class="['btns']">
-            <div v-if="!codeStatus" class="btn small" @click="refreshForm">Отмена</div>
+            <div v-if="!codeStatus" class="btn small" @click="hide">Отмена</div>
             <div v-if="!codeStatus" class="btn mid" @click="getCode">Получить проверочный код</div>
             <div v-if="codeStatus==='asked'" class="btn big" @click="getCode">Получить проверочный код еще раз</div>
           </div>
@@ -74,7 +74,7 @@
               <input v-model="code" />
             </div>
             <div :class="['btns', 'reg']">
-              <div class="btn " @click="refreshForm">Отмена</div>
+              <div class="btn " @click="hide">Отмена</div>
               <div class="btn " @click="setCode">Проверить код</div>
             </div>
           </div>
@@ -88,7 +88,7 @@
               <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value"/>
             </div>
             <div :class="['btns', 'reg']">
-              <div class="btn " @click="refreshForm">Отмена</div>
+              <div class="btn " @click="hide">Отмена</div>
               <div class="btn " @click="savePassword">Войти</div>
             </div>
           </div>
@@ -145,6 +145,7 @@
           },
           hide:function(){
             this.shown=false;
+            this.refreshForm();
           },
           refreshForm: function (){
             this.sendNewPswd = false;

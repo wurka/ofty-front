@@ -219,10 +219,7 @@
             if (Re[type].exec(val)) param.valid=true;
             else param.valid=false;
             if (type==='float') {
-              //val = val.replace(/,/g,'.');
-              e.target.value = val.replace(',','.');
-              /*e.target.value = val;
-              this.$forceUpdate();*/
+              this.addDict[param.alias] = val.replace(',','.');
             }
           },
           checkValid:function(){
@@ -600,7 +597,7 @@
       .alterPicPanel
         margin: 28px 10px 0 -207px
         position: absolute
-        z-index: 3
+        z-index: 2
       .validAlert
         position: absolute
         width: 628px
