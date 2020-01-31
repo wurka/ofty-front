@@ -1,18 +1,25 @@
 <template>
   <div class="Page">
-    <site-header></site-header>
-    <search-site-body></search-site-body>
-
+    <site-header/>
+    <!-- <SearchSiteBody/> -->
+    <div class="myBody">
+      <OfficeMenu/>
+      <SearchBody/>
+    </div>
   </div>
 </template>
 
 <script>
   import SiteHeader from "~/components/shared/SiteHeader";
-  import SearchSiteBody from "../components/unit-search/SearchSiteBody";
+  // import SearchSiteBody from "../components/unit-search/SearchSiteBody";
+  import OfficeMenu from "../components/shared/OfficeMenu";
+  import SearchBody from "../components/unit-search/SearchBody";
   export default {
     name: "NewPage",
     components: {
-      SearchSiteBody,
+      // SearchSiteBody,
+      SearchBody,
+      OfficeMenu,
       SiteHeader},
     data:function () {
       return{
@@ -30,14 +37,16 @@
     margin: auto
     background-color: white
     min-height: 100vh
+  .myBody
+    display: flex
 
 </style>
 
 <style lang="sass">
   body
     background-color: lightgrey
-    margin: 0px
-    font-family: philosopher
+    margin: 0
+    font-family: philosopher, serif
     .hidden
       display: none
     .btn
