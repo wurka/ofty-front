@@ -16,7 +16,8 @@
             </div>
             <div class="line">
               <div class="label">Пароль</div>
-              <input type="password" :class="[password.valid?'':'invalid']" v-model="password.value" @keyup.enter="login()"/>
+              <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @keyup.enter="login()"/>
+              <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
             </div>
           </form>
           <div :class="['btns']">
@@ -35,16 +36,18 @@
           <form>
             <div class="line">
               <div class="label">Пароль</div>
-              <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value" @change="validateChange($event, password);"/>
+              <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @change="validateChange($event, password);"/>
+              <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
             </div>
             <div class="line">
               <div class="label">Пароль еще раз</div>
-              <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value" @change="validateChange($event, password);"/>
+              <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @change="validateChange($event, rePassword);"/>
+              <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=!showPswd[1]; $forceUpdate();"/>
             </div>
           </form>
 
           <div class="line">
-            <div class="label">Имя пользователя <img :src="host+'/static/img/shared/info.png'" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
+            <div class="label">Имя пользователя <info-button class="infoBtn" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
             <input :class="[username.valid?'':'invalid']" v-model="username.value" @change="validateChange($event, username);"/>
           </div>
           <div class="captcha">
@@ -79,14 +82,21 @@
             </div>
           </div>
           <div v-if="codeStatus==='confirmed'">
-            <div class="line">
-              <div class="label">Новый пароль</div>
-              <input :class="[password.valid?'':'invalid']" type="password" v-model="password.value"/>
-            </div>
-            <div class="line">
-              <div class="label">Пароль еще раз</div>
-              <input :class="[rePassword.valid?'':'invalid']" type="password" v-model="rePassword.value"/>
-            </div>
+            <form>
+              <div class="line">
+                <div class="label">Новый пароль</div>
+                <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @change="validateChange($event, password);"/>
+                <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
+              </div>
+            </form>
+            <form>
+              <div class="line">
+                <div class="label">Пароль еще раз</div>
+                <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @change="validateChange($event, rePassword);"/>
+                <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=!showPswd[1]; $forceUpdate();"/>
+              </div>
+            </form>
+
             <div :class="['btns', 'reg']">
               <div class="btn " @click="hide">Отмена</div>
               <div class="btn " @click="savePassword">Войти</div>
@@ -101,13 +111,16 @@
 <script>
   //import {ax,host} from "./main.js"
     import axios from "axios";
+  import InfoButton from "./InfoButton";
     let ax;
     export default {
         name: "LoginBlock",
-        props: [],
+      components: {InfoButton},
+      props: [],
         data: function () {
             return {
               shown: false,
+              showPswd: [false,false],
               host:this.$store.state.host,
               warning: '',
               guest: false,
@@ -481,7 +494,16 @@
           height: 37px
           margin-left: 30px
           padding-left: 10px
-          font-family: Philosopher
+        .pswd
+          width: 320px
+          padding-right: 30px
+        .eye
+          margin-left: -35px
+          margin-right: 5px
+          vertical-align: middle
+          cursor: pointer
+        .infoBtn
+          display: inline-block
       .captcha
         margin-top: 30px
         img
@@ -495,7 +517,6 @@
           font-size: 18px
           padding-left: 20px
           width: 145px
-          font-family: Philosopher
       .check
         margin-top: 20px
         margin-right: 115px
@@ -505,7 +526,7 @@
         display: inline-block
         color: darkgray
         font-size: 15.5px
-        margin-left: 105px
+        margin-right: 15px
         cursor: pointer
         vertical-align: bottom
       .btns
@@ -519,6 +540,10 @@
         box-shadow: $shadow
         width: 130px
         font-size: 15.5px
+      .mid
+        width: 230px
+      .big
+        width: 260px
       .sendNewPswdBlock
         .btn
           width: 250px
@@ -526,6 +551,6 @@
       .reg
         .btn
           width: 150px
-          margin-left: 30px
+          margin-left: 26px
 
 </style>

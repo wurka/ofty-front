@@ -153,18 +153,21 @@
         width: inherit
         height: inherit
         background-color: white
-        border: black solid thin
+        border: darkgray solid thin
         position: fixed
         z-index: 2
         cursor: text
         .topPanel
           //background: lightsalmon
+          height: inherit
           input
             border: none
-            //background: yellow
+            background: none
             font-family: inherit
             font-size: inherit
-            margin: 5px 0px 5px 10px
+            //padding: 5px 0px 5px 10px
+            padding-left: 10px
+            height: inherit
             //width: calc(100% - 20px)
             //padding: 0
             width: 140px

@@ -18,12 +18,12 @@
         <div class="line">
           <div class="label">Новый пароль</div>
           <input :type="showPswd[0] ? 'text' : 'password'" class="text pswd" v-model="passwords[0]" />
-          <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=1-showPswd[0]; $forceUpdate();"/>
+          <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
         </div>
         <div class="line">
           <div class="label">Пароль еще раз</div>
           <input :type="showPswd[1] ? 'text' : 'password'" class="text pswd" v-model="passwords[1]" />
-          <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=1-showPswd[1]; $forceUpdate();"/>
+          <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=!showPswd[1]; $forceUpdate();"/>
         </div>
         <div class="warning"><span >{{errMsg.pswd}}</span></div>
         <div class="btn" @click="savePassword">Сменить пароль</div>
@@ -120,7 +120,7 @@
               passwords:['',''],
               avatars:{'big':'','small':''},
               newAvatar:'',
-              showPswd:[0,0],
+              showPswd:[false,false],
               infoKeys: [{key:"name",label:'Название компании'},{key:"site",label:'Сайт'},{key:"city",label:'Город'},{key:"mail",label:'Почта'},{key:"phone",label:'Телефон'},{key:"phone2",label:'Доп. телефон'},{key:"description",label:'О компании'}],
               days:[{name:'понедельник', key:'mon'},{name:'вторник', key:'tue'},{name:'среда', key:'wed'},{name:'четверг', key:'thu'},{name:'пятница', key:'fri'},{name:'суббота', key:'sat'},{name:'воскресенье', key:'sun'},],
               noteKeys: [ {text:'Показывать мгновенные сообщения', key:'push'}, {text:'Включить звуковое оповещение', key:'sound'}, {text:'Присылать смс о моем заказе', key:'orderSms'}, {text:'Присылать смс об окончании и начале срока аренды', key:'timeSms'},{text:'Присылать сообщение о новом заказе на эл. почту', key:'orderMail'},{text:'Присылать сообщения об окончании и начале срока аренды на эл. почту', key:'timeMail'}],

@@ -71,9 +71,16 @@
     color: $myred
   input
     border: thin solid lightgray
+    font-family: Tahoma
   textarea
+    font-family: Tahoma
     border: thin solid lightgray
   input.invalid
     border-color: $myred
     outline-color: $myred
+  textarea.invalid
+    border-color: $myred
+    outline-color: $myred
+  select
+    border: thin solid lightgray
 </style>

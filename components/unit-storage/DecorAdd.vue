@@ -24,7 +24,7 @@
         <div class="TopPanel">
           <div class="GenParams">
             <div class="GenParam" v-for="param in genParams"  :key="param.id">
-              <div class="ParamName">{{param.name}}<img v-if="param.info" class="paramInfo" :src="host+'/static/img/shared/info.png'" :title="param.info"/></div>
+              <div class="ParamName">{{param.name}}<info-button v-if="param.info" class="paramInfo" :title="param.info"/></div>
               <div v-if="param.name==='Цвет'" :class="['bar', colorArr.length ? '' : 'border']" @click="$refs.colorPicker.show(colorArr)">
                 <div class="color" v-for="c in colorArr"  :key="c.id" :style="'background-image: url('+c.texture+'); background-color: #'+c.rgb_hex+'; width: ' + (155-(colorArr.length+1)*0.8)/colorArr.length+'px;'"></div>
               </div>
@@ -71,7 +71,7 @@
         <div class="BotPanel">
           <div class="btn" @click="showAddFill=true">Заполнить за меня</div>
           <div class="BotParam">
-            <div class="ParamName" >{{botParams[0].name}}<img v-if="botParams[0].info" class="paramInfo" :src="host+'/static/img/shared/info.png'" :title="botParams[0].info"/></div>
+            <div class="ParamName" >{{botParams[0].name}}<info-button v-if="botParams[0].info" class="paramInfo" :title="botParams[0].info"/></div>
             <input v-model="addDict[botParams[0]['alias']]" :class="[botParams[0].valid ? '' : 'invalid']" @change="validateChange($event, botParams[0]);" @input="validateInput($event, botParams[0])"/>
           </div>
           <div class="BotParam">
@@ -94,10 +94,11 @@
     import ColorPicker from "./ColorPicker";
     var ax;
     import PickBar from "~/components/shared/PickBar";
+    import InfoButton from "../shared/InfoButton";
 
     export default {
       name: "DecorAdd",
-      components: {PickBar, ColorPicker, DecorAddFill},
+      components: {InfoButton, PickBar, ColorPicker, DecorAddFill},
         data: function () {
             return {
               shown: false,
@@ -193,6 +194,11 @@
           validateInput:function(e,param, type){
             //console.log(e);
 
+            if (param.type==='text'){
+              param.valid=true;
+              return
+            }
+
             let val = e.target.value;
             if (!type) type=param.type;
             if (type==='float') {
@@ -209,6 +215,11 @@
           },
           validateChange:function(e,param, type){
             //console.log('aw');
+            if (param.type==='text'){
+              param.valid=true;
+              return
+            }
+
             let val = e.target.value;
             if (!type) type=param.type;
             if (type==='float') {
@@ -548,16 +559,11 @@
       left: 145px
       top: 120px
       background-color: white
-      //border: solid darkgray 1px
       width: 1085px
       text-align: left
-      //margin-top: -42px
-      //margin-left: -243px
       box-shadow: $shadow
       font-family: Tahoma
       z-index: 1
-      input
-        border: thin solid darkgray
       .btn
         display: inline-block
         text-align: center
@@ -569,9 +575,10 @@
       .PickBar
         position: fixed
         z-index: 2
-        left: 523px
-        top: 147px
+        left: 550px
+        top: 140px
         width: 460px
+        height: 40px
       .PicPanel
         display: inline-block
         margin: 28px 10px 0 15px
@@ -627,9 +634,7 @@
         //margin-left:
         .paramInfo
           margin-left: 5px
-        .invalid
-          border-color: $myred
-          outline-color: $myred
+          display: inline-block
         span
           vertical-align: top
         .TopPanel
@@ -660,23 +665,23 @@
                 height: 24px
                 display: inline-block
                 background-size: cover
-                border: darkgray solid thin
+                border: lightgray solid thin
                 border-left: none
                 &:first-child
-                  border-left: darkgray solid thin
+                  border-left: lightgray solid thin
               .placeholder
                 color: gray
             .bar.border
-              border: darkgray solid thin
-              width: 155px
+              border: lightgray solid thin
+              width: 165px
 
             .GenParam
               margin-bottom: 10px
               .ParamName
-                width: 170px
+                width: 180px
                 display: inline-block
               input
-                width: 150px
+                width: 160px
                 height: 22px
                 font-size: 14px
                 padding-left: 5px
@@ -684,11 +689,11 @@
           .GroupParams
             display: inline-block
             vertical-align: top
-            margin-left: 25px
+            margin-left: 45px
             margin-right: 23px
             .Label
               //margin: 0px 0px 0px 0px
-              width: 120px
+              width: 90px
               display: inline-block
 
             .Groups
@@ -700,13 +705,13 @@
                 margin: 0px 0px 10px 0px
                 select
                   height: 27px
-                  width: 153px
+                  width: 163px
                   font-size: 14px
                   padding-left: 5px
                   font-family: Tahoma
             .Groups.edit
                 input
-                  width: 145px
+                  width: 155px
                   height: 22px
                   padding-left: 5px
                   font-size: 14px
@@ -717,10 +722,10 @@
               .Param
                 margin: 0 0 10px 0
                 .ParamName
-                  width: 120px
+                  width: 90px
                   display: inline-block
                 input
-                  width: 145px
+                  width: 155px
                   height: 22px
                   padding-left: 5px
                   font-size: 14px
@@ -730,7 +735,7 @@
             height: 145px
             vertical-align: top
             display: inline-block
-            border: solid gray thin
+            border: solid lightgray thin
         .BotPanel
           .btn
             display: inline-block
@@ -739,14 +744,14 @@
             text-align: center
             position: absolute
             margin: 105px 0 0 -200px
-            width: 327px
+            width: 357px
             font-family: Philosopher
             z-index: 1
           .BotParam
             margin-bottom: 10px
             .ParamName
               vertical-align: top
-              width: 170px
+              width: 180px
               display: inline-block
             input
               width: 648px
@@ -755,7 +760,7 @@
               padding-left: 5px
               font-family: Tahoma
             textarea
-              width: 645px
+              width: 646px
               padding-left: 5px
               height: 134px
               resize: none
@@ -763,7 +768,7 @@
               font-size: 14px
               font-family: Tahoma
           .BtnBar
-            text-align: left
+            text-align: right
             margin: 30px 0px 30px 153px
             .btn
               width: 200px

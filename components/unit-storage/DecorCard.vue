@@ -64,7 +64,11 @@
             <div class="name">Коллекция: </div> <div class="val">{{params.sets}}</div>
           </div>
           <div class="line">
-            <div class="name">Ключевые слова: </div> <div class="val" ><span v-for="w in params['keywords-info']" :key="w.id" class="kw">#{{w.word}}</span></div>
+            <div class="name">Ключевые слова: </div>
+            <div class="val">
+              <div v-for="w in params['keywords-info']" :key="w.id" class="kw">#{{w.word}}</div>
+            </div>
+
           </div>
           <div class="line" v-if="params.description">
             <div class="name">Комментарий: </div> <div class="val">{{params.description}}</div>
@@ -311,12 +315,18 @@
           max-width: 215px
       .BotPanel
         margin-bottom: 20px
-        .val span
-          margin-right: 10px
-        .kw
-          cursor: pointer
-          &:hover
-            color: $myblue
+        .line
+          max-width: 615px
+          .val
+            max-width: 480px
+            margin-bottom: 0
+          .kw
+            margin-right: 10px
+            cursor: pointer
+            display: inline-block
+            margin-bottom: 10px
+            &:hover
+              color: $myblue
       .Btns
         float: right
         margin-top: 10px
@@ -330,7 +340,7 @@
           width: 171px
         .status
           text-align: right
-          margin-bottom: 40px
+          margin-bottom: 20px
           color: black
           box-shadow: none
   .min.DecorCard
