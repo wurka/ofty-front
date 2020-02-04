@@ -66,8 +66,10 @@
         },
         myScroll: function () {
           window.onscroll = () => {
-            let bottomOfWindow = Math.abs(document.documentElement.offsetHeight - (document.documentElement.scrollTop + window.innerHeight)) < 1;
-            if (bottomOfWindow) this.loadCards();
+            let bottomOfWindow = Math.abs(document.documentElement.offsetHeight - (document.documentElement.scrollTop + window.innerHeight));
+            //console.log(bottomOfWindow);
+            if (bottomOfWindow<20)
+              this.loadCards();
             //console.log(document.documentElement.scrollTop + window.innerHeight);
           };
         },
