@@ -4,7 +4,7 @@
       <div class="bg" @click="hide"></div>
       <div class="alertContent">
         <div class="text">{{params.text}}</div>
-        <div v-for="(b,index) in params.btns" :key="index" class="btn" @click="$emit(b.name)"><span>{{b.text}}</span></div>
+        <div v-for="(b,index) in params.btns" :key="index" class="btn" @click="onClick(b)"><span>{{b.text}}</span></div>
       </div>
     </div>
   </div>
@@ -24,10 +24,15 @@
       show:function(){
         //console.log('show info');
         this.shown = true;
+
       },
       hide:function () {
         //console.log('hide info');
         this.shown = false;
+      },
+      onClick:function (b) {
+        this.$emit(b.name);
+        if(b.name==='close') this.hide();
       }
     }
   }

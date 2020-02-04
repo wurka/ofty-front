@@ -1,6 +1,6 @@
 <template>
     <div v-if="shown" class="DecorCard">
-      <my-alert ref="alert" class="alert" :params="alertParams" @ok="deleteUnit" @close="$refs.alert.shown=false"></my-alert>
+      <my-alert ref="alert" class="alert" :params="alertParams" @ok="deleteUnit"></my-alert>
       <div class="PicPanel">
         <img class="BigImg" :src="params.photo1 ? params.photo1 : host+'/static/img/shared/no_img.png'"/>
         <div class="smallPanel">
@@ -116,10 +116,6 @@
           }
         },
       methods:{
-        hideAlert:function (i) {
-          console.log(i);
-          this.$refs.alert.hide();
-        },
         publish:function () {
           var vm = this;
           ax.get("/shared/get-csrf-token")

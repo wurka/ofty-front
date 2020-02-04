@@ -13,7 +13,7 @@
           <form>
             <div class="line">
               <div class="label">Почта</div>
-              <input :class="[mail.valid?'':'invalid']" v-model="mail.value" @change="validateChange($event, mail);"/>
+              <input :class="[mail.valid?'':'invalid']" v-model="mail.value" @input="onInput" @change="validateChange($event, mail);"/>
             </div>
             <div class="line">
               <div class="label">Пароль</div>
@@ -37,24 +37,24 @@
           <form>
             <div class="line">
               <div class="label">Пароль</div>
-              <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @change="validateChange($event, password);"/>
+              <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @input="onInput" @change="validateChange($event, password);"/>
               <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
             </div>
             <div class="line">
               <div class="label">Пароль еще раз</div>
-              <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @change="validateChange($event, rePassword);"/>
+              <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @input="onInput" @change="validateChange($event, rePassword);"/>
               <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=!showPswd[1]; $forceUpdate();"/>
             </div>
           </form>
 
           <div class="line">
             <div class="label">Имя пользователя <info-button class="infoBtn" title="Имя будет отображаться везде и от этого не избавиться"/> </div>
-            <input :class="[username.valid?'':'invalid']" v-model="username.value" @change="validateChange($event, username);"/>
+            <input :class="[username.valid?'':'invalid']" v-model="username.value" @input="onInput" @change="validateChange($event, username);"/>
           </div>
-          <div class="captcha">
+          <!--<div class="captcha">
             <img :src="host+'/static/img/shared/uriy.svg'"/>
             <input v-model="capt" placeholder="код с картинки"/>
-          </div>
+          </div>-->
           <div :class="['btns', 'reg']">
             <div class="btn" @click="hide()">Отмена</div>
             <div class="btn" @click="register()">Войти</div>
@@ -86,14 +86,14 @@
             <form>
               <div class="line">
                 <div class="label">Новый пароль</div>
-                <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @change="validateChange($event, password);"/>
+                <input :type="showPswd[0] ? 'text' : 'password'" :class="[password.valid?'':'invalid','pswd']" v-model="password.value" @input="onInput" @change="validateChange($event, password);"/>
                 <img :src="showPswd[0] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[0]=!showPswd[0]; $forceUpdate();"/>
               </div>
             </form>
             <form>
               <div class="line">
                 <div class="label">Пароль еще раз</div>
-                <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @change="validateChange($event, rePassword);"/>
+                <input :type="showPswd[1] ? 'text' : 'password'" :class="[rePassword.valid?'':'invalid','pswd']" v-model="rePassword.value" @input="onInput" @change="validateChange($event, rePassword);"/>
                 <img :src="showPswd[1] ? host+'/static/img/shared/eye_on.png' : host+'/static/img/shared/eye_off.png'" class="eye" @click="showPswd[1]=!showPswd[1]; $forceUpdate();"/>
               </div>
             </form>
@@ -128,7 +128,6 @@
               guest: false,
               sendNewPswd: false,
               codeStatus: false,
-              //shop: false,
               mail:{value:'', type:'mail', valid:true},
               username:{value:'', type:'username', valid:true},
               password:{value:'', type:'password', valid:true},
@@ -166,6 +165,9 @@
             this.sendNewPswd = false;
             this.codeStatus = false;
             //this.$forceUpdate();
+          },
+          onInput:function () {
+            this.warning = '';
           },
           async checkCaptcha() {
             let vm=this;
@@ -448,6 +450,13 @@
               /*e.target.value = val;
               this.$forceUpdate();*/
             }
+            if (param.type==='mail') {
+              if (val.length>100){
+                console.warn('too long email');
+                this.warning='Слишком длинный email'
+                return
+              }
+            }
             let ReDict = {
               'username':/^[0-9a-zёа-я][0-9a-zёа-я\s]{0,28}[0-9a-zёа-я]$/gi,
               'mail': /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u,
@@ -455,6 +464,7 @@
             };
             if (!(param.type in ReDict)) {
               console.warn('Unknown validation type!');
+              this.warning='Ошибка на сервере';
               return
             }
 

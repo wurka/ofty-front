@@ -45,12 +45,12 @@
       display: none
     .btn
       cursor: pointer
-    .scrollDisable
-      overflow-y: scroll
-      //max-height: 100vh
-      .Page
-        height: 100vh
-        overflow-y: hidden
+  body.scrollDisable
+    overflow-y: scroll
+    //max-height: 100vh
+    .Page
+      height: 100vh
+      overflow-y: hidden
 
 
 

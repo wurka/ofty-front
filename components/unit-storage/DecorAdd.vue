@@ -2,6 +2,7 @@
   <div v-if="shown">
     <div class="bg"></div>
     <div class="DecorAdd">
+      <my-alert ref="alert" class="alert" :params="alertParams" @ok="reloadPage"></my-alert>
       <color-picker ref = "colorPicker" :colorData="colorData" @hideColorPicker="onHideColorPicker"></color-picker>
       <pick-bar ref="pickBar" :arr="matData" :len="matLen" :showLim="matShowLim" :pickLim="matPickLim" @done="updateMaterials"></pick-bar>
       <decor-add-fill :shown="showAddFill" @hideAddFill="showAddFill=false"></decor-add-fill>
@@ -95,10 +96,11 @@
     var ax;
     import PickBar from "~/components/shared/PickBar";
     import InfoButton from "../shared/InfoButton";
+    import MyAlert from "../shared/MyAlert";
 
     export default {
       name: "DecorAdd",
-      components: {InfoButton, PickBar, ColorPicker, DecorAddFill},
+      components: {MyAlert, InfoButton, PickBar, ColorPicker, DecorAddFill},
         data: function () {
             return {
               shown: false,
@@ -136,6 +138,10 @@
               matPickLim:5, // ограничение на кол-во материалов
               showValidAlert: false,
               alertMsg:'Default',
+              alertParams:{
+                text:'Поздравляю, остается только перезагрузить страницу.',
+                btns:[{name:'ok', text:'OK'}]
+              },
             }
         },
         computed:{
@@ -167,6 +173,9 @@
             this.$emit('scrollDisable');
             document.body.className='scrollDisable';
             //console.log(this.addDict['unit-materials']);
+          },
+          reloadPage:function(){
+            window.location.reload();
           },
           fillParams: function(){
             for (let i=0; i<5; i++){
@@ -376,8 +385,9 @@
                   ax.post("/units/update", fd,{headers:{'X-CSRFToken':data1.data,'Content-Type': 'multipart/form-data'}})
                     .then(function(data){
                         console.log(data.data);
-                        vm.hideAddDecor();
-                        window.location.reload();
+                        vm.$refs.alert.show();
+                        //vm.hideAddDecor();
+                        //window.location.reload();
                       }
                     )
                     .catch(function(data){
@@ -424,8 +434,9 @@
                   ax.post("/units/add-new-unit", fd,{headers:{'X-CSRFToken':data1.data,'Content-Type': 'multipart/form-data'}})
                   .then(function(data){
                       console.log(data.data);
-                      vm.hideAddDecor();
-                      window.location.reload();
+                      vm.$refs.alert.show();
+                      //vm.hideAddDecor();
+                      //window.location.reload();
                     }
                   )
                   .catch(function(data){
@@ -567,6 +578,9 @@
       box-shadow: $shadow
       font-family: Tahoma, serif
       z-index: 1
+      .alert
+        margin: 200px 0 0 250px
+        position: absolute
       .btn
         display: inline-block
         text-align: center
