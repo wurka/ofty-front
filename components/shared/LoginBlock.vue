@@ -1,5 +1,6 @@
 <template>
     <div class="LoginBlock" v-if="shown">
+      <my-dict ref="dict"></my-dict>
       <div class="switch" >
         <span v-if="guest" @click="guest=!guest">Войти</span>
         <span v-else @click="guest=!guest">Зарегистрироваться</span>
@@ -112,10 +113,11 @@
   //import {ax,host} from "./main.js"
     import axios from "axios";
   import InfoButton from "./InfoButton";
+  import MyDict from "./MyDict";
     let ax;
     export default {
         name: "LoginBlock",
-      components: {InfoButton},
+      components: {MyDict, InfoButton},
       props: [],
         data: function () {
             return {
@@ -219,9 +221,12 @@
                       .catch(function (data) {
                           if(data.response){
                             console.warn(data.response.data);
+                            vm.warning = vm.$refs.dict.translateErr(data.response.data);
                           }
-                          else
+                          else{
                             console.warn('no connection')
+                            vm.warning = vm.$refs.dict.translateErr('no connection');
+                          }
                         }
                       )
                   }
@@ -229,9 +234,12 @@
                 .catch(function (data) {
                     if(data.response){
                       console.warn(data.response.data);
+                      vm.warning = vm.$refs.dict.translateErr(data.response.data);
                     }
-                    else
+                    else{
                       console.warn('no connection')
+                      vm.warning = vm.$refs.dict.translateErr('no connection');
+                    }
                   }
                 )
             });
@@ -268,9 +276,12 @@
                     .catch(function (data) {
                         if(data.response){
                           console.warn(data.response.data);
+                          vm.warning = vm.$refs.dict.translateErr(data.response.data);
                         }
-                        else
+                        else{
                           console.warn('no connection')
+                          vm.warning = vm.$refs.dict.translateErr('no connection');
+                        }
                       }
                     )
                 }
@@ -278,9 +289,12 @@
               .catch(function (data) {
                   if(data.response){
                     console.warn(data.response.data);
+                    vm.warning = vm.$refs.dict.translateErr(data.response.data);
                   }
-                  else
+                  else{
                     console.warn('no connection')
+                    vm.warning = vm.$refs.dict.translateErr('no connection');
+                  }
                 }
               )
           },
@@ -306,9 +320,12 @@
                     .catch(function (data) {
                         if(data.response){
                           console.warn(data.response.data);
+                          vm.warning = vm.$refs.dict.translateErr(data.response.data);
                         }
-                        else
+                        else{
                           console.warn('no connection')
+                          vm.warning = vm.$refs.dict.translateErr('no connection');
+                        }
                       }
                     )
                 }
@@ -316,9 +333,12 @@
               .catch(function (data) {
                   if(data.response){
                     console.warn(data.response.data);
+                    vm.warning = vm.$refs.dict.translateErr(data.response.data);
                   }
-                  else
+                  else{
                     console.warn('no connection')
+                    vm.warning = vm.$refs.dict.translateErr('no connection');
+                  }
                 }
               )
           },
@@ -341,16 +361,25 @@
                         console.log(data.data);
                         if(data.data.code){
                           vm.newCode = data.data.code;
-                        } else console.warn('Code Error!');
+                        }
+                        else {
+                          console.warn('Code Error!');
+                          vm.warning = 'Ошибка на сервере';
+                          return;
+                        }
                         vm.codeStatus='confirmed';
                       }
                     )
                     .catch(function (data) {
                         if(data.response){
                           console.warn(data.response.data);
+                          vm.warning = vm.$refs.dict.translateErr(data.response.data);
                         }
-                        else
+                        else{
                           console.warn('no connection')
+                          vm.warning = vm.$refs.dict.translateErr('no connection');
+                        }
+
                       }
                     )
                 }
@@ -358,9 +387,13 @@
               .catch(function (data) {
                   if(data.response){
                     console.warn(data.response.data);
+                    vm.warning = vm.$refs.dict.translateErr(data.response.data);
                   }
-                  else
+                  else{
                     console.warn('no connection')
+                    vm.warning = vm.$refs.dict.translateErr('no connection');
+                  }
+
                 }
               )
           },
@@ -385,21 +418,23 @@
                     .catch(function(data){
                       if(data.response) {
                         console.warn(data.response.data);
-                        //vm.errMsg.pswd = vm.translateErr(data.response.data);
+                        vm.warning = vm.$refs.dict.translateErr(data.response.data);
                       }
                       else{
-                        console.warn('no connection');
-                        vm.warning = 'Не удалось сохранить изменения из-за проблем со связью';
+                        console.warn('no connection')
+                        vm.warning = vm.$refs.dict.translateErr('no connection');
                       }
                     })
                 }
               )
               .catch(function(data){
-                if(data.response)
+                if(data.response){
                   console.warn(data.response.data);
+                  vm.warning = vm.$refs.dict.translateErr(data.response.data);
+                }
                 else{
                   console.warn('no connection')
-                  vm.warning= 'Не удалось сохранить изменения из-за проблем со связью';
+                  vm.warning = vm.$refs.dict.translateErr('no connection');
                 }
               })
           },
