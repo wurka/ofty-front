@@ -23,7 +23,13 @@ const store = () => new Vuex.Store({
       enable: false,  // использовать ли капчу
       front: '6LfvotIUAAAAAOuFrracBIL3ZCHNX1sy_UEqaxOj',
       secret: '6LfvotIUAAAAAJsyumxSe0qTaFyIJA-jcS2gP7T9'
-    }
+    },
+    companies: [
+      {
+        name: '4 кота',
+        rating: 1
+      }
+    ]  // список компаний
 
   },
   mutations: {

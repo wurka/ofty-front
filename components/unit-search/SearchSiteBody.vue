@@ -2,7 +2,7 @@
     <div class="SearchSiteBody">
       <search-side-panel class="leftPanel sidePanel" :variants="leftVars" :placeholder="'Поиск по категориям'"></search-side-panel>
       <div class="midPanel">
-        <div class="params">
+        <div class="params" v-if="false">
           <div class="hideBtn">Скрыть</div>
           <div class="picPanel"></div>
           <div class="groupPanel">
