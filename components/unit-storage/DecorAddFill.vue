@@ -64,7 +64,6 @@
     margin-left: 40px
     width: 1010px
     height: 710px
-    font-family: Philosopher
     font-size: 18px
     z-index: 3
     .content
@@ -79,7 +78,7 @@
       .PriceList
         //padding: 50px
         //margin-left: 160px
-        font-family: Tahoma
+        font-family: Tahoma, serif
         margin-left: 35px
         //font-size: 21px
         margin-bottom: 100px

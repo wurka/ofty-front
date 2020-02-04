@@ -1,7 +1,7 @@
 <template>
     <div class="DecorHeader">
       <div class="btn" @click="$refs.decorAdd.show();">+ Добавить предмет</div>
-      <span> <search-bar text="Поиск в моем декоре" @search="decorSearch"></search-bar></span>
+      <span> <search-bar text="Поиск в моем декоре" @input="decorSearch" @change="decorSearch" @search="decorSearch"></search-bar></span>
       <span class="counter">Загружено товаров {{mine}}/{{all}}</span>
       <decor-add :shown="showAddDecor" :editParams="editParamsVal" ref="decorAdd" @hide-add-decor="showAddDecor = false; $emit('hide-add-decor');"></decor-add>
     </div>
@@ -100,7 +100,7 @@
         font-size: 14px
         float: right
         margin: 10px 47px 0 0
-        font-family: Tahoma
+        font-family: Tahoma, serif
       .SearchBar
         //margin-right: 25px
         margin-left: 47px

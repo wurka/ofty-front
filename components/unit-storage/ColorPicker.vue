@@ -123,7 +123,7 @@
     position: absolute
     margin: -5px 0px 0px 220px
     z-index: 2
-    font-family: Tahoma
+    font-family: Tahoma, serif
     .warning
       color:
       text-align: center
@@ -173,9 +173,7 @@
           display: inline-block
           margin-right: 45px
           padding-top: 9px
-          font-family: Philosopher
           font-size: 18px
-          box-shadow: $shadow
           height: 28px
           width: 160px
 

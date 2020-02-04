@@ -23,16 +23,16 @@
       <div class="RightPanel">
         <div class="TopPanel">
           <div class="GenParams">
-            <div class="GenParam" v-for="param in genParams"  :key="param.id">
+            <div class="GenParam" v-for="(param) in genParams"  :key="param.id">
               <div class="ParamName">{{param.name}}<info-button v-if="param.info" class="paramInfo" :title="param.info"/></div>
               <div v-if="param.name==='Цвет'" :class="['bar', colorArr.length ? '' : 'border']" @click="$refs.colorPicker.show(colorArr)">
-                <div class="color" v-for="c in colorArr"  :key="c.id" :style="'background-image: url('+c.texture+'); background-color: #'+c.rgb_hex+'; width: ' + (155-(colorArr.length+1)*0.8)/colorArr.length+'px;'"></div>
+                <div class="color" v-for="c in colorArr"  :key="c.id" :style="'background-image: url('+c.texture+'); background-color: #'+c.rgb_hex+'; width: ' + (165-(colorArr.length+1)*0.8)/colorArr.length+'px;'"></div>
               </div>
               <div v-if="param.name==='Материал'" :class="['bar', 'border']" @click="$refs.pickBar.show(editParams['unit-materials'])">
                 <span v-if="matStr">{{matStr}}</span>
                 <!--<span v-else class="placeholder">до {{matPickLim}} материалов</span>-->
               </div>
-              <input :class="[['Цвет','Материал'].includes(param.name) ? 'hidden' : '', param.valid ? '' : 'invalid']" v-model="addDict[param['alias']]" @change="validateChange($event, param);" @input="validateInput($event, param)"/>
+              <input :tabindex="['Цвет','Материал'].includes(param.name) ? '-1' : 1" :class="[['Цвет','Материал'].includes(param.name) ? 'hidden' : '', param.valid ? '' : 'invalid']" v-model="addDict[param['alias']]" @change="validateChange($event, param);" @input="validateInput($event, param)"/>
             </div>
           </div>
           <span></span>
@@ -41,7 +41,7 @@
             <div v-if="!isEdit" class="Groups">
               <div class="Group" v-for="(group,i) in groups" :key="group.id" v-if="group&&groupOptions[groups[i]]">
                 <!-- <label>{{group}}</label> -->
-                <select  v-if="groupOptions[groups[i]].length" v-model="groups[i+1]" @change="pickGroup(i, groups[i+1])">
+                <select :tabindex="3"  v-if="groupOptions[groups[i]].length" v-model="groups[i+1]" @change="pickGroup(i, groups[i+1])">
                   <option class="hidden" disabled></option>
                   <option v-for="g in groupOptions[groups[i]]" :key="g.id" :value="g.id">
                     {{g.name}}
@@ -55,28 +55,28 @@
             <div v-if="isEdit" class="Params">
               <div class="Param" v-for="param in editParams['group-info'].params"  :key="param.id">
                 <div class="ParamName">{{param.name}}<span v-if="param.dimension">, {{param.dimension}}</span></div>
-                <input :class="[(param.valid||!hasKey(param,'valid')) ? '' : 'invalid']" v-model="params[param.id]" @input="validateInput($event, param,'float'); $forceUpdate()" @change="validateChange($event, param,'float'); $forceUpdate()"/>
+                <input  :tabindex="3" :class="[(param.valid||!hasKey(param,'valid')) ? '' : 'invalid']" v-model="params[param.id]" @input="validateInput($event, param,'float'); $forceUpdate()" @change="validateChange($event, param,'float'); $forceUpdate()"/>
               </div>
             </div>
-            <div v-if="groupParams[groups[groups.length-1]]" class="Params">
+            <div v-if="!isEdit&&groupParams[groups[groups.length-1]]" class="Params">
                 <div class="Param" v-for="param in groupParams[groups[groups.length-1]]['parameters']" :key="param.id">
                   <div class="ParamName">{{param.name}}<span v-if="param.dimension">, {{param.dimension}}</span></div>
-                  <input :class="[(param.valid||!hasKey(param,'valid')) ? '' : 'invalid']" v-model="params[param.id]" @input="validateInput($event, param,'float'); $forceUpdate()" @change="validateChange($event, param,'float'); $forceUpdate()"/>
+                  <input :tabindex="3" :class="[(param.valid||!hasKey(param,'valid')) ? '' : 'invalid']" v-model="params[param.id]" @input="validateInput($event, param,'float'); $forceUpdate()" @change="validateChange($event, param,'float'); $forceUpdate()"/>
                 </div>
             </div>
           </div>
-          <img class="GroupImg" v-if="groupParams[groups[groups.length-1]]" :src="groupParams[groups[groups.length-1]]['picture']"/>
+          <img class="GroupImg" v-if="!isEdit&&groupParams[groups[groups.length-1]]" :src="groupParams[groups[groups.length-1]]['picture']"/>
           <img class="GroupImg" v-if="isEdit" :src="editParams['group-info']['group-image']"/>
         </div>
         <div class="BotPanel">
           <div class="btn" @click="showAddFill=true">Заполнить за меня</div>
           <div class="BotParam">
-            <div class="ParamName" >{{botParams[0].name}}<info-button v-if="botParams[0].info" class="paramInfo" :title="botParams[0].info"/></div>
-            <input v-model="addDict[botParams[0]['alias']]" :class="[botParams[0].valid ? '' : 'invalid']" @change="validateChange($event, botParams[0]);" @input="validateInput($event, botParams[0])"/>
+            <div class="ParamName">{{botParams[0].name}}<info-button v-if="botParams[0].info" class="paramInfo" :title="botParams[0].info"/></div>
+            <input :tabindex="2" v-model="addDict[botParams[0]['alias']]" :class="[botParams[0].valid ? '' : 'invalid']" @change="validateChange($event, botParams[0]);" @input="validateInput($event, botParams[0])"/>
           </div>
           <div class="BotParam">
-            <div class="ParamName" >{{botParams[1].name}}</div>
-            <textarea v-model="addDict[botParams[1]['alias']]" :class="[botParams[1].valid ? '' : 'invalid']" @change="validateChange($event, botParams[1]);" @input="validateInput($event, botParams[1])"></textarea>
+            <div class="ParamName">{{botParams[1].name}}</div>
+            <textarea :tabindex="2" v-model="addDict[botParams[1]['alias']]" :class="[botParams[1].valid ? '' : 'invalid']" @change="validateChange($event, botParams[1]);" @input="validateInput($event, botParams[1])"></textarea>
           </div>
           <div class="BtnBar">
             <div class="btn" @click="addDict.published=true;go();">Опубликовать</div>
@@ -119,7 +119,7 @@
                 {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
                 //{'name':'Коллекции', 'alias':'sets', 'valid':true, 'type':''},
               ],
-              groups:['root'], //выбранная ветка
+              groups:['root',1,2],//['root'], //выбранная ветка
               params:{}, //индивидуальные параметры последней подгруппы
               groupParams:{}, //полный словарь загруженных индивидуальных параметров
               botParams:[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
@@ -135,6 +135,7 @@
               matShowLim:6, //кол-во строк с вариантами
               matPickLim:5, // ограничение на кол-во материалов
               showValidAlert: false,
+              alertMsg:'Default',
             }
         },
         computed:{
@@ -477,7 +478,7 @@
               {'name':'Название', 'alias':'title', 'valid':true, 'type':'text'},
               //{'name':'Коллекции', 'alias':'sets', 'valid':true, 'type':''},
             ];
-            this.groups=['root'];
+            this.groups=['root',1,2];
             this.params={};
             this.botParams=[
               {'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
@@ -500,6 +501,8 @@
           //this.pickGroup(-1,'root');
           //this.groups.pop();
           this.addGroupOptions('root');
+          this.addGroupOptions('1');
+          this.addGroupOptions('2');
           //this.groups.push('root');
           //this.groupOptions.clear;
           ax.get(this.host+'/units/color-picker-source')
@@ -562,12 +565,11 @@
       width: 1085px
       text-align: left
       box-shadow: $shadow
-      font-family: Tahoma
+      font-family: Tahoma, serif
       z-index: 1
       .btn
         display: inline-block
         text-align: center
-        font-family: Philosopher
       .DecorAddFill
         z-index: 2
       .ColorPicker
@@ -617,7 +619,6 @@
         box-shadow: $shadow
         text-align: center
         .text
-          font-family: Philosopher
           font-size: 21px
           margin-top: 52px
         .btn
@@ -647,7 +648,7 @@
             display: inline-block
             .bar
               vertical-align: middle
-              width: 157px
+              width: 166px
               height: 24px
               display: inline-block
               cursor: pointer
@@ -685,7 +686,6 @@
                 height: 22px
                 font-size: 14px
                 padding-left: 5px
-                font-family: Tahoma
           .GroupParams
             display: inline-block
             vertical-align: top
@@ -708,14 +708,12 @@
                   width: 163px
                   font-size: 14px
                   padding-left: 5px
-                  font-family: Tahoma
             .Groups.edit
                 input
                   width: 155px
                   height: 22px
                   padding-left: 5px
                   font-size: 14px
-                  font-family: Tahoma
                   display: block
             .Params
               margin-top: 30px
@@ -729,7 +727,6 @@
                   height: 22px
                   padding-left: 5px
                   font-size: 14px
-                  font-family: Tahoma
           .GroupImg
             width: 145px
             height: 145px
@@ -745,7 +742,6 @@
             position: absolute
             margin: 105px 0 0 -200px
             width: 357px
-            font-family: Philosopher
             z-index: 1
           .BotParam
             margin-bottom: 10px
@@ -758,7 +754,6 @@
               height: 22px
               font-size: 14px
               padding-left: 5px
-              font-family: Tahoma
             textarea
               width: 646px
               padding-left: 5px
@@ -766,7 +761,6 @@
               resize: none
               //padding: 1px
               font-size: 14px
-              font-family: Tahoma
           .BtnBar
             text-align: right
             margin: 30px 0px 30px 153px

@@ -1,6 +1,6 @@
 <template>
   <div class="SearchBar">
-    <input v-bind:placeholder="text" v-model="val" @keyup.enter="onSubmit"/>
+    <input v-bind:placeholder="text" v-model="val" @input="onInput" @change="onChange" @keyup.enter="onSubmit"/>
     <img :src="host+'/static/img/shared/loupe-24.png'" @click="onSubmit"/>
   </div>
 </template>
@@ -19,8 +19,14 @@
       methods:{
         onSubmit:function () {
           //if (this.val==='') return;
-          console.log('search');
+          //console.log('search');
           this.$emit('search', this.val);
+        },
+        onInput:function () {
+          this.$emit('input', this.val);
+        },
+        onChange:function () {
+          this.$emit('change', this.val);
         }
       }
     }
@@ -35,7 +41,7 @@
       height: 37px
       vertical-align: middle
       font-size: 18px
-      font-family: Philosopher
+      font-family: Philosopher, serif
       padding-left: 30px
       padding-right: 40px
     img

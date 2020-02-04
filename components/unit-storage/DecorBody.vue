@@ -5,7 +5,7 @@
       <div v-else v-for="card in cardArr" :key="card.id" :class="[(!detalized && card.type=='unit') ? 'inline' : '']">
         <div v-if="card.type==='header1'" class="group">{{card.text}}</div>
         <div v-if="card.type==='header2'" class="subgroup">{{card.text}}</div>
-        <decor-card  v-if="card.type==='unit'" @edit-decor="editDecor" :params="card" :class="[detalized ? '' : 'min']"></decor-card>
+        <decor-card  v-if="card.type==='unit'" @delete="reloadCards" @edit-decor="editDecor" :params="card" :class="[detalized ? '' : 'min']"></decor-card>
       </div>
 
     </div>
@@ -24,7 +24,7 @@
               cardArr:[],
               detalized: 1,
               host:this.$store.state.host,
-              unitsParams: {'offset': 0,'size': 3,'filter': '', 'last-group-id':-1},
+              unitsParams: {'offset': 0,'size': 10,'filter': '', 'last-group-id':-1},
               showEdit:false,
               editParams: {},
               loadReady: true,
@@ -78,6 +78,12 @@
           //this.showEdit=true;
           //this.editParams=params;
           this.$emit('edit-decor', params);
+        },
+        reloadCards:function(){
+          this.unitsParams.filter=this.filter.toString();
+          this.unitsParams.offset=0;
+          this.cardArr=[];
+          this.loadCards();
         }
       },
       mounted:function(){
@@ -90,10 +96,7 @@
       },
       watch:{
         filter:function () {
-          this.unitsParams.filter=this.filter.toString();
-          this.unitsParams.offset=0;
-          this.cardArr=[];
-          this.loadCards();
+          this.reloadCards();
         }
       }
     }

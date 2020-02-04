@@ -41,7 +41,6 @@
   body
     background-color: lightgrey
     margin: 0px
-    font-family: philosopher
     .hidden
       display: none
     .btn

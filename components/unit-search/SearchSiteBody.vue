@@ -203,7 +203,7 @@
       display: inline-block
       width: 665px
       margin-left: 18px
-      font-family: Tahoma
+      font-family: Tahoma, serif
       font-size: 14px
       .params
         background-color: $lgray
@@ -214,7 +214,6 @@
           margin-left: 15px
           padding-top: 5px
           margin-bottom: 5px
-          font-family: Philosopher
         .picPanel
           width: 145px
           height: 145px
@@ -253,7 +252,6 @@
         .zeroResult
           margin-top: 70px
           font-size: 24px
-          font-family: Philosopher
         .searchCard
           display: inline-block
           background-color: $lgray

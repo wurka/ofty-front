@@ -539,13 +539,12 @@
       display: inline-block
       width: 100%
       font-size: 15.5px
-      font-family: Tahoma
+      font-family: Tahoma, serif
       .btn
         text-align: center
         display: block
         padding: 8px 5px 8px 10px
         width: 150px
-        font-family: Philosopher
         margin-left: 345px
         //margin-top: 35px
       .line
@@ -577,7 +576,6 @@
           cursor: pointer
       .label1
         font-size: 21px
-        font-family: Philosopher
         margin-left: 50px
         margin-bottom: 20px
       .warning

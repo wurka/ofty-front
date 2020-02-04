@@ -45,7 +45,7 @@
         height: 37px
         vertical-align: middle
         font-size: 18px
-        font-family: Philosopher
+        font-family: Philosopher, serif
         padding-left: 10px
         padding-right: 40px
       img

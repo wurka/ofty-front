@@ -1,5 +1,6 @@
 <template>
     <div v-if="shown" class="DecorCard">
+      <my-alert ref="alert" class="alert" :params="alertParams" @ok="deleteUnit" @close="$refs.alert.shown=false"></my-alert>
       <div class="PicPanel">
         <img class="BigImg" :src="params.photo1 ? params.photo1 : host+'/static/img/shared/no_img.png'"/>
         <div class="smallPanel">
@@ -57,7 +58,7 @@
           <div class="btn" @click="$emit('edit-decor', params)">Редактировать</div>
           <div v-if="posted" class="btn" @click="unpublish">Отменить публикацию</div>
           <div v-else class="btn" @click="publish">Опубликовать</div>
-          <div class="btn" @click="deleteUnit">Удалить</div>
+          <div class="btn" @click="$refs.alert.shown=true">Удалить</div>
         </div>
         <div class="BotPanel">
           <div class="line hidden">
@@ -82,17 +83,22 @@
 
 <script>
     import BtnBar from "~/components/shared/BtnBar";
+    import MyAlert from "../shared/MyAlert";
     var ax;
 
     export default {
         name: "DecorCard",
-        components: {BtnBar},
+        components: {MyAlert, BtnBar},
         props: ["params"],
           data: function () {
               return {
                 posted: this.params['published'],
                 host:this.$store.state.host,
                 shown:true,
+                alertParams:{
+                  text:'Вы уверены, что хотите удалить этот товар?',
+                  btns:[{name:'ok', text:'Удалить'},{name:'close', text:'Отмена'}]
+                },
               }
           },
         computed:{
@@ -110,9 +116,9 @@
           }
         },
       methods:{
-        dot:function (i) {
-          if (i<this.materialArr.length-1) return ',';
-          else return '';
+        hideAlert:function (i) {
+          console.log(i);
+          this.$refs.alert.hide();
         },
         publish:function () {
           var vm = this;
@@ -197,7 +203,8 @@
                   }
                 })
                 .then(function (data) {
-                    vm.shown = false;
+                    //vm.shown = false;
+                    vm.$emit('delete');
                     console.log(data.data);
                   }
                 )
@@ -239,6 +246,9 @@
     box-shadow: $shadow
     width: 847px
     margin-bottom: 20px
+    .alert
+      margin: 40px 0 0 150px
+      position: absolute
     .line
       .name
         display: inline-block

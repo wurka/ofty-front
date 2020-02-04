@@ -121,7 +121,7 @@
     z-index: 1
     .text
       font-size: 15.5px
-      font-family: Tahoma
+      font-family: Tahoma, serif
       margin: 45px 0 0 65px
     .cropper
       margin: 30px 0 0 60px
@@ -154,7 +154,6 @@
       display: inline-block
       padding: 8px 5px 8px 10px
       width: 155px
-      font-family: Philosopher
     .b1
       margin: 35px 0 0 170px
     .b2

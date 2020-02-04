@@ -67,13 +67,13 @@
       //border: gray solid 0.1px
       box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5)
   .warning
-    font-family: Tahoma
+    font-family: Tahoma, serif
     color: $myred
   input
     border: thin solid lightgray
-    font-family: Tahoma
+    font-family: Tahoma, serif
   textarea
-    font-family: Tahoma
+    font-family: Tahoma, serif
     border: thin solid lightgray
   input.invalid
     border-color: $myred
@@ -83,4 +83,5 @@
     outline-color: $myred
   select
     border: thin solid lightgray
+    font-family: Tahoma, serif
 </style>
