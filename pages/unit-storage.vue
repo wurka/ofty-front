@@ -40,7 +40,8 @@
 <style lang="sass">
   body
     background-color: lightgrey
-    margin: 0px
+    overflow-y: scroll
+    margin: 0
     .hidden
       display: none
     .btn
