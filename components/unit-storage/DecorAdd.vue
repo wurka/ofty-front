@@ -2,23 +2,20 @@
   <div v-if="shown">
     <div class="bg"></div>
     <div class="DecorAdd">
+      <my-dict ref="dict"></my-dict>
       <my-alert ref="alert" class="alert" :params="alertParams" @ok="reloadPage"></my-alert>
       <color-picker ref = "colorPicker" :colorData="colorData" @hideColorPicker="onHideColorPicker"></color-picker>
       <pick-bar ref="pickBar" :arr="matData" :len="matLen" :showLim="matShowLim" :pickLim="matPickLim" @done="updateMaterials"></pick-bar>
       <decor-add-fill :shown="showAddFill" @hideAddFill="showAddFill=false"></decor-add-fill>
-      <div v-if="showValidAlert" class="validAlert">
-        <div class="text">Корректно заполните все поля</div>
-        <div class="btn" @click="showValidAlert=false"><span>OK</span></div>
-      </div>
       <div class="PicPanel" :class="[isEdit ? 'disabled':'']">
         <div class="Pic" v-for="(pic, index) in pics"  :key="index">
-          <img class="picImg" :src="pic ? pic : host+'/static/img/shared/no_img.png'" @click="$refs.input[index].click()"/>
+          <img class="picImg" :src="pic ? pic : host+'/static/img/shared/no_img.png'" :class="[(!pic && isEdit)?'hidden':'']" @click="$refs.input[index].click()"/>
           <input class='hidden' type="file" :ref="'input'" :file="pic" @change="updatePics($event,index)">
         </div>
       </div>
       <div class="alterPicPanel PicPanel" :class="['disabled']">
         <div class="Pic" v-for="(pic, index) in pics"  :key="index">
-          <img class="picImg" :src="pic ? pic : host+'/static/img/shared/no_img.png'"/>
+          <img class="picImg" :class="[(!pic && isEdit)?'hidden':'']" :src="pic ? pic : host+'/static/img/shared/no_img.png'"/>
         </div>
       </div>
       <div class="RightPanel">
@@ -97,10 +94,11 @@
     import PickBar from "~/components/shared/PickBar";
     import InfoButton from "../shared/InfoButton";
     import MyAlert from "../shared/MyAlert";
+    import MyDict from "../shared/MyDict";
 
     export default {
       name: "DecorAdd",
-      components: {MyAlert, InfoButton, PickBar, ColorPicker, DecorAddFill},
+      components: {MyDict, MyAlert, InfoButton, PickBar, ColorPicker, DecorAddFill},
         data: function () {
             return {
               shown: false,
@@ -125,7 +123,7 @@
               params:{}, //индивидуальные параметры последней подгруппы
               groupParams:{}, //полный словарь загруженных индивидуальных параметров
               botParams:[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
-                {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}],
+                {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':''}],
               showAddFill: false,
               showColorPicker: 0,
               host:this.$store.state.host,
@@ -138,15 +136,12 @@
               matPickLim:5, // ограничение на кол-во материалов
               showValidAlert: false,
               alertMsg:'Default',
-              alertParams:{
-                text:'Поздравляю, остается только перезагрузить страницу.',
-                btns:[{name:'ok', text:'OK'}]
-              },
+              alertParams:{},
             }
         },
         computed:{
           isEdit:function(){
-            console.log(this.editParams);
+            //console.log(this.editParams);
             if (this.editParams.id) return true;
             return false;
           },
@@ -204,10 +199,10 @@
           validateInput:function(e,param, type){
             //console.log(e);
 
-            if (param.type==='text'){
+            /*if (param.type==='text'){
               param.valid=true;
               return
-            }
+            }*/
 
             let val = e.target.value;
             if (!type) type=param.type;
@@ -217,7 +212,7 @@
               /*e.target.value = val;
               this.$forceUpdate();*/
             }
-            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            let Re = {'text':/\S+/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+\.?[0-9]*?$/g, 'words':/^[a-zёа-я\s]*$/gi, '':/\S*/gi};
 
             if (Re[type].exec(val)) param.valid=true;
             else param.valid=false;
@@ -225,10 +220,10 @@
           },
           validateChange:function(e,param, type){
             //console.log('aw');
-            if (param.type==='text'){
+            /*if (param.type==='text'){
               param.valid=true;
               return
-            }
+            }*/
 
             let val = e.target.value;
             if (!type) type=param.type;
@@ -236,7 +231,7 @@
               val = val.replace(/,/g,'.');
               //e.target.value = val;
             }
-            let Re = {'text':/^[0-9a-zёа-я,.:\-\s]+$/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]+$/gi};
+            let Re = {'text':/\S+/gi, 'int': /^[0-9]+$/g, 'float':/^[0-9]+(\.?[0-9]+)?$/g, 'words':/^[a-zёа-я\s]*$/gi, '':/\S*/gi};
             if (Re[type].exec(val)) param.valid=true;
             else param.valid=false;
             if (type==='float') {
@@ -247,8 +242,15 @@
             let arr = this.genParams.concat(this.botParams);
             //console.log(arr);
             for (let i in arr){
+              this.validateChange({target:{value:this.addDict[arr[i].alias]}},arr[i])
+            }
+            for (let i in arr){
               if (!arr[i].valid){
-                this.showValidAlert=true;
+                this.alertParams={
+                  text:'Поле "'+arr[i].name.split(',')[0]+'" заполнено некорректно.',
+                  btns:[{name:'close', text:'OK'}]
+                }
+                this.$refs.alert.show();
                 return false;
               }
             }
@@ -263,8 +265,9 @@
           },
           go:function(){
             if(this.checkValid()){
-              if(this.isEdit) this.editDecorUnit();
-              else this.addDecorUnit();
+              /*if(this.isEdit) this.editDecorUnit();
+              else this.addDecorUnit();*/
+              this.postUnit();
             }
           },
           addGroupOptions: function (gid) {
@@ -341,10 +344,6 @@
             }
           },
           hideAddDecor:function(){
-            //console.log('hide ti');
-            //this.$emit('hide-add-decor');
-            /*this.groups=['root'];
-            this.colorArr=[];*/
             this.clear();
             this.shown=false;
             document.body.className='';
@@ -368,23 +367,34 @@
 
             }
           },
-          editDecorUnit:function(){
-            var vm = this;
-            var fd = new FormData;
+          postUnit:function(){
+            let vm = this,
+              fd = new FormData,
+              url = "/units/update";
+
             vm.addDict['unit-group'] = vm.groups[vm.groups.length-1];
-            //vm.addDict['parameters'] = vm.params;
             vm.addDict['parameters'] = JSON.stringify(vm.params);
 
             for ( var key in vm.addDict ) {
               fd.append(key, vm.addDict[key]);
             }
-            console.log(fd);
-            console.log(vm.addDict);
+            if (!vm.isEdit) {
+              url = "/units/add-new-unit";
+              fd.set('photo1', vm.$refs.input[0].files[0]);
+              fd.set('photo2', vm.$refs.input[1].files[0]);
+              fd.set('photo3', vm.$refs.input[2].files[0]);
+              fd.set('photo4', vm.$refs.input[3].files[0]);
+              fd.set('photo5', vm.$refs.input[4].files[0]);
+            }
             ax.get("/shared/get-csrf-token")
               .then(function(data1){
-                  ax.post("/units/update", fd,{headers:{'X-CSRFToken':data1.data,'Content-Type': 'multipart/form-data'}})
+                  ax.post(url, fd,{headers:{'X-CSRFToken':data1.data,'Content-Type': 'multipart/form-data'}})
                     .then(function(data){
                         console.log(data.data);
+                        vm.alertParams={
+                          text:'Поздравляю, остается только перезагрузить страницу.',
+                          btns:[{name:'ok', text:'Перезагрузить'}]
+                        }
                         vm.$refs.alert.show();
                         //vm.hideAddDecor();
                         //window.location.reload();
@@ -393,71 +403,45 @@
                     .catch(function(data){
                         if(data.response){
                           console.warn(data.response.data);
+                          vm.alertParams={
+                            text: vm.$refs.dict.translateErr(data.response.data),
+                            btns:[{name:'close', text:'OK'}]
+                          }
+                          vm.$refs.alert.show();
                         }
-                        else
-                          console.warn('no connection')
+                        else{
+                          console.warn('no connection');
+                          vm.alertParams={
+                            text: vm.$refs.dict.translateErr('no connection'),
+                            btns:[{name:'close', text:'OK'}]
+                          }
+                          vm.$refs.alert.show();
+                        }
+
+
                       }
                     )
                 }
               )
               .catch(function(data){
-                  if(data.response){
-                    console.warn(data.response.data);
+                if(data.response){
+                  console.warn(data.response.data);
+                  vm.alertParams={
+                    text: vm.$refs.dict.translateErr(data.response.data),
+                    btns:[{name:'close', text:'OK'}]
                   }
-                  else
-                    console.warn('no connection')
+                  vm.$refs.alert.show();
                 }
-              )
-          },
-          addDecorUnit:function(){
-            var vm = this;
-            var fd = new FormData;
-            vm.addDict['unit-group'] = vm.groups[vm.groups.length-1];
-            vm.addDict['parameters'] = JSON.stringify(vm.params);
-
-            for ( var key in vm.addDict ) {
-                fd.append(key, vm.addDict[key]);
-            }
-
-            fd.set('photo1', vm.$refs.input[0].files[0]);
-            fd.set('photo2', vm.$refs.input[1].files[0]);
-            fd.set('photo3', vm.$refs.input[2].files[0]);
-            fd.set('photo4', vm.$refs.input[3].files[0]);
-            fd.set('photo5', vm.$refs.input[4].files[0]);
-
-
-            console.log(fd);
-            console.log(vm.addDict);
-            //console.log(vm.$refs.input)
-            ax.get("/shared/get-csrf-token")
-              .then(function(data1){
-                  ax.post("/units/add-new-unit", fd,{headers:{'X-CSRFToken':data1.data,'Content-Type': 'multipart/form-data'}})
-                  .then(function(data){
-                      console.log(data.data);
-                      vm.$refs.alert.show();
-                      //vm.hideAddDecor();
-                      //window.location.reload();
-                    }
-                  )
-                  .catch(function(data){
-                      if(data.response){
-                        console.warn(data.response.data);
-                      }
-                      else
-                        console.warn('no connection')
-                    }
-                  )
+                else{
+                  console.warn('no connection');
+                  vm.alertParams={
+                    text: vm.$refs.dict.translateErr('no connection'),
+                    btns:[{name:'close', text:'OK'}]
+                  }
+                  vm.$refs.alert.show();
+                }
               }
               )
-              .catch(function(data){
-                  if(data.response){
-                    console.warn(data.response.data);
-                  }
-                  else
-                    console.warn('no connection')
-                }
-              )
-
           },
           onHideColorPicker:function(colorArr){
             this.colorArr=colorArr;
@@ -491,10 +475,9 @@
             ];
             this.groups=['root',1,2];
             this.params={};
-            this.botParams=[
-              {'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
-              {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':'text'}
-              ];
+            this.groupParams={};
+            this.botParams=[{'name':'Ключевые слова', 'alias':'keywords', 'valid':true, 'type':'words', 'info': 'добавьте слова через пробел'},
+              {'name':'Комментарий', 'alias':'description', 'valid':true, 'type':''}];
             this.colorArr=[];
             this.editParams={};
           },
@@ -581,6 +564,7 @@
       .alert
         margin: 200px 0 0 250px
         position: absolute
+        z-index: 4
       .btn
         display: inline-block
         text-align: center
@@ -598,6 +582,7 @@
       .PicPanel
         display: inline-block
         margin: 28px 10px 0 15px
+        width: 192px
         .Pic
           display: inline-block
           .picImg
@@ -621,26 +606,6 @@
         margin: 28px 10px 0 -207px
         position: absolute
         z-index: 2
-      .validAlert
-        position: absolute
-        width: 628px
-        height: 208px
-        left: 215px
-        top: 185px
-        background: #FFFFFF
-        border: 0.5px solid #C4C4C4
-        box-sizing: border-box
-        box-shadow: $shadow
-        text-align: center
-        .text
-          font-size: 21px
-          margin-top: 52px
-        .btn
-          width: 200px
-          display: inline-block
-          font-size: 18px
-          margin-top: 64px
-          padding: 10px 0 10px 0
       .RightPanel
         display: inline-block
         vertical-align: top

@@ -40,6 +40,7 @@
             pickedArr:[],
             focus: true,
             toDelete: false,
+            cursor:0,
           }
       },
       computed:{
