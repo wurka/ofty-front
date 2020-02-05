@@ -10,8 +10,11 @@
       <div class="option" @click="logout(); showOptions=false">Выйти</div>
       <div class="option" @click="$refs.loginBlock.show(false); showOptions=false">Сменить пользователя</div>
     </div>
-    <img v-if="!$store.state.user.anonymous" :src="host+'/static/img/shared/basket-32.png'" />
-    <img v-if="!$store.state.user.anonymous" :src="host+'/static/img/shared/star-32.png'"/>
+    <span v-if="!$store.state.user.anonymous">
+      <img  :src="host+'/static/img/shared/basket-32.png'" />
+      <div class="basketNum">{{$store.state.user.stock}}</div>
+      <img :src="host+'/static/img/shared/star-32.png'"/>
+    </span>
     <login-block ref="loginBlock" ></login-block>
   </div>
 </template>
@@ -25,7 +28,7 @@
       data: function () {
         return {
           showOptions: false,
-          host:this.$store.state.host,
+          host: this.$store.state.host,
         }
       },
       methods: {
@@ -144,7 +147,9 @@
           color: $myblue
     img
       height: 32px
+      width: 32px
       float: right
+      cursor: pointer
     .username
       //margin-right: 20px
       //margin-left: 80px
@@ -156,4 +161,15 @@
       overflow: hidden
       &:hover
         color: $myblue
+    .basketNum
+      background-color: white
+      border: solid thin black
+      margin-top: 16px
+      margin-right: -30px
+      float: right
+      text-align: center
+      font-size: 11px
+      width: 15px
+      pointer-events: none
+
 </style>
