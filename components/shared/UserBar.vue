@@ -11,8 +11,8 @@
       <div class="option" @click="$refs.loginBlock.show(false); showOptions=false">Сменить пользователя</div>
     </div>
     <span v-if="!$store.state.user.anonymous">
-      <img  :src="host+'/static/img/shared/basket-32.png'" />
-      <div class="basketNum">{{$store.state.user.stock}}</div>
+      <a href="/office/basket"><img  :src="host+'/static/img/shared/basket-32.png'" /></a>
+      <div class="basketNum">{{$store.state.basket.count}}</div>
       <img :src="host+'/static/img/shared/star-32.png'"/>
     </span>
     <login-block ref="loginBlock" ></login-block>
@@ -36,7 +36,7 @@
           ax.get("/shared/get-csrf-token")
           .then(function(data1){
             console.log(data1.data);
-            var fd = new FormData;
+            let fd = new FormData;
             fd.append('csrfmiddlewaretoken', data1.data);
             ax.post("/account/logout", fd, {
               headers: {

@@ -18,6 +18,7 @@
     import TabBar from "./TabBar";
     import SearchBar from "./SearchBar";
     import UserBar from "./UserBar";
+    import axios from "axios";
     export default {
       name: "SiteHeader",
       components: {UserBar, SearchBar, TabBar, CityBlock},
@@ -29,13 +30,29 @@
       methods:{
         home:function () {
           document.location='#';
-        }
-      }
+        },
+        downloadBasket(){
+          axios
+            .get(this.$store.state.host + "/basket/get-content")
+            .then((response)=>{
+              this.$store.state.basket.blocks = response.data;
+              let count = 0;
+              response.data.forEach((block)=>{
+                block['units'].forEach((item)=>{
+                  if (item.type === 'unit'){count += 1;}
+                });
+              });
+              this.$store.state.basket.count = count;
+            })
+            .catch(()=>{console.warn('error while download basket')})
+        },
+      },
     }
 </script>
 
 <style lang="sass" scoped>
   .SiteHeader
+    background: white
     padding-left: 18px
     padding-top: 19px
     height: 102px

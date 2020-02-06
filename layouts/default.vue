@@ -5,6 +5,46 @@
 </template>
 
 <style>
+  .t1-1 {
+    font-family: Philosopher, serif;
+    font-size: 31px;
+  }
+  .t1-2 {
+    font-family: Philosopher, serif;
+    font-size: 24px;
+  }
+  .t1-3 {
+    font-family: Philosopher, serif;
+    font-size: 21px;
+  }
+  .t1-4 {
+    font-family: Philosopher, serif;
+    font-size: 18px;
+  }
+  .t1-5 {
+    font-family: Philosopher, serif;
+    font-size: 15.5px;
+  }
+  .t2-1 {
+    font-family: Tahoma, serif;
+    font-size: 28px;
+  }
+  .t2-2 {
+    font-family: Philosopher, serif;
+    font-size: 24px;
+  }
+  .t2-3 {
+    font-family: Philosopher, serif;
+    font-size: 21px;
+  }
+  .t2-4 {
+    font-family: Philosopher, serif;
+    font-size: 18px;
+  }
+  .t2-5 {
+    font-family: Philosopher, serif;
+    font-size: 14px;
+  }
 /*html {
   font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;

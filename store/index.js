@@ -5,7 +5,6 @@ Vue.use(Vuex);
 
 const store = () => new Vuex.Store({
   state: {
-    counter: 0,
     host:'http://localhost:9000',
 
     csrf: undefined,  //csrf middleware token for backend csrf security
@@ -24,8 +23,11 @@ const store = () => new Vuex.Store({
       front: '6LfvotIUAAAAAOuFrracBIL3ZCHNX1sy_UEqaxOj',
     },
     companies: [
-    ]  // список компаний
-
+    ],  // список компаний
+    basket: {
+      count: 0,
+      blocks: []
+    }
   },
   mutations: {
     increment (state) {

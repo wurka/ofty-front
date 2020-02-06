@@ -18,6 +18,9 @@
     <div>
       <a href="/office/orders">Список заказов (/office/orders)</a>
     </div>
+    <div>
+      <a href="/office/basket">Корзина заказов (/office/basket)</a>
+    </div>
   </div>
 </template>
 
