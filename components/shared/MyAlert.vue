@@ -54,12 +54,13 @@
     .alertContent
       position: absolute
       width: 628px
-      height: 208px
+      min-height: 208px
       background: #FFFFFF
       border: 0.5px solid #C4C4C4
       box-sizing: border-box
       box-shadow: $shadow
       text-align: center
+      padding-bottom: 20px
       .text
         font-size: 21px
         margin-top: 52px
