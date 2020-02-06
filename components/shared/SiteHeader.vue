@@ -35,13 +35,19 @@
           axios
             .get(this.$store.state.host + "/basket/get-content")
             .then((response)=>{
-              this.$store.state.basket.blocks = response.data;
-              let count = 0;
+              let count = 0,
+                  bail = 0,
+                  cost = 0;
               response.data.forEach((block)=>{
+                bail = 0;
                 block['units'].forEach((item)=>{
                   if (item.type === 'unit'){count += 1;}
+                  item['order-count'] = 1;
+                  bail += parseInt(item['order-count']) * parseInt(item['data']['bail'])
                 });
+                block['bail'] = bail;
               });
+              this.$store.state.basket.blocks = response.data;
               this.$store.state.basket.count = count;
             })
             .catch(()=>{console.warn('error while download basket')})
