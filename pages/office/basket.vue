@@ -119,7 +119,7 @@
     }},
     methods: {
       inputCommentary(event, block) {
-        block['commentary'] = event.target.innerHTML;
+        this.$set(block, 'commentary',event.target.innerHTML);
       },
       countChanges(event, block, unit) {
         this.$set(unit, 'order-count',event.target.value);
