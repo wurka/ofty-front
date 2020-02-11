@@ -3,18 +3,10 @@
     <SiteHeader/>
     <div class="my-body">
       <div class="link-panel">
-        <ul>
-          <li>Настройки профиля</li>
-          <li>Календарь</li>
-          <li>Мои заказы</li>
-          <li>Запросы от клиентов</li>
-          <li>Мой декор</li>
-          <li>Оплата</li>
-          <li>Мои коллекции</li>
-        </ul>
+        <OfficeMenu/>
       </div>
       <div class="content-panel">
-        <div class="order" v-for="order in $store.state.orders" :key="order.id">
+        <div class="order" v-for="order in $store.getters.ORDERS" :key="order.id">
           <div class="flex">
             <div class="status-time">
               <div class="status">Статус сделки - {{order.statusText}}</div>
@@ -38,9 +30,10 @@
             <div class="pay">Оплата: {{order['cost']}}</div>
             <div class="pay">Залог: {{order['bail']}}</div>
           </div>
+          {{order}}
           <div class="buttons">
-            <div class="button">Изменить</div>
-            <div class="button">Отказаться</div>
+            <div class="button" v-if="order['status'] === 'init'">Изменить</div>
+            <div class="button" @click="reject()">Отказаться</div>
             <div class="button">Сообщение</div>
           </div>
         </div>
@@ -54,10 +47,11 @@
   import {Module as $store} from "vuex"
   import axios from 'axios'
   import SiteHeader from "../../components/shared/SiteHeader";
+  import OfficeMenu from "../../components/shared/OfficeMenu";
 
   export default {
     name: "orders",
-    components: {SiteHeader},
+    components: {OfficeMenu, SiteHeader},
     data: ()=>({
       notLoaded: true,
       csrf: null,
@@ -106,28 +100,13 @@
         this.closeLoginDialog();
         this.aboutMe();
       },
-      getMyOrders() {
-        axios
-          .get(this.$store.state.host + "/orders/get-my-orders", {params: {
-              page: 1
-            }})
-          .then((response)=>{
-            this.$store.state.orders = response.data;
-
-          })
-          .catch((resp)=>{
-            if (resp.response) {
-              console.warn(resp.response.data);
-            }
-          })
-      }
     },
     computed: {
     },
     mounted() {
       this.notLoaded = false;
       this.aboutMe();
-      this.getMyOrders();
+      this.$store.dispatch('ORDERS_GET');
     }
   }
 </script>
@@ -219,6 +198,7 @@
     text-align: right
     margin: 10px 0 10px 0
     .button
+      cursor: pointer
       display: inline-block
       font-size: 15.5px
       width: 170px
@@ -231,6 +211,11 @@
       text-align: center
       justify-content: center
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
+      user-select: none
+      &:hover
+        background: #F8F8F8
+      &:active
+        transform: scale(0.95)
       &:last-child
         margin: 0 16px 0 0
       &:not(:last-child)

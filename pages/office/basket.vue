@@ -2,14 +2,14 @@
   <div class="layout" :class="{hidden: notLoaded, visible: !notLoaded}">
     <SiteHeader ref="siteHeader"/>
     <transition name="fade">
-      <div v-if="notLoaded" style="position: absolute; width: 1140px; height:80vh; background: white; z-index: 100">
-        <img :src="this.$store.state.host+'/static/img/shared/crazy-owl.gif'" style="position: absolute; left: 50vw; top: 10vh; margin-left:-200px">
+      <div v-if="!$store.getters.BASKET.ready" style="position: absolute; width: 1140px; height:80vh; background: white; z-index: 100">
+        <img :src="this.$store.state.host+'/static/img/shared/crazy-owl.gif'" style="position: absolute; margin-left:420px">
       </div>
     </transition>
 
     <div class="flex">
       <div class="basketContent t1-1">
-        <div v-for="(block, index) in this.$store.state.basket.blocks" v-bind:key="block+index">
+        <div v-for="(block, index) in this.$store.getters.BASKET.blocks" v-bind:key="block+index">
           <div class="flex">
             <div class="ownerInfo t1-3">
               <div class="name">
@@ -142,7 +142,7 @@
               'Content-Type': 'multipart/form-data'
             }
           })
-          .then(()=>{this.$refs.siteHeader.downloadBasket()})
+          .then(()=>{this.$store.dispatch('BASKET_DOWNLOAD')})
           .catch((data)=>{console.warn(data.response.data)});
       },
       newOrder(block){
@@ -190,12 +190,6 @@
       picker_style.type='text/css';
       picker_style.href="https://unpkg.com/element-ui/lib/theme-chalk/index.css";
       //head.appendChild(picker_style);
-
-      //this.downloadBasket();
-      axios
-        .get(this.$store.state.host + "/csrf")
-        .then((response)=>{this.$store.state.csrf = response.data; this.notLoaded = false;});
-      this.$refs.siteHeader.downloadBasket();
     },
   }
 </script>

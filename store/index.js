@@ -1,16 +1,20 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import orders from './modules/orders'
+import basket from './modules/basket'
+import csrf from './modules/csrf'
 
 Vue.use(Vuex);
+
+export function host() {
+  return 'http://localhost:9000'
+}
 
 const store = () => new Vuex.Store({
   state: {
     host:'http://localhost:9000',
 
     csrf: undefined,  //csrf middleware token for backend csrf security
-    // for orders
-    orders: [],
-
     // info about user
     user: {
       username: "anonymous",
@@ -24,15 +28,16 @@ const store = () => new Vuex.Store({
     },
     companies: [
     ],  // список компаний
-    basket: {
-      count: 0,
-      blocks: []
-    }
   },
   mutations: {
     increment (state) {
       state.counter++
     }
+  },
+  modules: {
+    orders,
+    basket,
+    csrf
   }
 });
 

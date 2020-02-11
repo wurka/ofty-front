@@ -12,7 +12,7 @@
     </div>
     <span v-if="!$store.state.user.anonymous">
       <a href="/office/basket"><img  :src="host+'/static/img/shared/basket-32.png'" /></a>
-      <div class="basketNum">{{$store.state.basket.count}}</div>
+      <div class="basketNum">{{$store.getters.BASKET.count}}</div>
       <img :src="host+'/static/img/shared/star-32.png'"/>
     </span>
     <login-block ref="loginBlock" ></login-block>
@@ -88,6 +88,9 @@
         }
       },
       mounted: function () {
+        this.$store.dispatch('CSRF')
+        this.$store.dispatch('BASKET_DOWNLOAD');
+
         let vm = this;
         this.myScroll();
         ax = this.$axios.create({  baseURL: this.host});

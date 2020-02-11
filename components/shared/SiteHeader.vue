@@ -32,34 +32,6 @@
         home:function () {
           document.location='#';
         },
-        downloadBasket(){
-          let now = new Date(),
-              year = now.getFullYear(),
-              month = now.getMonth()+1,
-              day = now.getDate();
-          axios
-            .get(this.$store.state.host + "/basket/get-content")
-            .then((response)=>{
-              let count = 0;
-              response.data.forEach((block)=>{
-                block['units'].forEach((item)=>{
-                  if (item.type === 'unit'){count += 1;}
-                  item['order-count'] = 1;
-                });
-
-                block['commentary'] = '';
-                block['from'] = day.toString()+"."+month+"."+year;
-                block['to'] = (day+1).toString()+"."+month+"."+year;
-                let bac = blockBailAndCost(block);
-                block['bail'] = bac.bail;
-                block['cost'] = bac.cost;
-                block['ok'] = bac.ok;
-              });
-              this.$store.state.basket.blocks = response.data;
-              this.$store.state.basket.count = count;
-            })
-            .catch(()=>{console.warn('error while download basket')})
-        },
       },
     }
 </script>
