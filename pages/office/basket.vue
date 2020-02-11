@@ -91,7 +91,7 @@
               <div class="commentaries">
                 <div class="title t1-4">Комментарий:</div>
                 <span class="placeholder" v-if="block['commentary'] === ''">Введите комментарий</span>
-                <div class="textarea" contenteditable @input="inputCommentary($event, block)">{{block['commentary']}}</div>
+                <div class="textarea" contenteditable @input="inputCommentary($event, block)"></div>
               </div>
               <div class="request t1-5">
                 <div class="button" :class="{disabled: !block.ok}" @click="newOrder(block)">Отправить запрос</div>
@@ -109,7 +109,8 @@
   import axios from "axios";
   import SiteHeader from "../../components/shared/SiteHeader";
   import OfficeMenu from "../../components/shared/OfficeMenu";
-  import {blockBailAndCost, removeItem} from "~/static/myTools";
+  import {blockBailAndCost, removeItem, decodeHTMLEntities} from "~/static/myTools";
+
 
   export default {
     name: "basket.vue",
@@ -149,14 +150,17 @@
         let fd = new FormData(),
             units = [];
         fd.append('owner', block['owner'].id);
-        fd.append('commentary', block['commentary']);
+        fd.append('commentary', decodeHTMLEntities(block['commentary']));
         fd.append('start-date', block['from']);
         fd.append('stop-date', block['to']);
         fd.append('bail', block['bail']);
         fd.append('cost', block['cost']);
 
         block['units'].forEach((unit)=>{
-          units.push(unit['id']);
+          units.push({
+            'id': unit['data']['id'],
+            'count': unit['order-count']
+          });
         });
         fd.append('units', JSON.stringify(units));
 
@@ -172,7 +176,7 @@
                 this.$store.state.basket.blocks.splice(index, 1);
               }
             });})
-          .catch((response)=>{console.warn(response.data.response)});
+          .catch((response)=>{if (response.response) {console.warn(response.response.data)}});
       }
     },
     mounted() {

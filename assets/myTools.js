@@ -5,3 +5,5 @@ export function myClone(arg) {
 
 //this.$store.state.host,
 //ax = this.$axios.create({  baseURL: this.host});
+
+
