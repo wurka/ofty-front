@@ -14,7 +14,7 @@ const store = () => new Vuex.Store({
   state: {
     host:'http://localhost:9000',
 
-    csrf: undefined,  //csrf middleware token for backend csrf security
+    //csrf: undefined,  //csrf middleware token for backend csrf security
     // info about user
     user: {
       username: "anonymous",

@@ -11,10 +11,10 @@
       <div class="basketContent t1-1">
         <div v-for="(block, index) in this.$store.getters.BASKET.blocks" v-bind:key="block+index">
           <div class="flex">
+              {{block['owner'].name}}
+            <div class="name">
+            </div>
             <div class="ownerInfo t1-3">
-              <div class="name">
-                {{block['owner'].name}}
-              </div>
               <div class="conditions t1-5" v-if="block['owner']['rent-commentary'] !== ''">
                 Условия доставки:<br>
                 {{block['owner']['rent-commentary']}}

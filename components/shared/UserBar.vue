@@ -88,7 +88,7 @@
         }
       },
       mounted: function () {
-        this.$store.dispatch('CSRF')
+        this.$store.dispatch('CSRF_GET');
         this.$store.dispatch('BASKET_DOWNLOAD');
 
         let vm = this;

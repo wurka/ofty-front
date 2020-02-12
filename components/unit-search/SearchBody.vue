@@ -103,11 +103,6 @@
           }
         },
         mounted() {
-          axios
-            .get(this.$store.state.host + "/csrf")
-            .then((response)=>{this.$store.state.csrf = response.data})
-            .catch(()=>{console.warn('error')});
-          this.getUnits();
         }
     }
 </script>
