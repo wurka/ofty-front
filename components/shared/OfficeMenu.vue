@@ -1,12 +1,12 @@
 <template>
   <div class="office-panel">
-    <div class="menu-item">Настройка профиля</div>
-    <div class="menu-item">Календарь</div>
-    <div class="menu-item" onclick="window.location='/office/orders'">Мои заказы</div>
-    <div class="menu-item">Запросы от клиентов</div>
-    <div class="menu-item">Мой декор</div>
-    <div class="menu-item">Оплата</div>
-    <div class="menu-item">Мои коллекции</div>
+    <a class="menu-item" href="/account-settings">Настройка профиля</a>
+    <div class="menu-item disabled">Календарь</div>
+    <a class="menu-item" href="/office/orders">Мои заказы</a>
+    <a class="menu-item" href="/office/deals">Запросы от клиентов</a>
+    <div class="menu-item disabled">Мой декор</div>
+    <div class="menu-item disabled">Оплата</div>
+    <div class="menu-item disabled">Мои коллекции</div>
   </div>
 </template>
 
@@ -17,11 +17,19 @@
 </script>
 
 <style scoped lang="sass">
+  .disabled
+    color: gray !important
+    cursor: not-allowed !important
+    pointer-events: none
   .office-panel
     background: #f6f6f6
     min-width: 224px
     flex-basis: 224px
+    a
+      display: block
     .menu-item
+      color: black
+      text-decoration: none
       cursor: pointer
       font-family: Philosopher, serif
       line-height: 40px

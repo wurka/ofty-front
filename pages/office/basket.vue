@@ -2,7 +2,7 @@
   <div class="layout" :class="{hidden: notLoaded, visible: !notLoaded}">
     <SiteHeader ref="siteHeader"/>
     <transition name="fade">
-      <div v-if="!$store.getters.BASKET.ready" style="position: absolute; width: 1140px; height:80vh; background: white; z-index: 100">
+      <div v-if="!$store.getters.BASKET.ready" style="position: absolute; width: 1140px; height:80vh; background: white; z-index: 10">
         <img :src="this.$store.state.host+'/static/img/shared/crazy-owl.gif'" style="position: absolute; margin-left:420px">
       </div>
     </transition>
@@ -11,10 +11,10 @@
       <div class="basketContent t1-1">
         <div v-for="(block, index) in this.$store.getters.BASKET.blocks" v-bind:key="block+index">
           <div class="flex">
-              {{block['owner'].name}}
-            <div class="name">
-            </div>
             <div class="ownerInfo t1-3">
+              <div class="name">
+                {{block['owner']['name']}}
+              </div>
               <div class="conditions t1-5" v-if="block['owner']['rent-commentary'] !== ''">
                 Условия доставки:<br>
                 {{block['owner']['rent-commentary']}}

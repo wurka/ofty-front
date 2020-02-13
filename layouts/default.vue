@@ -45,6 +45,12 @@
     font-family: Philosopher, serif;
     font-size: 14px;
   }
+body {
+  margin: 0;
+  background: lightgray;
+  height: 100vh;
+  overflow-y: scroll;
+}
 /*html {
   font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;

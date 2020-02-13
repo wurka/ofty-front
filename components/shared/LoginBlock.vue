@@ -506,6 +506,7 @@
 <style lang="sass" scoped>
   $shadow: 0px 2px 5px rgba(0, 0, 0, 0.5)
   .LoginBlock
+    z-index: 11
     background-color: white
     position: fixed
     box-shadow: $shadow

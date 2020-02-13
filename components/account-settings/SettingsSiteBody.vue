@@ -1,6 +1,8 @@
 <template>
     <div class="SettingsSiteBody">
-      <btn-bar></btn-bar>
+      <div class="menu">
+        <OfficeMenu/>
+      </div>
       <div id="layout">
         <account-info></account-info>
       </div>
@@ -9,11 +11,11 @@
 </template>
 
 <script>
-    import BtnBar from "~/components/shared/BtnBar";
+    import OfficeMenu from "../shared/OfficeMenu";
     import AccountInfo from "./AccountInfo";
     export default {
         name: "SettingsSiteBody",
-      components: {AccountInfo, BtnBar},
+      components: {AccountInfo, OfficeMenu},
       data: function () {
             return {}
         }
@@ -22,8 +24,12 @@
 
 <style lang="sass" scoped>
   .SettingsSiteBody
+    display: flex
     .BtnBar
       vertical-align: top
+  .menu
+    width: 224px
+    margin: 13px
   #layout
     display: inline-block
     padding-left: 15px

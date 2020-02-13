@@ -1,5 +1,5 @@
 <template>
-  <OrderDeal mode="order"/>
+  <OrderDeal mode="deal"/>
 </template>
 
 <script>

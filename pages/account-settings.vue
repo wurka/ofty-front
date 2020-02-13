@@ -1,8 +1,8 @@
 <template>
   <div class="Page">
-    <site-header></site-header>
+    <site-header/>
 
-    <settings-site-body></settings-site-body>
+    <settings-site-body/>
   </div>
 </template>
 
