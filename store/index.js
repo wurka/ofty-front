@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import orders from './modules/orders'
 import basket from './modules/basket'
 import csrf from './modules/csrf'
+import unit from './modules/unit'
 
 Vue.use(Vuex);
 
@@ -35,6 +36,7 @@ const store = () => new Vuex.Store({
     }
   },
   modules: {
+    unit,
     orders,
     basket,
     csrf
