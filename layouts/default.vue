@@ -95,5 +95,13 @@ body {
   color: #fff;
   background-color: #35495e;
 }*/
+  html {
+    overflow-y: scroll;
+  }
+  body {
+    background: lightgray;
+    margin: 0;
+    font-family: philosopher, serif;
+  }
 </style>
 

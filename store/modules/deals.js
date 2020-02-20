@@ -6,23 +6,24 @@ const state = {
 };
 const getters = {
   DEALS: state => {
-    return state.orders;
+    return state.deals;
   }
 };
 const mutations = {
   DEALS_SET(state, payload) {
     state.deals = payload;
+    console.log(state.deals);
   }
 };
 const actions = {
-  ORDERS_GET(context) {
+  DEALS_GET(context) {
     axios
       .get(host() + "/orders/get-my-deals", {params: {
           page: 1
         }})
       .then((response)=>{
         let new_orders = response.data;
-        context.commit('ORDERS_SET', new_orders);
+        context.commit('DEALS_SET', new_orders);
       })
       .catch((resp)=>{
         if (resp.response) {

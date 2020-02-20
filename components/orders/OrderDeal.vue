@@ -107,7 +107,7 @@
     },
     computed: {
       source(){
-        if (this.$props.mode == 'order') {
+        if (this.$props.mode === 'order') {
           return this.$store.getters.ORDERS;
         } else {
           return this.$store.getters.DEALS;
@@ -117,7 +117,13 @@
     mounted() {
       this.notLoaded = false;
       this.aboutMe();
-      this.$store.dispatch('ORDERS_GET');
+      if (this.$props.mode === 'order') {
+        this.$store.dispatch('ORDERS_GET');
+      } else if (this.$props.mode === 'deal') {
+        this.$store.dispatch('DEALS_GET')
+      } else {
+        console.warn("unknown mode");
+      }
     }
   }
 </script>
