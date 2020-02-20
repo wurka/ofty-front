@@ -1,6 +1,6 @@
 <template>
     <div :class="['DecorBody']">
-      <div class="btn minimize" @click="detalized=!detalized">{{btnName}}</div>
+      <div class="btn minimize t1-5" @click="detalized=!detalized">{{btnName}}</div>
       <div v-if="!cardArr" class="text">Это Ваш личный склад, Вы можете <span @click="$emit('add-decor-click')">добавлять</span> сюда предметы.</div>
       <div v-else v-for="card in cardArr" :key="card.id" :class="[(!detalized && card.type=='unit') ? 'inline' : '']">
         <div v-if="card.type==='header1'" class="group">{{card.text}}</div>
@@ -110,6 +110,7 @@
       //background-color: lightseagreen
       //padding-left: 20px
       //margin-top: 15px
+      width: 850px
       .text
         font-size: 24px
         line-height: 27px
@@ -125,12 +126,12 @@
       .btn
         padding: 10px 0 10px 0
         height: 17px
-        width: 143px
+        width: 175px
         font-size: 15.5px
         text-align: center
       .minimize
         float: right
-        margin-right: 48px
+        margin-right: 0
         display: inline-block
       .more
         margin: auto

@@ -4,7 +4,7 @@
     <div class="menu-item disabled">Календарь</div>
     <a class="menu-item" href="/office/orders">Мои заказы</a>
     <a class="menu-item" href="/office/deals">Запросы от клиентов</a>
-    <div class="menu-item disabled">Мой декор</div>
+    <a class="menu-item" href="/unit-storage">Мой декор</a>
     <div class="menu-item disabled">Оплата</div>
     <div class="menu-item disabled">Мои коллекции</div>
   </div>
@@ -42,7 +42,7 @@
       &:hover
         text-decoration: underline
       &:first-child
-        margin-top: 10px
+        margin-top: 0
       &:last-child
         margin-bottom: 10px
 

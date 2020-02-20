@@ -1,8 +1,10 @@
 <template>
     <div class="DecorHeader">
-      <div class="btn" @click="$refs.decorAdd.show();">+ Добавить предмет</div>
-      <span> <search-bar text="Поиск в моем декоре" @input="decorSearch" @change="decorSearch" @search="decorSearch"></search-bar></span>
-      <span class="counter">Загружено товаров {{mine}}/{{all}}</span>
+      <div class="flex">
+        <div class="btn" @click="$refs.decorAdd.show()">+ Добавить предмет</div>
+        <search-bar text="Поиск в моем декоре" @input="decorSearch" @change="decorSearch" @search="decorSearch"></search-bar>
+        <span class="counter">Загружено товаров {{mine}}/{{all}}</span>
+      </div>
       <decor-add :shown="showAddDecor" :editParams="editParamsVal" ref="decorAdd" @hide-add-decor="showAddDecor = false; $emit('hide-add-decor');"></decor-add>
     </div>
 </template>
@@ -86,24 +88,28 @@
 <style lang="sass" scoped>
     $lgray: #f6f6f6
     $shadow: 0px 2px 5px rgba(0, 0, 0, 0.5)
+    .flex
+      display: flex
     .DecorHeader
       //background-color: lightpink
       //text-align: right
       .btn
-        display: inline-block
         padding: 8px 0 8px 20px
         font-size: 18px
         width: 188px
+        //margin: 0 30px 0 0
       .counter
         //margin: 5px
         //width: 200px
         font-size: 14px
         float: right
-        margin: 10px 47px 0 0
+        margin: 10px 0 0 0
+        text-align: right
         font-family: Tahoma, serif
+        width: 188px
       .SearchBar
         //margin-right: 25px
-        margin-left: 47px
+        margin-left: 60px
 
 </style>
 

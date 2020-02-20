@@ -29,7 +29,7 @@
       vertical-align: top
   .menu
     width: 224px
-    margin: 13px
+    margin: 0 13px 3px 13px
   #layout
     display: inline-block
     padding-left: 15px

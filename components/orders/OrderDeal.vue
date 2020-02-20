@@ -145,7 +145,7 @@
   .link-panel
     width: 224px
     background: $pageBackground
-    margin: 13px
+    margin: 0 13px 13px 13px
     ul
       list-style-type: none
       li

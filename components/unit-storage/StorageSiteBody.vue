@@ -1,16 +1,13 @@
 <template>
   <div class="StorageSiteBody">
-    <btn-bar :btns="[{text:'Настройки профиля'},
-              {text:'Календарь'},
-              {text:'Мои заказы'},
-              {text:'Запросы от клиентов'},
-              {text:'Мой декор'},
-              {text:'Оплата'},
-              {text:'Мои коллекции'}]">
-    </btn-bar>
     <div id="layout">
-      <decor-header :showAdd="showAdd" ref="decorHeader"  @decor-search="onDecorSearch" @hide-add-decor="showAdd=false"></decor-header>
-      <decor-body :filter="decorSearchVal" @add-decor-click="showAdd=true; " @edit-decor="editDecor"></decor-body>
+      <div class="left">
+        <OfficeMenu/>
+      </div>
+      <div class="right">
+        <decor-header :showAdd="showAdd" ref="decorHeader"  @decor-search="onDecorSearch" @hide-add-decor="showAdd=false"></decor-header>
+        <decor-body :filter="decorSearchVal" @add-decor-click="showAdd=true; " @edit-decor="editDecor"></decor-body>
+      </div>
     </div>
   </div>
 </template>
@@ -19,9 +16,10 @@
   import BtnBar from "~/components/shared/BtnBar";
   import DecorHeader from "./DecorHeader";
   import DecorBody from "./DecorBody";
+  import OfficeMenu from "../shared/OfficeMenu";
   export default {
     name: "StorageSiteBody",
-    components: {DecorBody, DecorHeader, BtnBar},
+    components: {DecorBody, DecorHeader, BtnBar, OfficeMenu},
     data: function () {
       return {
         decorSearchVal:'',
@@ -50,9 +48,12 @@
       vertical-align: top
     #layout
       //background-color: aquamarine
-      display: inline-block
-      padding-left: 15px
+      display: flex
       width: 879px
+      .left
+        padding: 0 0 0 13px
+      .right
+        margin: 0 0 0 15px
 
 
 
