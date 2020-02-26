@@ -9,7 +9,7 @@
         <div class="order" v-for="order in source" :key="order.id">
           <div class="flex">
             <div class="status-time">
-              <div class="status">Статус сделки - {{order.statusText}}</div>
+              <div class="status">Статус сделки - {{getStatusText(order.status)}}</div>
               <div class="time">{{order.start}} - {{order.stop}}</div>
             </div>
             <div class="owner-info" v-if="mode==='order'">
@@ -38,7 +38,7 @@
           {{order}}
           <div class="buttons">
             <div class="button" v-if="order['status'] === 'init'">Изменить</div>
-            <div class="button" @click="reject()">Отказаться</div>
+            <div class="button" @click="reject(order['id'])">Отказаться</div>
             <div class="button">Сообщение</div>
           </div>
         </div>
@@ -100,10 +100,19 @@
             this.$store.state.user.anonymous = ans.data['anonymous'];
           });
       },
+      reject(orderid) {
+        alert(orderid);
+      },
       loginSuccess() {
         this.closeLoginDialog();
         this.aboutMe();
       },
+      getStatusText(statusText){
+        if (statusText === 'init') {
+          return "новый заказ (ждём ответа от владельца)"
+        }
+        return "..."
+      }
     },
     computed: {
       source(){
