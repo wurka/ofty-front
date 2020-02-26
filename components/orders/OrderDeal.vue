@@ -35,11 +35,18 @@
             <div class="pay">Оплата: {{order['cost']}}</div>
             <div class="pay">Залог: {{order['bail']}}</div>
           </div>
-          {{order}}
+          <!--{{order}}-->
           <div class="buttons">
             <div class="button" v-if="order['status'] === 'init'">Изменить</div>
-            <div class="button" @click="reject(order['id'])">Отказаться</div>
-            <div class="button">Сообщение</div>
+            <div class="button" @click="reject(order['id'])"
+                 v-if="(order['status'] === 'init')"
+              >Отказаться</div>
+            <div class="button"
+                 v-if="(order['status'] === 'init')"
+              >Сообщение</div>
+            <div class="button"
+                 v-if="(order['status'] === 'rejected-by-client') || (order['status'] === 'rejected-by-owner')"
+              >Удалить</div>
           </div>
         </div>
       </div>
@@ -100,18 +107,76 @@
             this.$store.state.user.anonymous = ans.data['anonymous'];
           });
       },
-      reject(orderid) {
-        alert(orderid);
+      reject(order_id) {
+        let vm=this,
+          csrf = vm.$store.state.csrf.csrf,
+          fd = new FormData();
+        fd.append('order_id', order_id);
+
+        // для order (текущий пользователь - заказчик)
+        if (this.$props.mode === 'order') {
+          axios
+            .post(this.$store.state.host + '/orders/reject-by-client', fd,
+              {
+                headers: {
+                  "X-CSRFToken": csrf
+                }
+              })
+            .then(this.loadOrderDeal)
+            .catch((resp)=>{
+              if (resp.response) {
+                console.warn("reject-by-client: " + resp.response.data);
+              }
+            });
+        }
+        // для deal (текущий пользователь - хозяин товара)
+        if (this.$props.mode === 'deal') {
+          axios
+            .post(this.$store.state.host + '/orders/reject-by-owner',fd,
+              {
+                headers: {
+                  "X-CSRFToken": csrf
+                }
+              })
+            .then(this.loadOrderDeal)
+            .catch((resp)=>{
+              if (resp.response) {
+                console.warn("reject-by-owner: " + resp.response.data);
+              }
+            });
+        }
       },
       loginSuccess() {
         this.closeLoginDialog();
         this.aboutMe();
       },
       getStatusText(statusText){
-        if (statusText === 'init') {
-          return "новый заказ (ждём ответа от владельца)"
+        if (this.$props.mode === 'order') {
+          if (statusText === 'init') {
+            return "новый заказ (ждём ответа от владельца)";
+          }
+          if (statusText === 'rejected-by-client') {
+            return "отменён Вами";
+          }
         }
-        return "..."
+        if (this.$props.mode === 'deal') {
+          if (statusText === 'init') {
+            return "ожидает Вашего рассмотрения";
+          }
+          if (statusText === 'rejected-by-owner') {
+            return 'отменён арендодателем';
+          }
+        }
+        return statusText;
+      },
+      loadOrderDeal(){
+        if (this.$props.mode === 'order') {
+          this.$store.dispatch('ORDERS_GET');
+        } else if (this.$props.mode === 'deal') {
+          this.$store.dispatch('DEALS_GET')
+        } else {
+          console.warn("unknown mode");
+        }
       }
     },
     computed: {
@@ -126,13 +191,7 @@
     mounted() {
       this.notLoaded = false;
       this.aboutMe();
-      if (this.$props.mode === 'order') {
-        this.$store.dispatch('ORDERS_GET');
-      } else if (this.$props.mode === 'deal') {
-        this.$store.dispatch('DEALS_GET')
-      } else {
-        console.warn("unknown mode");
-      }
+      this.loadOrderDeal();
     }
   }
 </script>

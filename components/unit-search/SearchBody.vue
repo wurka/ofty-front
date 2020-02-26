@@ -1,6 +1,11 @@
 <template>
   <div class="searchBody">
-    this is search body div
+    <div class="no-items t1-2" v-if="(units.length === 0) && (!loading)">
+      К сожалению, ниодин товар не найден...
+    </div>
+    <div class="no-items t1-2" v-if="loading">
+      Загрузка...
+    </div>
     <div class="items">
       <div class="item" v-for="unit in units" v-bind:key="'item#'+unit.id">
         <div class="buttons">
@@ -27,10 +32,10 @@
             </div>
           </div>
         </div>
-        <div class="picture" onclick="window.alert('daboo dee')">
+        <a class="picture" :href="'/unit?id='+unit.id">
           <!--<img src="https://dummyimage.com/155x155.svg" alt="155">-->
-          <img :src="unit.photo1" alt="155" width="155" height="155">
-        </div>
+          <img :src="unit.photo1" alt="not found" width="155" height="155">
+        </a>
         <div class="text">
           <span>{{unit['day-cost']}}</span>
           <span v-if="unit['day-cost'] !== unit['first-day-cost']">({{unit['first-day-cost']}})</span>
@@ -47,6 +52,7 @@
         name: "SearchBody",
         data() { return {
           units: [],
+          loading: true,
         }},
         methods: {
           downloadBasket(){
@@ -98,16 +104,22 @@
               .get(this.$store.state.host + "/units/get-all-units")
               .then((resp)=>{
                 this.units = resp.data;
+                this.loading = false;
               })
-              .catch(()=>{console.warn("fuck it")})
+              .catch(()=>{this.loading=false; console.warn("fuck it")})
           }
         },
         mounted() {
+          this.getUnits();
         }
     }
 </script>
 
 <style scoped lang="sass">
+  .no-items
+    text-align: center
+    margin: 150px auto 0 auto
+    color: gray
   .buttons
     display: none
   .item:hover
@@ -154,10 +166,17 @@
         flex-direction: column
         align-items: flex-end
     .picture
+      color: black
       background: white
       width: 155px
       height: 155px
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
+      display: inline-block
+      img
+        display: inline-block
+        width: 155px
+        height: 155px
+        box-sizing: border-box
     .text
       font-family: Tahoma, serif
       background: #f6f6f6

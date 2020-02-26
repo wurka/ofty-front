@@ -105,3 +105,10 @@ body {
   }
 </style>
 
+<script>
+  export default {
+    mounted() {
+      this.$store.dispatch('CSRF_GET');
+    }
+  }
+</script>
