@@ -12,7 +12,6 @@ const getters = {
 const mutations = {
   DEALS_SET(state, payload) {
     state.deals = payload;
-    console.log(state.deals);
   }
 };
 const actions = {

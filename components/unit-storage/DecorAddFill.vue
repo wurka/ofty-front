@@ -32,7 +32,6 @@
     },
     methods:{
       hideAddFill: function () {
-        console.log('hideAddFill');
         this.$emit('hideAddFill');
       }
     }

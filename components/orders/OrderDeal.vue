@@ -45,6 +45,7 @@
                  v-if="(order['status'] === 'init')"
               >Сообщение</div>
             <div class="button"
+                 @click="deleteOrder(order['id'])"
                  v-if="(order['status'] === 'rejected-by-client') || (order['status'] === 'rejected-by-owner')"
               >Удалить</div>
           </div>
@@ -102,7 +103,6 @@
         axios
           .get(this.$store.state.host + "/account/about-me")
           .then((ans) => {
-            console.log(ans.data);
             this.$store.state.user.username = ans.data['username'];
             this.$store.state.user.anonymous = ans.data['anonymous'];
           });
@@ -146,6 +146,35 @@
             });
         }
       },
+      deleteOrder(orderId){
+        let url = '',
+          vm = this,
+          fd = new FormData(),
+          csrf = this.$store.state.csrf.csrf;
+        fd.append('order_id', orderId);
+        if (this.$props.mode === 'order') {  // i am client
+          url = '/orders/delete-by-client';
+        } else if (this.$props.mode === 'deal') {
+          url = '/orders/delete-by-owner';
+        } else {
+          console.warn('unsupported mode');
+          return;
+        }
+        axios
+          .post(this.$store.state.host + url, fd,
+            {
+              headers: {
+                "X-CSRFToken": csrf
+              }
+            })
+          .then(vm.loadOrderDeal)
+          .catch((resp)=>{
+            if (resp.response) {
+              console.warn("delete: " + resp.response.data);
+            }
+          });
+
+      },
       loginSuccess() {
         this.closeLoginDialog();
         this.aboutMe();
@@ -158,13 +187,19 @@
           if (statusText === 'rejected-by-client') {
             return "отменён Вами";
           }
+          if (statusText === 'rejected-by-owner') {
+            return 'отменён арендодателем';
+          }
         }
         if (this.$props.mode === 'deal') {
           if (statusText === 'init') {
             return "ожидает Вашего рассмотрения";
           }
+          if (statusText === 'rejected-by-client') {
+            return "отменён клиентом";
+          }
           if (statusText === 'rejected-by-owner') {
-            return 'отменён арендодателем';
+            return 'отменён Вами';
           }
         }
         return statusText;
