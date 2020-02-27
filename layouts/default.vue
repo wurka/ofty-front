@@ -45,6 +45,57 @@
     font-family: Philosopher, serif;
     font-size: 14px;
   }
+  .c1 {
+    color: white
+  }
+  .c2 {
+    color: #F6F6F6
+  }
+  .c3 {
+    color: #C4C4C4
+  }
+  .c4 {
+     color: #8A8888
+  }
+  .c5 {
+    color: #000000
+  }
+  .c6 {
+    color: #CA1612
+  }
+  .c7 {
+    color: #12925C
+  }
+  .c8 {
+    color: #182B93
+  }
+  .bg1 {
+    background-color: white
+  }
+  .bg2 {
+    background-color: #F6F6F6
+  }
+  .bg3 {
+    background-color: #C4C4C4
+  }
+  .bg4 {
+    background-color: #8A8888
+  }
+  .bg5 {
+    background-color: #000000
+  }
+  .bg6 {
+    background-color: #CA1612
+  }
+  .bg7 {
+    background-color: #12925C
+  }
+  .bg8 {
+    background-color: #182B93
+  }
+  .shadow1{
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
+  }
 body {
   margin: 0;
   background: lightgray;
@@ -95,14 +146,6 @@ body {
   color: #fff;
   background-color: #35495e;
 }*/
-  html {
-    overflow-y: scroll;
-  }
-  body {
-    background: lightgray;
-    margin: 0;
-    font-family: philosopher, serif;
-  }
 </style>
 
 <script>
