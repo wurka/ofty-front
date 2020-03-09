@@ -1,10 +1,10 @@
 <template>
   <div class="Page">
-    <site-header/>
+    <SiteHeader ref="siteHeader"/>
     <!-- <SearchSiteBody/> -->
     <div class="myBody">
       <OfficeMenu/>
-      <SearchBody/>
+      <SearchBody @loginRequest="()=>{this.$refs.siteHeader.showLoginDialog()}"/>
     </div>
   </div>
 </template>

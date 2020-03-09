@@ -5,11 +5,10 @@
     </a>
 
     <div class="rightPanel">
-      <tab-bar></tab-bar>
-      <search-bar text="Поиск по сайту"></search-bar>
-      <user-bar></user-bar>
+      <TabBar/>
+      <SearchBar text="Поиск по сайту"/>
+      <UserBar ref="userBar"/>
     </div>
-
   </div>
 </template>
 
@@ -32,6 +31,10 @@
         home:function () {
           document.location='#';
         },
+        showLoginDialog() {
+          // открыть диалоговое окно входа на сайт
+          this.$refs.userBar.showLoginDialog();
+        }
       },
     }
 </script>

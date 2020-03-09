@@ -10,24 +10,24 @@
       <div class="item" v-for="unit in units" v-bind:key="'item#'+unit.id">
         <div class="buttons">
           <div class="left">
-            <div class="button like" @click="unitLike(unit.id)">
+            <div class="button like" @click="unitLike(unit.id)" title="Поставить лайк">
               <img :src="$store.state.host+'/static/img/shared/like.svg'" alt="like">
             </div>
-            <div class="button dislike" @click="unitDislike(unit.id)">
+            <div class="button dislike" @click="unitDislike(unit.id)" title="Поставить дизлайк">
               <img :src="$store.state.host+'/static/img/shared/dislike.svg'" alt="dis">
             </div>
-            <div class="button asterisk" @click="unitAlert(unit.id)">
+            <div class="button asterisk" @click="unitAlert(unit.id)" title="Пожаловаться на товар">
               <img :src="$store.state.host+'/static/img/shared/asterisk.svg'" alt="!">
             </div>
           </div>
           <div class="right">
-            <div class="button basket" @click="unitBasket(unit.id)">
+            <div class="button basket" @click="unitBasket(unit.id)" title="Добавить в корзину">
               <img :src="$store.state.host+'/static/img/shared/basket.svg'" alt="bask">
             </div>
-            <div class="button star" @click="unitStar(unit.id)">
+            <div class="button star" @click="unitStar(unit.id)" title="Добавить в избранное">
               <img :src="$store.state.host+'/static/img/shared/star.svg'" alt="str">
             </div>
-            <div class="button collection" @click="unitCollection(unit.id)">
+            <div class="button collection" @click="unitCollection(unit.id)" title="Добавить в коллекцию">
               <img :src="$store.state.host+'/static/img/shared/kollection.svg'" alt="K">
             </div>
           </div>
@@ -71,15 +71,37 @@
               .catch(()=>{console.warn('error while download basket')})
           },
           unitLike(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
             console.log('i like unit ' + unitId);
           },
           unitDislike(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
             console.log('i dislike unit ' + unitId);
           },
           unitAlert(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
             console.log('omg, this is unit: ' + unitId);
           },
           unitBasket(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
+
+
             console.log('i put unit to basket: ' + unitId);
             let fd = new FormData(),
                 vm = this;
@@ -94,9 +116,19 @@
               .catch((response)=>{console.log(response.response.data);})
           },
           unitStar(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
             console.log('my favorite unit is ' + unitId);
           },
           unitCollection(unitId) {
+            // check for login
+            if (this.$store.state.user.anonymous) {
+              this.$emit('loginRequest');
+              return;
+            }
             console.log('put to collection: ' + unitId);
           },
           getUnits(){

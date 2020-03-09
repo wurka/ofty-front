@@ -167,7 +167,7 @@
         axios
           .post(this.$store.state.host + "/orders/new-order", fd, {
             headers: {
-              'X-CSRFToken': this.$store.state.csrf,
+              'X-CSRFToken': this.$store.state.csrf.csrf,
               'Content-Type': 'multipart/form-data'
             }})
           .then(()=>{

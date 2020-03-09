@@ -1,27 +1,29 @@
 <template>
   <div class="UserBar">
-    <span v-if="!$store.state.user.anonymous" class="username" @click="showOptions=true; myScroll();">{{username}}</span>
+    <span v-if="!$store.state.user.anonymous" class="username"
+          @click="()=>{this.showOptions=true; myScroll();}">{{username}}</span>
     <span v-else >
-      <span class="username" @click="$refs.loginBlock.show(false);">Вход</span>
+      <span class="username" @click="showLoginDialog">Вход</span>
       <!--<span class="username" @click="$refs.loginBlock.show(true);">/Регистрация</span>-->
     </span>
     <div v-if="showOptions" class="options">
       <div class="bg" @click="showOptions=false"></div>
-      <div class="option" @click="logout(); showOptions=false">Выйти</div>
-      <div class="option" @click="$refs.loginBlock.show(false); showOptions=false">Сменить пользователя</div>
+      <div class="option" @click="()=>{logout(); this.showOptions=false}">Выйти</div>
+      <div class="option" @click="()=>{this.$refs.loginBlock.show(false); this.showOptions=false;}">
+        Сменить пользователя</div>
     </div>
-    <span v-if="!$store.state.user.anonymous">
-      <a href="/office/basket"><img  :src="host+'/static/img/shared/basket-32.png'" /></a>
+    <div class="notAnonymous" v-if="!$store.state.user.anonymous">
+      <a href="/office/basket"><img  :src="host+'/static/img/shared/basket-32.png'" alt="basket.png"/></a>
       <div class="basketNum">{{$store.getters.BASKET.count}}</div>
-      <img :src="host+'/static/img/shared/star-32.png'"/>
-    </span>
-    <login-block ref="loginBlock" ></login-block>
+      <img :src="host+'/static/img/shared/star-32.png'" alt="star.png"/>
+    </div>
+    <LoginBlock ref="loginBlock"/>
   </div>
 </template>
 
 <script>
     import LoginBlock from "./LoginBlock";
-    var ax;
+    let ax;
     export default {
       name: "UserBar",
       components: {LoginBlock},
@@ -32,6 +34,9 @@
         }
       },
       methods: {
+        showLoginDialog(){
+          this.$refs.loginBlock.show(false)
+        },
         logout: function () {
           ax.get("/shared/get-csrf-token")
           .then(function(data1){
@@ -174,5 +179,6 @@
       font-size: 11px
       width: 15px
       pointer-events: none
-
+  .notAnonymous
+    display: inline-block
 </style>
