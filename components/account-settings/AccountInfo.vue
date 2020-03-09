@@ -594,6 +594,9 @@
         height: 170px
         width: 170px
         margin-left: 345px
+        border-radius: 95px
+        overflow: hidden
+        box-sizing: border-box
       .small
         display: inline-block
         vertical-align: top

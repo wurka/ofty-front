@@ -55,21 +55,6 @@
           loading: true,
         }},
         methods: {
-          downloadBasket(){
-            axios
-              .get(this.$store.state.host + "/basket/get-content")
-              .then((response)=>{
-                this.$store.state.basket.blocks = response.data;
-                let count = 0;
-                response.data.forEach((block)=>{
-                  block['units'].forEach((item)=>{
-                    if (item.type === 'unit'){count += 1;}
-                  });
-                });
-                this.$store.state.basket.count = count;
-              })
-              .catch(()=>{console.warn('error while download basket')})
-          },
           unitLike(unitId) {
             // check for login
             if (this.$store.state.user.anonymous) {
@@ -109,9 +94,9 @@
             axios
               .post(this.$store.state.host + "/basket/add-unit",
                 fd,
-                {headers:{'X-CSRFToken': this.$store.state.csrf}})
+                {headers:{'X-CSRFToken': this.$store.state.csrf.csrf}})
               .then(()=>{
-                vm.downloadBasket();
+                this.$store.dispatch('BASKET_DOWNLOAD');
               })
               .catch((response)=>{console.log(response.response.data);})
           },

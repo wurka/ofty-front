@@ -101,7 +101,6 @@
         ax = this.$axios.create({  baseURL: this.host});
         ax.get(this.host + '/account/about-me')
           .then(function (data) {
-              console.log(data.data);
               vm.$store.state.user.anonymous = data.data.anonymous;
               if(data.data.anonymous) vm.$store.state.user.username = '';
               else vm.$store.state.user.username = data.data.username;

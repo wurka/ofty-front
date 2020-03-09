@@ -8,6 +8,11 @@
     </transition>
 
     <div class="flex">
+      <div class="empty-basket" v-if="this.$store.getters.BASKET.blocks.length === 0">
+        <div class="t1-2 c4">Корзина пуста</div>
+        <div class="t1-2 c4">воспользуйся <a class="c4" href="/unit-search">поиском</a></div>
+        <div class="t1-2 c4">там полно крутых вещей</div>
+      </div>
       <div class="basketContent t1-1">
         <div v-for="(block, index) in this.$store.getters.BASKET.blocks" v-bind:key="block+index">
           <div class="flex">
@@ -138,7 +143,7 @@
         axios
           .post(this.$store.state.host + "/basket/remove-unit", fd, {
             headers: {
-              'X-CSRFToken': this.$store.state.csrf,
+              'X-CSRFToken': this.$store.state.csrf.csrf,
               'Content-Type': 'multipart/form-data'
             }
           })
@@ -163,7 +168,6 @@
           });
         });
         fd.append('units', JSON.stringify(units));
-
         axios
           .post(this.$store.state.host + "/orders/new-order", fd, {
             headers: {
@@ -180,6 +184,8 @@
       }
     },
     mounted() {
+      this.$store.dispatch('CSRF_GET');
+
       let head=document.getElementsByTagName('head')[0],
           picker_script = document.createElement('script'),
           picker_style = document.createElement('link');
@@ -361,4 +367,14 @@
     pointer-events: none
     color: gray
     background: #F5F5F5
+
+  .empty-basket
+    text-align: center
+    flex-grow: 1
+    margin: 50px
+    a:link
+      text-decoration: underline
+    a:hover
+      color: black
+
 </style>

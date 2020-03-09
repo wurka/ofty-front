@@ -19,3 +19,4 @@ dist
 /pages/README.md
 /plugins/README.md
 /store/README.md
+/package-lock.json

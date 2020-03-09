@@ -13,8 +13,7 @@
         </div>
         <div class="col col2">
           <div class="cupPanel">
-
-            <div v-for="i in [1,2,3,4,5,6,7]" class="cup"></div>
+            <div v-for="i in [1,2,3,4,5,6,7]" class="cup" :key="'some#'+i">i</div>
             <div class="bBtn"></div>
             <div class="fBtn"></div>
           </div>
@@ -22,7 +21,7 @@
           <div class="t2">{{paramDict.rating}}</div>
         </div>
         <div class="col col3">
-          <div v-for="c in paramDict.contacts" class="contact">{{c}}</div>
+          <div v-for="(c, cindex) in paramDict.contacts" class="contact" :key="'contact#'+cindex">{{c}}</div>
           <div class="btn">Написать сообщение</div>
         </div>
       </div>
@@ -33,16 +32,21 @@
           <div class="deliveryPanel">
             <div class="label">Стоимость доставки: </div>
             <div class="deliveryList">
-              <div v-for="i in paramDict.delivery" class="delivery">{{i.name}} - {{i.value}}</div>
+              <div v-for="(i, deliveryIndex) in paramDict.delivery" class="delivery" :key="'delivery#'+deliveryIndex">
+                {{i.name}} - {{i.value}}</div>
             </div>
           </div>
           <div class="timePanel">
             <div class="label">Время работы: </div>
             <div class="timeList">
-              <div v-for="i in [0,1,2,3]" class="time"><div class="name">{{paramDict.workTime[i].name}}</div><div class="value">{{paramDict.workTime[i].value}}</div></div>
+              <div v-for="(i, timeIndex) in [0,1,2,3]" class="time" :key="'time#'+timeIndex">
+                <div class="name">{{paramDict.workTime[i].name}}</div><div class="value">{{paramDict.workTime[i].value}}</div>
+              </div>
             </div>
             <div class="timeList">
-              <div v-for="i in [4,5,6]" class="time"><div class="name">{{paramDict.workTime[i].name}}</div><div class="value">{{paramDict.workTime[i].value}}</div></div>
+              <div v-for="(i, timeIndex) in [4,5,6]" class="time" :key="'time2#'+timeIndex">
+                <div class="name">{{paramDict.workTime[i].name}}</div><div class="value">{{paramDict.workTime[i].value}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -52,6 +56,7 @@
 </template>
 
 <script>
+  import axios from "axios";
     export default {
         name: "CompanyCard",
         data: function () {
@@ -78,6 +83,14 @@
                   {'name':'Вс', 'value':'Выходной'},],
               }
             }
+        },
+        methods: {
+          getData(userId) {
+            axios
+              .get(this.$store.state.host + '/account/about-user/' + userId)
+              .then((response)=>{this.paramDict = response.data})
+              .catch(()=>{console.warn('getData error')})
+          }
         }
     }
 </script>
