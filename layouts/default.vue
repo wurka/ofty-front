@@ -149,9 +149,69 @@ body {
 </style>
 
 <script>
+  import axios from "axios";
+
   export default {
+    methods: {
+      aboutMe() { return new Promise((resolve, reject)=> {
+          axios
+            .get(this.$store.state.host + "/account/about-me")
+            .then((ans) => {
+              this.$store.state.user.username = ans.data['username'];
+              this.$store.state.user.anonymous = ans.data['anonymous'];
+              this.$store.state.user.id = ans.data['id'];
+              resolve()
+            })
+            .catch(()=>{reject()})
+        })
+      },
+      enableNotifications() {
+        return new Promise((resolve)=>{
+          // запросить разрешение на отправку сообщений через Notifications
+          if (Notification) {
+            Notification.requestPermission().then((result)=>{console.log(result);}).catch()
+          }
+          resolve();
+        })
+      },
+      subscribeSocket () {
+        // подключение к long connect сервисам (WebSocket)
+        let anonymous = this.$store.state.user.anonymous,
+          socket = this.$store.state.user.webSocket,
+          userId = this.$store.state.user.id.toString();
+
+        if (anonymous) {
+          // никаких оповещений для незарегистрированных пользователей
+          return;
+        }
+
+        // проверка на то, что Socket уже был использован;
+        if (!socket) {
+          let socket_url = 'ws://localhost:9000/ws/user_update/' + userId;
+          socket = new WebSocket(socket_url);
+          if (socket !== undefined) {
+              socket.onmessage = (e) => {
+              console.log('on message');
+              console.log(e);
+              new Notification('this is it', {
+                body: e.data,
+                icon: this.$store.state.host + '/static/img/shared/message-24.png',
+              })
+            };
+            socket.onclose = (e) => {
+              console.log('on close');
+              console.log(e);
+            };
+          } else {
+            console.warn("socket can not be created with url: " + socket_url);
+          }
+        }
+        console.log("okk");
+      }
+    },
     mounted() {
       this.$store.dispatch('CSRF_GET');
+      this.aboutMe().then(this.enableNotifications).then(this.subscribeSocket);
     }
   }
 </script>

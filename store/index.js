@@ -19,10 +19,12 @@ const store = () => new Vuex.Store({
     //csrf: undefined,  //csrf middleware token for backend csrf security
     // info about user
     user: {
+      id: 0,
       username: "anonymous",
       anonymous: true,
       stock:0,
       stockMax:0,
+      webSocket: undefined,
     },
     captcha: {
       enable: false,  // использовать ли капчу
