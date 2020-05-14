@@ -200,7 +200,7 @@ body {
             };
             socket.onclose = (e) => {
               console.log('on close');
-              console.log(e);
+              /*console.log(e);*/
             };
           } else {
             console.warn("socket can not be created with url: " + socket_url);
