@@ -54,7 +54,4 @@
         padding: 0 0 0 13px
       .right
         margin: 0 0 0 15px
-
-
-
 </style>

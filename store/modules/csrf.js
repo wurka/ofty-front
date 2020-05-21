@@ -1,5 +1,5 @@
 import axios from "axios";
-import {host} from "~/store/index"
+import {store} from "~/store/index"
 
 let state = {
   csrf: 'no csrf'
@@ -13,8 +13,9 @@ let mutations = {
 };
 let actions = {
   CSRF_GET(context){
+    console.log(store);
     axios
-      .get(host() + "/csrf")
+      .get(store().state.host + "/csrf")
       .then((response)=>{
         let new_csrf = response.data;
         context.commit('CSRF_SET', new_csrf);

@@ -24,7 +24,6 @@
           console.log('on close');
           console.log(e);
         };
-        console.log("okk");
 
         if (Notification) {
           Notification.requestPermission().then((result)=>{console.log(result);}).catch()

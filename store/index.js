@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import Vuex from 'vuex'
 import orders from './modules/orders'
 import deals from './modules/deals'
@@ -6,13 +5,9 @@ import basket from './modules/basket'
 import csrf from './modules/csrf'
 import unit from './modules/unit'
 
-Vue.use(Vuex);
+//Vue.use(Vuex);
 
-export function host() {
-  return 'http://localhost:9000'
-}
-
-const store = () => new Vuex.Store({
+const store = () => {return new Vuex.Store({
   state: {
     host:'http://localhost:9000',
 
@@ -45,6 +40,6 @@ const store = () => new Vuex.Store({
     basket,
     csrf
   }
-});
+})};
 
 export default store

@@ -169,7 +169,10 @@ body {
         return new Promise((resolve)=>{
           // запросить разрешение на отправку сообщений через Notifications
           if (Notification) {
-            Notification.requestPermission().then((result)=>{console.log(result);}).catch()
+            Notification.requestPermission().then(
+              (result)=>{
+                  console.log("alert permission: " + result);
+                }).catch()
           }
           resolve();
         })
@@ -206,7 +209,7 @@ body {
             console.warn("socket can not be created with url: " + socket_url);
           }
         }
-        console.log("okk");
+        console.log("socket connected to server");
       }
     },
     mounted() {

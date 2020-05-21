@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {host} from '../index'
+import {store} from '../index'
 
 const state = {
   unit: {
@@ -20,7 +20,7 @@ const actions = {
   UNIT_GET(context, param) {
     console.log(param);
     axios
-      .get(host() + "/units/unit/" + param)
+      .get(store().state.host() + "/units/unit/" + param)
       .then((response)=>{
         let new_unit = response.data[0];
         context.commit("UNIT_SET", new_unit);
