@@ -160,7 +160,7 @@
               'Wrong syntax (json decode error)':'Ошибка на сервере',
               'delivery parameter must be valid json array':'Ошибка на сервере'
             };
-            var keys = Object.keys(errDict);
+            let keys = Object.keys(errDict);
             keys.forEach(function(key, i, keys){
               let Re = new RegExp("^"+key+".*","gi");
               if (Re.exec(text)) {
@@ -174,7 +174,7 @@
           getSettings: function(func){
            ax.get(this.host+'/account/get-settings')
               .then(function(data){
-                console.log(data.data );
+                // console.log(data.data );
                 func(data.data);
                 return (data.data);
               })
@@ -191,7 +191,7 @@
             let vm = this;
             vm.getSettings(
               function (ans) {
-                console.log(ans);
+                // console.log(ans);
                 vm.settings = ans;
                 vm.alterInfo = ans.company.info;
                 vm.workTime = ans.company.workTime;
@@ -204,8 +204,8 @@
             );
           },
           saveNote: function () {
-            var vm = this;
-            var fd = new FormData;
+            let vm = this,
+              fd = new FormData;
 
             vm.startWaiting();
 
@@ -217,7 +217,7 @@
               .then(function(data1){
                   ax.post("/account/save-notification", fd,{headers:{'X-CSRFToken':data1.data}})
                     .then(function(data){
-                        console.log(data.data);
+                        // console.log(data.data);
                         vm.goodResult();
                       }
                     )
