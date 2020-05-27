@@ -1,12 +1,14 @@
 import Vuex from 'vuex'
+import Vue from 'vue'
 import orders from './modules/orders'
 import deals from './modules/deals'
 import basket from './modules/basket'
 import csrf from './modules/csrf'
 import unit from './modules/unit'
 
-export const host = 'http://localhost:9000';
-const store = () => {return new Vuex.Store({
+Vue.use(Vuex);
+
+const store = () => new Vuex.Store({
   state: {
     //csrf: undefined,  //csrf middleware token for backend csrf security
     // info about user
@@ -38,7 +40,9 @@ const store = () => {return new Vuex.Store({
     basket,
     csrf
   }
-})};
+});
+
+export const host = 'http://localhost:9000';
 
 // host export отдельно, т.к. в модулях нельзя увидеть store
 

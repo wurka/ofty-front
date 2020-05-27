@@ -35,8 +35,6 @@ let actions = {
       month = now.getMonth()+1,
       day = now.getDate();
 
-    console.log(host);
-
     axios
       .get(host + "/basket/get-content")
       .then((response)=>{

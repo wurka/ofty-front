@@ -1,7 +1,6 @@
 import axios from "axios";
 import {host} from "~/store/index"
 
-
 let state = {
   csrf: 'no csrf'
 };
@@ -12,7 +11,6 @@ let mutations = {
     state.csrf = payload;
   }
 };
-
 let actions = {
   CSRF_GET(context){
     axios
