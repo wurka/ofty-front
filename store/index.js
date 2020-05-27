@@ -5,14 +5,12 @@ import basket from './modules/basket'
 import csrf from './modules/csrf'
 import unit from './modules/unit'
 
-//Vue.use(Vuex);
-
+export const host = 'http://localhost:9000';
 const store = () => {return new Vuex.Store({
   state: {
-    host:'http://localhost:9000',
-
     //csrf: undefined,  //csrf middleware token for backend csrf security
     // info about user
+    host: host,
     user: {
       id: 0,
       username: "anonymous",
@@ -41,5 +39,7 @@ const store = () => {return new Vuex.Store({
     csrf
   }
 })};
+
+// host export отдельно, т.к. в модулях нельзя увидеть store
 
 export default store

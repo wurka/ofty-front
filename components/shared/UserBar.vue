@@ -23,6 +23,7 @@
 
 <script>
     import LoginBlock from "./LoginBlock";
+
     let ax;
     export default {
       name: "UserBar",
