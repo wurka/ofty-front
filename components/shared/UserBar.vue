@@ -18,6 +18,7 @@
       <img :src="host+'/static/img/shared/star-32.png'" alt="star.png"/>
     </div>
     <LoginBlock ref="loginBlock"/>
+
   </div>
 </template>
 

@@ -6,7 +6,7 @@ import basket from './modules/basket'
 import csrf from './modules/csrf'
 import unit from './modules/unit'
 
-Vue.use(Vuex);
+//Vue.use(Vuex);
 
 const store = () => new Vuex.Store({
   state: {

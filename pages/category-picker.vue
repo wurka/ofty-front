@@ -5,9 +5,23 @@
         <div class="loading circle" v-if="loading">
           <img src="http://zlaksa.ru/static/img/shared/pencil.gif" alt="loading">
         </div>
-        <div class="group" v-for="(group, index) in groups" v-bind:key="'group_'+index">
-          <img :src="group['group-image']" alt="group">
-          <div class="name">{{group.name}}</div>
+        <div class="parent-group" v-if="parentGroup !== ''">
+          <div class="line">
+            <div class="img-container">
+              <img :src="parentGroupImg" alt="parent img">
+            </div>
+            <span>{{parentGroup}}</span>
+          </div>
+
+        </div>
+        <div class="groups">
+          <div class="group" v-for="(group, index) in groups" v-bind:key="'group_'+index"
+            @click="setParent(group.name, group['group-image'])">
+            <div class="img-container">
+              <img :src="group['group-image']" alt="group">
+            </div>
+            <div class="name">{{group.name}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -21,17 +35,28 @@
       data: function() {
         return {
           loading: true,
-          groups: []
+          groups: [],
+          parentGroupId: 0,
+          parentGroup: "",
+          parentGroupImg: 'https://dummyimage.com/155x155.png',
         }
       },
       mounted() {
+        let url = this.$store.state.host + '/units/get-groups';
+        console.log(url);
         axios
-        .get(this.$store.state.host + '/units/get-groups')
+        .get(url)
         .then((result)=> {
           this.loading = false;
           console.log(result.data);
           this.groups = result.data;
         })
+      },
+      methods: {
+        setParent(name, image) {
+          this.parentGroup = name;
+          this.parentGroupImg = image;
+        }
       }
     }
 </script>
@@ -66,12 +91,68 @@
     position: absolute
     top: 0
     left: 0
+  .parent-group
+    text-align: center
+    padding: 0 0 0 50px
+    span
+      background: pink
+      line-height: 135px
+      display: inline-block
+      vertical-align: top
+    .img-container
+      width: 135px
+      display: inline-block
+    img
+      line-height: 135px
+      vertical-align: bottom
+
+  .groups
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    grid-gap: 10px
+    padding: 10px
   .group
-    display: inline-block
-    width: 145px
-    overflow: hidden
+    text-align: center
     font-size: 18px
-    margin: 20px
+    border: 1px solid white
+    padding: 0 0 15px 0
+    &:hover
+      border: 1px solid gray
+      background: lightskyblue
+      img
+        background: skyblue
     .name
       text-align: center
+      animation-name: fade-out
+      animation-duration: 0.3s
+      animation-delay: 0.3s
+      opacity: 0
+      animation-fill-mode: forwards
+    .img-container
+      animation-name: intro-container
+      animation-duration: 0.3s
+      display: inline-block
+      overflow: hidden
+      line-height: 145px
+      img
+        vertical-align: middle
+
+  @keyframes fade-out
+    from
+      opacity: 0.0
+    to
+      opacity: 1.0
+  @keyframes intro-container
+    from
+      width: 0
+      height: 0
+      line-height: 0
+    60%
+      width: 175px
+      height: 175px
+      line-height: 175px
+    to
+      width: 145px
+      height: 145px
+      line-height: 145px
 </style>
