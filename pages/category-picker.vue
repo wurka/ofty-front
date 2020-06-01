@@ -1,6 +1,14 @@
 <template>
     <div class="layout">
       <div class="title">Выберите категорию товара</div>
+      <div class="navigator">
+        <div class="navigator-element" @click="goRoot"> > все товары</div>
+        <div class="navigator-element" v-for="(ng, index) in navigatorGroups"
+             :key="'ng_' + index"
+             @click="goBackGroup(ng)">
+          > {{ng.name}}
+        </div>
+      </div>
       <div class="pictures">
         <div class="loading circle" v-if="loading">
           <img src="http://zlaksa.ru/static/img/shared/pencil.gif" alt="loading">
@@ -16,7 +24,7 @@
         </div>
         <div class="groups">
           <div class="group" v-for="(group, index) in groups" v-bind:key="'group_'+index"
-            @click="setParent(group.name, group['group-image'])">
+            @click="goNextGroup(group)">
             <div class="img-container">
               <img :src="group['group-image']" alt="group">
             </div>
@@ -39,6 +47,7 @@
           parentGroupId: 0,
           parentGroup: "",
           parentGroupImg: 'https://dummyimage.com/155x155.png',
+          navigatorGroups: [],
         }
       },
       mounted() {
@@ -53,9 +62,56 @@
         })
       },
       methods: {
-        setParent(name, image) {
+        loadGroups() {
+          let url = this.$store.state.host + '/units/get-groups',
+            config = {};
+
+          if (this.parentGroupId !== 0) {
+            config = {
+              params: {'parentid': this.parentGroupId}
+            }
+          }
+
+          axios
+            .get(url, config)
+            .then((result)=> {
+              this.loading = false;
+              console.log(result.data);
+              this.groups = result.data;
+            })
+        },
+        setParent(group) {
+          let name = group.name,
+            image = group['group-image'],
+            group_id = group.id;
           this.parentGroup = name;
           this.parentGroupImg = image;
+          this.parentGroupId = group_id;
+          this.loadGroups();
+        },
+        goRoot() {
+          this.parentGroup = "";
+          this.parentGroupImg = "";
+          this.parentGroupId = 0;
+          this.navigatorGroups = [];
+          this.loadGroups();
+        },
+        goNextGroup(group) {
+          // перейти на следующую в дереве группу
+          this.navigatorGroups.push(group);
+          this.setParent(group);
+          this.loadGroups();
+        },
+        goBackGroup(group) {
+          // откатиться до указанной группы в дереве
+          let newLength = 0;
+          this.navigatorGroups.forEach((g, index)=>{
+            if (g.id === group.id) {
+              newLength = index + 1;
+            }
+          });
+          this.navigatorGroups.splice(newLength);
+          this.setParent(group);
         }
       }
     }
@@ -94,6 +150,7 @@
   .parent-group
     text-align: center
     padding: 0 0 0 50px
+    display: none
     span
       background: pink
       line-height: 135px
@@ -111,6 +168,7 @@
     grid-template-columns: repeat(3, 1fr)
     grid-gap: 10px
     padding: 10px
+    user-select: none
   .group
     text-align: center
     font-size: 18px
@@ -118,9 +176,8 @@
     padding: 0 0 15px 0
     &:hover
       border: 1px solid gray
-      background: lightskyblue
-      img
-        background: skyblue
+    &:active
+      transform: scale(1.1)
     .name
       text-align: center
       animation-name: fade-out
@@ -136,6 +193,17 @@
       line-height: 145px
       img
         vertical-align: middle
+
+  .navigator
+    padding: 0 0 0 30px
+    .navigator-element
+      display: inline-block
+      cursor: default
+      user-select: none
+      font-size: 18px
+      color: gray
+      &:hover
+        text-decoration: underline
 
   @keyframes fade-out
     from
