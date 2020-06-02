@@ -529,11 +529,7 @@
                   console.warn('no connection')
               }
             );
-
         }
-
-
-
     }
 </script>
 
@@ -553,8 +549,8 @@
     .DecorAdd
       position: fixed
       opacity: 1
-      left: 145px
-      top: 120px
+      margin-left: -175px
+      margin-top: -60px
       background-color: white
       width: 1085px
       text-align: left

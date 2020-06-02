@@ -5,17 +5,23 @@
         <search-bar text="Поиск в моем декоре" @input="decorSearch" @change="decorSearch" @search="decorSearch"></search-bar>
         <span class="counter">Загружено товаров {{mine}}/{{all}}</span>
       </div>
-      <decor-add :shown="showAddDecor" :editParams="editParamsVal" ref="decorAdd" @hide-add-decor="showAddDecor = false; $emit('hide-add-decor');"></decor-add>
+      <!--decor-add :shown="showAddDecor" :editParams="editParamsVal" ref="decorAdd" @hide-add-decor="showAddDecor = false; $emit('hide-add-decor');"></decor-add-->
+      <NewUnitWizard
+        :shown="showAddDecor"
+        :editParams="editParamsVal"
+        ref="decorAdd"
+        @hide-add-decor="hideWizard"/>
     </div>
 </template>
 
 <script>
     import DecorAdd from "./DecorAdd";
     import SearchBar from "../shared/SearchBar";
+    import NewUnitWizard from "./NewUnitWizard";
     var ax;
     export default {
       name: "DecorHeader",
-      components: {SearchBar, DecorAdd},
+      components: {SearchBar, DecorAdd, NewUnitWizard},
       props:['showAdd', 'editParams'],
       data: function () {
             return {
@@ -55,6 +61,9 @@
         decorSearch:function (val) {
           console.log('decor search: '+val);
           this.$emit('decor-search', val);
+        },
+        hideWizard() {
+          this.$refs.decorAdd.shown = false;
         }
       },
       created:function () {

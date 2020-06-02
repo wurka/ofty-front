@@ -9,18 +9,18 @@
           > {{ng.name}}
         </div>
       </div>
-      <div class="pictures">
+
+      <div class="pictures" v-if="selectGroupMode">
         <div class="loading circle" v-if="loading">
           <img src="http://zlaksa.ru/static/img/shared/pencil.gif" alt="loading">
         </div>
         <div class="parent-group" v-if="parentGroup !== ''">
           <div class="line">
             <div class="img-container">
-              <img :src="parentGroupImg" alt="parent img">
+              <img :src="parentGroup['group-image']" alt="parent img">
             </div>
             <span>{{parentGroup}}</span>
           </div>
-
         </div>
         <div class="groups">
           <div class="group" v-for="(group, index) in groups" v-bind:key="'group_'+index"
@@ -32,67 +32,106 @@
           </div>
         </div>
       </div>
+
+      <div class="set-params" v-if="specifyParamsMode">
+        <div class="columns">
+          <div class="column-1">
+            <div class="picture">
+              <img :src="parentGroup['group-size-image']" alt="size img">
+            </div>
+            <div class="parameters">
+              <div class="parameter" v-for="(parameter, pi) in parameters" :key="'par_' + pi">
+                <label :for="'pv_' + parameter.id">{{parameter.name}}, {{parameter.dimension}}</label>
+                <span>=</span>
+                <input type="text" :id="'pv_' + parameter.id" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div class="column-2">
+            Материал, Вес, количество и т.п.
+          </div>
+        </div>
+        <div class="buttons">
+          <input type="button" value="Отмена">
+          <input type="button" value="Подтвердить">
+        </div>
+      </div>
     </div>
 </template>
 
 <script>
-    import axios from "axios";
+  import axios from "axios";
 
-    export default {
+  const rootGroup = {
+    id: 0,
+    name: "blank",
+    'group-image': 'https://dummyimage.com/155x155.png',
+    'group-size-image': 'https://dummyimage.com/155x155.png',
+    active: false
+  };
+
+  export default {
       name: "category-picker",
       data: function() {
         return {
+          selectGroupMode: true,
+          specifyParamsMode: false,
           loading: true,
           groups: [],
-          parentGroupId: 0,
-          parentGroup: "",
-          parentGroupImg: 'https://dummyimage.com/155x155.png',
+          parentGroup: rootGroup,
           navigatorGroups: [],
+          parameters: [],
         }
       },
       mounted() {
-        let url = this.$store.state.host + '/units/get-groups';
-        console.log(url);
-        axios
-        .get(url)
-        .then((result)=> {
-          this.loading = false;
-          console.log(result.data);
-          this.groups = result.data;
-        })
+        this.loadGroups();
+        window.onbeforeunload = function () {
+          return "Данные о товаре будут потеряны. Всё-равно  уйти?";
+        }
       },
       methods: {
         loadGroups() {
-          let url = this.$store.state.host + '/units/get-groups',
+          let gg_url = this.$store.state.host + '/units/get-groups',
+            gp_url = this.$store.state.host + "/units/get-group-parameters",
             config = {};
 
-          if (this.parentGroupId !== 0) {
+          if (this.parentGroup.id !== 0) {
             config = {
-              params: {'parentid': this.parentGroupId}
+              params: {'parentid': this.parentGroup.id}
             }
           }
 
-          axios
-            .get(url, config)
-            .then((result)=> {
-              this.loading = false;
-              console.log(result.data);
-              this.groups = result.data;
-            })
+          this.selectGroupMode = !this.parentGroup.active;
+          this.specifyParamsMode = this.parentGroup.active;
+
+          if (this.parentGroup.active) {
+            // у активной группы спрашиваем параметры с сервера
+            axios
+              .get(gp_url, {params: {groupid: this.parentGroup.id}})
+              .then((result)=>{
+                let ans = JSON.parse(result.data.parameters);
+                console.log(ans);
+                this.parameters = ans;
+              })
+
+          } else {
+            // у неактивной группы спрашиваем подгруппы
+            axios
+              .get(gg_url, config)
+              .then((result)=> {
+                this.loading = false;
+                console.log(result.data);
+                this.groups = result.data;
+              })
+          }
+
         },
         setParent(group) {
-          let name = group.name,
-            image = group['group-image'],
-            group_id = group.id;
-          this.parentGroup = name;
-          this.parentGroupImg = image;
-          this.parentGroupId = group_id;
+          this.parentGroup = group;
           this.loadGroups();
         },
         goRoot() {
-          this.parentGroup = "";
-          this.parentGroupImg = "";
-          this.parentGroupId = 0;
+          this.parentGroup = rootGroup;
           this.navigatorGroups = [];
           this.loadGroups();
         },
@@ -101,6 +140,8 @@
           this.navigatorGroups.push(group);
           this.setParent(group);
           this.loadGroups();
+
+          console.log(group.active);
         },
         goBackGroup(group) {
           // откатиться до указанной группы в дереве
@@ -112,6 +153,9 @@
           });
           this.navigatorGroups.splice(newLength);
           this.setParent(group);
+
+          this.selectGroupMode = !group.active;
+          this.specifyParamsMode = group.active;
         }
       }
     }
@@ -119,7 +163,7 @@
 
 <style scoped lang="sass">
   .layout
-    width: 800px
+    width: 1080px
     background: white
     font-family: Philosopher,serif
     font-size: 24px
@@ -152,7 +196,6 @@
     padding: 0 0 0 50px
     display: none
     span
-      background: pink
       line-height: 135px
       display: inline-block
       vertical-align: top
@@ -204,6 +247,51 @@
       color: gray
       &:hover
         text-decoration: underline
+
+  .set-params
+    .columns
+      display: flex
+    .column-1
+      flex-basis: 200px
+      padding: 33px 100px 0 45px
+      .picture
+        box-sizing: border-box
+        border: 1px solid gray
+        width: 330px
+        height: 330px
+        text-align: center
+        line-height: 330px
+        img
+          vertical-align: middle
+
+      .parameters
+        padding: 70px 0 0 0
+        .parameter
+          label
+            display: inline-block
+            min-width: 80px
+          input
+            display: inline-block
+            line-height: 25px
+            padding: 1px
+            border: 1px solid gray
+            width: 216px
+            font-family: Philosopher, serif
+    .column-2
+      flex-grow: 1
+      padding: 33px 45px 0 0
+    .buttons
+      text-align: center
+      input
+        background: white
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
+        min-width: 158px
+        margin: 150px 16px 50px 16px
+        line-height: 20px
+        font-size: 16px
+        font-family: Philosopher, serif
+        padding: 8px 0
+        display: inline-block
 
   @keyframes fade-out
     from
