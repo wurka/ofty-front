@@ -43,7 +43,13 @@
             <div class="parameter" v-for="(parameter, pi) in parameters" :key="'par_' + pi">
               <label :for="'pv_' + parameter.id">{{parameter.name}}, {{parameter.dimension}}</label>
               <span>=</span>
-              <input type="text" :id="'pv_' + parameter.id" autocomplete="off">
+              <input
+                type="text" :id="'pv_' + parameter.id"
+                autocomplete="off"
+                @input="parameterChanged"
+                class="invalid"
+                ref="parameter-input"
+              >
             </div>
           </div>
         </div>
@@ -77,6 +83,7 @@
         parentGroup: rootGroup,
         navigatorGroups: [],
         parameters: [],
+        validated: false,  // true => все исходные данные введены верно
       }
     },
     mounted() {
@@ -152,6 +159,25 @@
 
         this.selectGroupMode = !group.active;
         this.specifyParamsMode = group.active;
+      },
+      parameterChanged(event) {
+        let value = event.target.value,
+          intValue = parseInt(value);
+
+        if (intValue.toString() !== value) {
+          event.target.classList.add('invalid');
+          this.validated = false;
+        } else {
+          event.target.classList.remove('invalid');
+          this.validated = true;
+          this.$refs['parameter-input'].forEach((item)=>{
+            if (item.classList.contains('invalid')) {
+              this.validated = false;
+            }
+          })
+        }
+
+
       }
     }
   }
@@ -279,6 +305,8 @@
               border: 1px solid gray
               width: 216px
               font-family: Philosopher, serif
+            .invalid
+              border: 1px solid red
       .column-2
         flex-grow: 1
         padding: 33px 45px 0 0

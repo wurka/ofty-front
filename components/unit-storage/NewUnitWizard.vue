@@ -7,11 +7,13 @@
       </div>
     </div>
     <div class="step-1" v-if="step === 1">
-      <CategoryPicker/>
+      <CategoryPicker ref="CategoryPicker"/>
     </div>
     <div class="buttons">
       <input type="button" class="button" value="Отмена" @click="emitHide">
-      <input type="button" class="button" value="Подтвердить">
+      <input
+        :class="{'disabled' : !nextStepAvailable }"
+        type="button" class="button" value="Подтвердить" @click="goNext">
     </div>
   </div>
 </template>
@@ -23,8 +25,26 @@
     components: {CategoryPicker},
     data: function () {
       return {
+        isMounted: false,
         shown: true,
         step: 1,
+      }
+    },
+    mounted() {
+      this.isMounted = true;
+    },
+    computed: {
+      nextStepAvailable() {
+        // защита от неинициализированных $refs
+        if (!this.isMounted) {
+          return false;
+        }
+
+        if (this.step === 1) {
+          return this.$refs['CategoryPicker'].validated;
+        } else {
+          return false;
+        }
       }
     },
     methods: {
@@ -37,8 +57,17 @@
         this.$emit('scrollDisable');
         document.body.className='scrollDisable';
       },
+      validateStep() {
+        // проверить, что все данные на текущем шаге введены верно
+        if (this.step === 1) {
+
+        }
+      },
       goStep(step_number) {
         this.step = step_number;
+      },
+      goNext() {
+        this.step += 1;
       },
       emitHide() {
         this.$emit('hide-add-decor');
@@ -48,6 +77,10 @@
 </script>
 
 <style scoped lang="sass">
+  .disabled
+    color: gray
+    pointer-events: none
+    cursor: not-allowed
   .layout
     position: absolute
     width: 1080px
