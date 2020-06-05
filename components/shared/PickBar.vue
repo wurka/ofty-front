@@ -171,7 +171,7 @@
             height: inherit
             //width: calc(100% - 20px)
             //padding: 0
-            width: 140px
+            width: 340px
             &:focus
               outline: none
           .pickedBar

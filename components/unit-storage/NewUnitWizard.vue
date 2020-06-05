@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="step-1" v-if="step === 1">
-      <CategoryPicker ref="CategoryPicker"/>
+      <CategoryPicker ref="CategoryPicker" @validatedChanged="checkNextStepAvailable"/>
     </div>
     <div class="buttons">
       <input type="button" class="button" value="Отмена" @click="emitHide">
@@ -28,26 +28,25 @@
         isMounted: false,
         shown: true,
         step: 1,
+        nextStepAvailable: false,
       }
     },
     mounted() {
       this.isMounted = true;
     },
-    computed: {
-      nextStepAvailable() {
+    methods: {
+      checkNextStepAvailable(){
         // защита от неинициализированных $refs
         if (!this.isMounted) {
-          return false;
+          this.nextStepAvailable = false;
         }
 
         if (this.step === 1) {
-          return this.$refs['CategoryPicker'].validated;
+          this.nextStepAvailable = this.$refs['CategoryPicker'].validated;
         } else {
-          return false;
+          this.nextStepAvailable = false;
         }
-      }
-    },
-    methods: {
+      },
       show : function(params){
         this.shown=true;
         if (params){

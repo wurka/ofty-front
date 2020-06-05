@@ -54,7 +54,43 @@
           </div>
         </div>
         <div class="column-2">
-          Материал, Вес, количество и т.п.
+          <div class="line" @click="$refs.PickBar.show()">
+            <label for="materials">Материал
+              <img
+                title="Выберите до 5 материалов"
+                :src="$store.state.host + '/static/img/shared/info.png'"
+                alt="info.png">
+            </label>
+            <PickBar
+              ref="PickBar"
+              :arr="allMaterials" :len="2" :showLim="10" :pickLim="5"
+              @done="updateMaterials"/>
+            <input type="text" id="materials">
+          </div>
+          <div class="line">
+            <label for="weight">Вес, кг</label>
+            <input type="text" id="weight">
+          </div>
+          <div class="line">
+            <label for="count">Количество</label>
+            <input type="text" id="count">
+          </div>
+          <div class="line">
+            <label for="unit-name">Название</label>
+            <input type="text" id="unit-name">
+          </div>
+          <div class="line">
+            <label for="set">Коллекция</label>
+            <input type="text" id="set">
+          </div>
+          <div class="line">
+            <label for="keywords">Ключевые слова</label>
+            <input type="text" id="keywords">
+          </div>
+          <div class="line">
+            <label for="commentary">Комментарий</label>
+            <textarea id="commentary"/>
+          </div>
         </div>
       </div>
     </div>
@@ -63,6 +99,7 @@
 
 <script>
   import axios from "axios";
+  import PickBar from "../shared/PickBar";
 
   const rootGroup = {
     id: 0,
@@ -74,6 +111,7 @@
 
   export default {
     name: "category-picker",
+    components: {PickBar},
     data: function() {
       return {
         selectGroupMode: true,
@@ -83,51 +121,64 @@
         parentGroup: rootGroup,
         navigatorGroups: [],
         parameters: [],
+        allMaterials: [],
         validated: false,  // true => все исходные данные введены верно
       }
     },
     mounted() {
-      this.loadGroups();
+      this.loadGroups().then(this.validateAllParameters);
+      this.getAllMaterials();
       window.onbeforeunload = function () {
         return "Данные о товаре будут потеряны. Всё-равно  уйти?";
       }
     },
     methods: {
+      getAllMaterials() {
+        axios
+          .get(this.$store.state.host + "/units/materials-source")
+          .then((result)=>{
+            this.allMaterials = result.data;
+          });
+      },
       loadGroups() {
-        let gg_url = this.$store.state.host + '/units/get-groups',
-          gp_url = this.$store.state.host + "/units/get-group-parameters",
-          config = {};
+        return new Promise((resolve, reject)=>
+        {
+          let gg_url = this.$store.state.host + '/units/get-groups',
+            gp_url = this.$store.state.host + "/units/get-group-parameters",
+            config = {};
 
-        if (this.parentGroup.id !== 0) {
-          config = {
-            params: {'parentid': this.parentGroup.id}
+          if (this.parentGroup.id !== 0) {
+            config = {
+              params: {'parentid': this.parentGroup.id}
+            }
           }
-        }
 
-        this.selectGroupMode = !this.parentGroup.active;
-        this.specifyParamsMode = this.parentGroup.active;
+          this.selectGroupMode = !this.parentGroup.active;
+          this.specifyParamsMode = this.parentGroup.active;
 
-        if (this.parentGroup.active) {
-          // у активной группы спрашиваем параметры с сервера
-          axios
-            .get(gp_url, {params: {groupid: this.parentGroup.id}})
-            .then((result)=>{
-              let ans = JSON.parse(result.data.parameters);
-              console.log(ans);
-              this.parameters = ans;
-            })
+          if (this.parentGroup.active) {
+            // у активной группы спрашиваем параметры с сервера
+            axios
+              .get(gp_url, {params: {groupid: this.parentGroup.id}})
+              .then((result) => {
+                let ans = JSON.parse(result.data.parameters);
+                console.log(ans);
+                this.parameters = ans;
+                resolve();
+              })
 
-        } else {
-          // у неактивной группы спрашиваем подгруппы
-          axios
-            .get(gg_url, config)
-            .then((result)=> {
-              this.loading = false;
-              console.log(result.data);
-              this.groups = result.data;
-            })
-        }
-
+          } else {
+            // у неактивной группы спрашиваем подгруппы
+            axios
+              .get(gg_url, config)
+              .then((result) => {
+                this.loading = false;
+                console.log(result.data);
+                this.groups = result.data;
+                resolve();
+              })
+          }
+        })
       },
       setParent(group) {
         this.parentGroup = group;
@@ -136,15 +187,14 @@
       goRoot() {
         this.parentGroup = rootGroup;
         this.navigatorGroups = [];
-        this.loadGroups();
+        this.loadGroups().then(this.validateAllParameters);
+
       },
       goNextGroup(group) {
         // перейти на следующую в дереве группу
         this.navigatorGroups.push(group);
         this.setParent(group);
-        this.loadGroups();
-
-        console.log(group.active);
+        this.loadGroups().then(this.validateAllParameters);
       },
       goBackGroup(group) {
         // откатиться до указанной группы в дереве
@@ -154,11 +204,31 @@
             newLength = index + 1;
           }
         });
-        this.navigatorGroups.splice(newLength);
-        this.setParent(group);
 
-        this.selectGroupMode = !group.active;
-        this.specifyParamsMode = group.active;
+        // не надо ничего делать, если переходят на последнюю группу
+        if (newLength !== this.navigatorGroups.length) {
+          this.navigatorGroups.splice(newLength);
+          this.setParent(group);
+
+          this.selectGroupMode = !group.active;
+          this.specifyParamsMode = group.active;
+          this.validateAllParameters();
+        }
+      },
+      validateAllParameters() {
+        // невалидно, ессли есть хотя бы один невалидный параметр
+        // или текущая группа - не активная
+        if (this.parentGroup.active) {
+          this.validated = true;
+          this.$refs['parameter-input'].forEach((item)=>{
+            if (item.classList.contains('invalid')) {
+              this.validated = false;
+            }
+          });
+        } else {
+          this.validated = false;
+        }
+        this.$emit("validatedChanged");
       },
       parameterChanged(event) {
         let value = event.target.value,
@@ -166,18 +236,13 @@
 
         if (intValue.toString() !== value) {
           event.target.classList.add('invalid');
-          this.validated = false;
         } else {
           event.target.classList.remove('invalid');
-          this.validated = true;
-          this.$refs['parameter-input'].forEach((item)=>{
-            if (item.classList.contains('invalid')) {
-              this.validated = false;
-            }
-          })
         }
-
-
+        this.validateAllParameters();
+      },
+      updateMaterials() {
+        console.log(1);
       }
     }
   }
