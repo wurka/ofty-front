@@ -1,13 +1,14 @@
 <template>
 
     <div class="PickBar" v-if="shown" >
-      <div class="bg" @scroll="yell()" @click="$emit('done', idArr); hide();"></div>
+      <div class="bg" @scroll="yell()" @click="$emit('done', pickedArr); hide();"></div>
       <div class="body" @click="$refs.input.focus()">
         <div class="topPanel">
           <div v-for="p in pickedArr"  :key="p.id" class="picked">
             <span class="text">{{p.name+','}}</span>
           </div>
-          <input v-model="val" ref="input" :class="[valid ? '' : 'invalid']" @keyup.enter="pickWord(val)" @keyup.esc="$emit('done', idArr); hide();"
+          <input v-model="val" ref="input" :class="[valid ? '' : 'invalid']" @keyup.enter="pickWord(val)"
+                 @keyup.esc="$emit('done', pickedArr); hide();"
                  @keydown.backspace="removeVariant()" @keydown="checkLim"/>
         </div>
         <div class="variants" v-if="showVariants" >
@@ -45,11 +46,16 @@
       },
       computed:{
         displayed: function () {
+          console.log('displayed: ');
+          console.log(this.pickedArr);
           //this.showVariants=true;
           var vm = this;
           //this.updateWords();
           var re = new RegExp('(^'+this.val+')','i');
-          var ans = this.arr.filter(variant => (re.exec(variant.name) && !vm.pickedArr.includes(variant))).slice(0,this.showLim);
+          let myIds = this.idArr;
+          var ans = this.arr.filter(
+            variant => (re.exec(variant.name) && !myIds.includes(variant.id))
+          ).slice(0,this.showLim);
 
           //console.warn(ans);
           return ans;
@@ -74,6 +80,7 @@
         hide: function(){
           this.shown=false;
           this.val = '';
+          this.$emit("hide");
         },
         checkLim:function(e){
           if (this.pickedArr.length >= this.pickLim){
@@ -93,6 +100,7 @@
             return
           }
           this.pickedArr.push(buf[0]);
+          console.log(this.pickedArr);
           this.val='';
           this.updateWords();
           this.$refs.input.focus();
@@ -171,7 +179,7 @@
             height: inherit
             //width: calc(100% - 20px)
             //padding: 0
-            width: 340px
+            width: 260px
             &:focus
               outline: none
           .pickedBar

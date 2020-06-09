@@ -11,8 +11,11 @@
     </div>
 
     <div class="pictures" v-if="selectGroupMode">
-      <div class="loading circle" v-if="loading">
-        <img src="http://zlaksa.ru/static/img/shared/pencil.gif" alt="loading">
+      <div class="loading" v-if="loading">
+        <div class="circle">
+          <img src="http://zlaksa.ru/static/img/shared/pencil.gif" alt="loading">
+        </div>
+        <span>Загрузка...</span>
       </div>
       <div class="parent-group" v-if="parentGroup !== ''">
         <div class="line">
@@ -54,7 +57,7 @@
           </div>
         </div>
         <div class="column-2">
-          <div class="line" @click="$refs.PickBar.show()">
+          <div class="line" @click="showPickBar">
             <label for="materials">Материал
               <img
                 title="Выберите до 5 материалов"
@@ -64,32 +67,37 @@
             <PickBar
               ref="PickBar"
               :arr="allMaterials" :len="2" :showLim="10" :pickLim="5"
-              @done="updateMaterials"/>
-            <input type="text" id="materials">
+              @done="updateMaterials"
+              @hide="hidePickBar"
+            />
+            <input type="text" id="materials" autocomplete="off"
+                   v-show="!pickBarShown" disabled
+                   :value="materialsStr"
+            >
           </div>
           <div class="line">
             <label for="weight">Вес, кг</label>
-            <input type="text" id="weight">
+            <input type="text" id="weight" autocomplete="off">
           </div>
           <div class="line">
             <label for="count">Количество</label>
-            <input type="text" id="count">
+            <input type="text" id="count" autocomplete="off">
           </div>
           <div class="line">
             <label for="unit-name">Название</label>
-            <input type="text" id="unit-name">
+            <input type="text" id="unit-name" autocomplete="off">
           </div>
           <div class="line">
             <label for="set">Коллекция</label>
-            <input type="text" id="set">
+            <input type="text" id="set" autocomplete="off">
           </div>
           <div class="line">
             <label for="keywords">Ключевые слова</label>
-            <input type="text" id="keywords">
+            <input type="text" id="keywords" autocomplete="off">
           </div>
           <div class="line">
             <label for="commentary">Комментарий</label>
-            <textarea id="commentary"/>
+            <textarea id="commentary" autocomplete="off"/>
           </div>
         </div>
       </div>
@@ -122,7 +130,10 @@
         navigatorGroups: [],
         parameters: [],
         allMaterials: [],
+        selectedMaterials: [],
         validated: false,  // true => все исходные данные введены верно
+        isMounted: false,
+        pickBarShown: false,
       }
     },
     mounted() {
@@ -130,9 +141,33 @@
       this.getAllMaterials();
       window.onbeforeunload = function () {
         return "Данные о товаре будут потеряны. Всё-равно  уйти?";
+      };
+      this.isMounted = true;
+    },
+    computed: {
+      materialsStr: function () {
+        let ansArr=[],
+          selected = this.selectedMaterials;
+        //console.log(this.addDict['unit-materials']);
+        for (let i in selected){
+          let mat = this.allMaterials.filter(m => m.id===selected[i].id);
+          ansArr.push(mat[0].name);
+        }
+        let ans = ansArr.join(', ');
+        if (ans.length>16) ans=ans.substring(0,16)+'...';
+        return ans;
       }
     },
     methods: {
+      showPickBar(){
+        if (!this.pickBarShown) {
+          this.$refs.PickBar.show(this.selectedMaterials);
+          this.pickBarShown = true;
+        }
+      },
+      hidePickBar() {
+        this.pickBarShown = false;
+      },
       getAllMaterials() {
         axios
           .get(this.$store.state.host + "/units/materials-source")
@@ -241,8 +276,9 @@
         }
         this.validateAllParameters();
       },
-      updateMaterials() {
-        console.log(1);
+      updateMaterials(arr) {
+        console.log(arr);
+        this.selectedMaterials = arr;
       }
     }
   }
@@ -264,11 +300,20 @@
       overflow-x: hidden
     .title
       text-align: center
-    .circle
-      border-radius: 50%
-      display: inline-block
-      position: relative
-      text-align: center
+    .loading
+      margin: auto
+      display: flex
+      align-items: center
+      .circle
+        flex-grow: 1
+        border-radius: 50%
+        display: inline-block
+        position: relative
+        text-align: center
+      span
+        color: gray
+        flex-grow: 2
+        vertical-align: middle
     .circle img
       border-radius: 50%
       display: inline-block
@@ -360,6 +405,7 @@
         .parameters
           padding: 70px 0 0 0
           .parameter
+            margin: 0 0 10px 0
             label
               display: inline-block
               min-width: 80px
@@ -370,11 +416,28 @@
               border: 1px solid gray
               width: 216px
               font-family: Philosopher, serif
+              font-size: 24px
             .invalid
               border: 1px solid red
       .column-2
         flex-grow: 1
         padding: 33px 45px 0 0
+        .line
+          display: grid
+          grid-template-columns: 1fr 1fr
+          margin: 0 0 15px 0
+          textarea, input
+            font-family: Philosopher, serif
+            font-size: 24px
+            box-sizing: border-box
+            width: 250px
+            padding: 0 5px 0 5px
+          textarea
+            resize: none
+          input:disabled
+            background: white
+            border: 1px solid #C4C4C4
+            cursor: text
 
     @keyframes fade-out
       from
