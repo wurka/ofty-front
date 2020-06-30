@@ -64,16 +64,7 @@
                 :src="$store.state.host + '/static/img/shared/info.png'"
                 alt="info.png">
             </label>
-            <PickBar
-              ref="PickBar"
-              :arr="allMaterials" :len="2" :showLim="10" :pickLim="5"
-              @done="updateMaterials"
-              @hide="hidePickBar"
-            />
-            <input type="text" id="materials" autocomplete="off"
-                   v-show="!pickBarShown" disabled
-                   :value="materialsStr"
-            >
+            <Picker ref="materialPicker"/>
           </div>
           <div class="line">
             <label for="weight">Вес, кг</label>
@@ -107,7 +98,8 @@
 
 <script>
   import axios from "axios";
-  import PickBar from "../shared/PickBar";
+  import PickBar from "~/components/shared/PickBar";
+  import Picker from "~/components/Picker";
 
   const rootGroup = {
     id: 0,
@@ -119,7 +111,7 @@
 
   export default {
     name: "category-picker",
-    components: {PickBar},
+    components: {PickBar, Picker},
     data: function() {
       return {
         selectGroupMode: true,
@@ -161,8 +153,8 @@
     methods: {
       showPickBar(){
         if (!this.pickBarShown) {
-          this.$refs.PickBar.show(this.selectedMaterials);
-          this.pickBarShown = true;
+          //this.$refs.PickBar.show(this.selectedMaterials);
+          //this.pickBarShown = true;
         }
       },
       hidePickBar() {
@@ -251,7 +243,7 @@
         }
       },
       validateAllParameters() {
-        // невалидно, ессли есть хотя бы один невалидный параметр
+        // невалидно, если есть хотя бы один невалидный параметр
         // или текущая группа - не активная
         if (this.parentGroup.active) {
           this.validated = true;
@@ -260,6 +252,10 @@
               this.validated = false;
             }
           });
+
+          // проверка материалов
+          this.validated = this.validated && this.$refs.materialPicker.isValid;
+
         } else {
           this.validated = false;
         }

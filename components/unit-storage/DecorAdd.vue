@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shown">
+  <div v-if="shown">123
     <div class="bg"></div>
     <div class="DecorAdd">
       <my-dict ref="dict"></my-dict>
