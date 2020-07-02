@@ -68,7 +68,9 @@
           </div>
           <div class="line">
             <label for="weight">Вес, кг</label>
-            <input type="text" id="weight" autocomplete="off">
+            <input type="text" id="weight" autocomplete="off"
+                   v-model="inputWeight"
+                   :class="{invalid: !validWeight}">
           </div>
           <div class="line">
             <label for="count">Количество</label>
@@ -126,6 +128,8 @@
         validated: false,  // true => все исходные данные введены верно
         isMounted: false,
         pickBarShown: false,
+        inputWeight: 0,
+        inputCount: 0,
       }
     },
     mounted() {
@@ -137,6 +141,26 @@
       this.isMounted = true;
     },
     computed: {
+      validWeight() {
+        if (this.inputWeight) {
+          let int_val = parseFloat(this.inputWeight);
+          if (isNaN(int_val)) {
+            return false;
+          }
+          return ((int_val > 0) && (int_val < 3000));
+        }
+        return true;
+      },
+      validCount() {
+        if (this.inputCount) {
+          let int_val = parseFloat(this.inputCount);
+          if (isNaN(int_val)) {
+            return false;
+          }
+          return ((int_val > 0) && (int_val < 1000));
+        }
+        return true;
+      },
       materialsStr: function () {
         let ansArr=[],
           selected = this.selectedMaterials;
@@ -255,6 +279,8 @@
 
           // проверка материалов
           this.validated = this.validated && this.$refs.materialPicker.isValid;
+          // проверка веса
+          this.validated = this.validated && this.validWeight;
 
         } else {
           this.validated = false;
