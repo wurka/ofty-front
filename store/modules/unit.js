@@ -4,6 +4,13 @@ import {host} from '../index'
 const state = {
   unit: {
     id: '?'
+  },
+  colors: {
+    'group1': [],
+    'group2': [],
+    'group3': [],
+    'group4': [],
+    'group5': [],
   }
 };
 const getters = {
@@ -14,9 +21,37 @@ const getters = {
 const mutations = {
   UNIT_SET(state, payload) {
     state.unit = payload;
+  },
+  COLORS_SET(state, payload) {
+    // присваимвание свойства checked для каждого цвета
+    [
+      payload.group1,
+      payload.group2,
+      payload.group3,
+      payload.group4,
+      payload.group5,
+    ].forEach(
+      (group)=>{
+      group.forEach((color)=>{
+        color.checked = false;
+      })
+    });
+
+    state.colors = payload;
   }
 };
 const actions = {
+  COLORS_GET(context) {
+    axios
+      .get(host + "/units/color-picker-source")
+      .then((response)=>{
+        context.commit('COLORS_SET', response.data)
+      })
+      .catch((response)=>{
+        console.warn('error while getting colors');
+        console.log(response);
+      });
+  },
   UNIT_GET(context, param) {
     console.log(param);
     axios

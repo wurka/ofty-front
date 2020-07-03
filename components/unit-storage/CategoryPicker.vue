@@ -64,7 +64,8 @@
                 :src="$store.state.host + '/static/img/shared/info.png'"
                 alt="info.png">
             </label>
-            <Picker ref="materialPicker"/>
+            <Picker ref="materialPicker"
+                    @valueChanged="validateAllParameters"/>
           </div>
           <div class="line">
             <label for="weight">Вес, кг</label>
@@ -74,23 +75,35 @@
           </div>
           <div class="line">
             <label for="count">Количество</label>
-            <input type="text" id="count" autocomplete="off">
+            <input type="text" id="count"
+                   v-model="inputCount"
+                   :class="{invalid: !validCount}"
+                   autocomplete="off">
           </div>
           <div class="line">
             <label for="unit-name">Название</label>
-            <input type="text" id="unit-name" autocomplete="off">
+            <input type="text" id="unit-name"
+                   v-model="inputName"
+                   :class="{invalid: !validName}"
+                   placeholder="введите название"
+                   autocomplete="off">
           </div>
-          <div class="line">
+          <div class="line disabled">
             <label for="set">Коллекция</label>
-            <input type="text" id="set" autocomplete="off">
+            <input type="text" id="set" autocomplete="off" tabindex="-1"
+                   placeholder="в разработке...">
           </div>
-          <div class="line">
+          <div class="line disabled">
             <label for="keywords">Ключевые слова</label>
-            <input type="text" id="keywords" autocomplete="off">
+            <input type="text" id="keywords" autocomplete="off"
+                   placeholder="в разработке..."
+                   tabindex="-1">
           </div>
           <div class="line">
             <label for="commentary">Комментарий</label>
-            <textarea id="commentary" autocomplete="off"/>
+            <textarea id="commentary" autocomplete="off"
+                      v-model="inputCommentary"
+                      :class="{invalid: !validCommentary}"/>
           </div>
         </div>
       </div>
@@ -128,8 +141,10 @@
         validated: false,  // true => все исходные данные введены верно
         isMounted: false,
         pickBarShown: false,
-        inputWeight: 0,
-        inputCount: 0,
+        inputWeight: 1,
+        inputCount: 1,
+        inputName: '',
+        inputCommentary: '',
       }
     },
     mounted() {
@@ -140,7 +155,25 @@
       };
       this.isMounted = true;
     },
+    watch: {
+      inputCount(newVal) {
+        this.inputCount = newVal.replace(/,/g, '.');
+        this.validateAllParameters();
+      },
+      inputName() {
+        this.validateAllParameters();
+      },
+      inputWeight() {
+        this.validateAllParameters();
+      }
+    },
     computed: {
+      validName() {
+        return this.inputName !== '';
+      },
+      validCommentary() {
+        return true;
+      },
       validWeight() {
         if (this.inputWeight) {
           let int_val = parseFloat(this.inputWeight);
@@ -149,7 +182,7 @@
           }
           return ((int_val > 0) && (int_val < 3000));
         }
-        return true;
+        return false;
       },
       validCount() {
         if (this.inputCount) {
@@ -159,7 +192,7 @@
           }
           return ((int_val > 0) && (int_val < 1000));
         }
-        return true;
+        return false;
       },
       materialsStr: function () {
         let ansArr=[],
@@ -280,7 +313,10 @@
           // проверка материалов
           this.validated = this.validated && this.$refs.materialPicker.isValid;
           // проверка веса
-          this.validated = this.validated && this.validWeight;
+          this.validated = this.validated
+            && this.validWeight
+            && this.validCount
+            && this.validCommentary;
 
         } else {
           this.validated = false;
@@ -445,6 +481,11 @@
         flex-grow: 1
         padding: 33px 45px 0 0
         .line
+          &.disabled
+            color: gray
+            pointer-events: none
+            input
+
           display: grid
           grid-template-columns: 1fr 1fr
           margin: 0 0 15px 0

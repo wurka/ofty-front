@@ -9,6 +9,9 @@
     <div class="step-1" v-if="step === 1">
       <CategoryPicker ref="CategoryPicker" @validatedChanged="checkNextStepAvailable"/>
     </div>
+    <div class="step-2" v-if="step === 2">
+      <PhotoAndColorPicker ref="photoPicker" @validatedChanged="checkNextStepAvailable"/>
+    </div>
     <div class="buttons">
       <input type="button" class="button" value="Отмена" @click="emitHide">
       <input
@@ -19,10 +22,12 @@
 </template>
 
 <script>
-  import CategoryPicker from "./CategoryPicker";
+  import CategoryPicker from "~/components/unit-storage/CategoryPicker";
+  import PhotoAndColorPicker from "~/components/unit-storage/PhotoAndColorPicker";
+
   export default {
     name: "NewUnitWizard",
-    components: {CategoryPicker},
+    components: {PhotoAndColorPicker, CategoryPicker},
     data: function () {
       return {
         isMounted: false,

@@ -89,6 +89,7 @@
         variant.selected = true;
         this.selectedVariants.push(variant);
         this.deactivateSearchMode();
+        this.$emit('valueChanged');
       },
       removeVariantFromSelected(variant) {
         for (let i=0; i<this.selectedVariants.length; i++) {
@@ -102,6 +103,7 @@
             this.variants[i].selected = false;
           }
         }
+        this.$emit('valueChanged');
       },
       updateVariants() {
         let text = this.$refs.searchInput.value.toLowerCase();
@@ -186,6 +188,7 @@
   .empty
     font-size: 18px
     padding: 3px 7px
+    color: gray
   .shown-variants
     max-height: 400px
     overflow-y: scroll
