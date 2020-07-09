@@ -12,9 +12,19 @@
       Допустимо добавление не более 5 цветов
     </div>
     <div class="colors">
-      <div class="group" id="group1">
+      <div class="group" :id="'group'+i_group" v-for="i_group in 5" :key="'group#' + i_group">
         <div class="color"
-             v-for="(color, ci) in $store.state.unit.colors.group1"
+             v-if="i_group >= 3"
+             v-for="(color, ci) in $store.state.unit.colors['group' + i_group]"
+             :key="'group_1_color'+ci"
+             :style="'background: url(' + color['texture'] + ')'">
+          <div class="marker" v-show="color.checked">
+            <img :src="$store.state.host + '/static/img/shared/black-flag.png'" alt="marker">
+          </div>
+        </div>
+        <div class="color"
+             v-if="i_group < 3"
+             v-for="(color, ci) in $store.state.unit.colors['group' + i_group]"
              :key="'group_1_color'+ci"
              :style="'background: #' + color['rgb_hex']">
           <div class="marker" v-show="color.checked">
@@ -22,18 +32,6 @@
           </div>
         </div>
       </div>
-      <div class="group" id="group2">
-        <div class="color"
-             v-for="(color, ci) in $store.state.unit.colors.group2"
-             :key="'group_1_color'+ci"
-             :style="'background: #' + color['rgb_hex']">
-          <div class="marker" v-show="color.checked">
-            <img :src="$store.state.host + '/static/img/shared/black-flag.png'" alt="marker">
-          </div>
-        </div>
-      </div>
-
-
     </div>
   </div>
 </template>
@@ -47,7 +45,7 @@
     }},
     mounted() {
       this.$store.dispatch('COLORS_GET');
-    }
+    },
   }
 </script>
 
@@ -76,9 +74,13 @@
         flex-grow: 1
         margin: 0 6px
         box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
-      &#group1
+      &#group1, &#group2
         .color
           height: 71px
-
-
+      &#group3
+        .color
+          height: 35px
+      &#group4, &#group5
+        .color
+          height: 103px
 </style>
