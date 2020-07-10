@@ -41,6 +41,16 @@ const mutations = {
   }
 };
 const actions = {
+  COLORS_INVERSE_CHECKED(context, color) {
+    for (let i=1; i<=5; i++) {
+      let grp = 'group' + i;
+      context.state.colors[grp].forEach((clr)=>{
+        if (clr.id === color.id) {
+          clr.checked = !clr.checked;
+        }
+      })
+    }
+  },
   COLORS_GET(context) {
     axios
       .get(host + "/units/color-picker-source")
