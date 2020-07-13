@@ -27,6 +27,7 @@
 <script>
   import VueCropper from 'vue-cropperjs';
   import 'cropperjs/dist/cropper.css';
+  import axios from "../../.nuxt/axios";
 
   export default {
     name: "AvatarPicker",
