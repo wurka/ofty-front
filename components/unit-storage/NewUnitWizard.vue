@@ -12,6 +12,9 @@
     <div class="step-2" v-if="step === 2">
       <PhotoAndColorPicker ref="photoPicker" @validatedChanged="checkNextStepAvailable"/>
     </div>
+    <div class="step-3" v-if="step === 3">
+      <CostPicker ref="costPicker" @validatedChanged="checkNextStepAvailable"/>
+    </div>
     <div class="buttons">
       <input type="button" class="button" value="Отмена" @click="emitHide">
       <input
@@ -24,10 +27,11 @@
 <script>
   import CategoryPicker from "~/components/unit-storage/CategoryPicker";
   import PhotoAndColorPicker from "~/components/unit-storage/PhotoAndColorPicker";
+  import CostPicker from "~/components/unit-storage/CostPicker";
 
   export default {
     name: "NewUnitWizard",
-    components: {PhotoAndColorPicker, CategoryPicker},
+    components: {PhotoAndColorPicker, CategoryPicker, CostPicker},
     data: function () {
       return {
         isMounted: false,
@@ -48,9 +52,13 @@
 
         if (this.step === 1) {
           this.nextStepAvailable = this.$refs['CategoryPicker'].validated;
+        } else if (this.step === 1) {
+          this.nextStepAvailable = this.$refs['PhotoAndColorPicker'].validated;
         } else {
           this.nextStepAvailable = false;
         }
+
+
       },
       show : function(params){
         this.shown=true;

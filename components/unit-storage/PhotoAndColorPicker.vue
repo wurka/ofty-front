@@ -2,10 +2,13 @@
   <div class="photo-and-color-picker-layout">
     <div class="title">
       Загрузите фотографию товара и выберите цвета (максимально 5 цветов)
+      {{validated}}
     </div>
     <div class="photos">
       <div class="photo" v-for="(im, i) in images" :key="'photo_' + i">
-        <img :src="im" :alt="'photo_'+i" @click="clickPhotoInput(i)">
+        <img :src="$store.state.host+'/static/img/shared/minus.png'" alt="x" class="clear-me"
+             @click="clearImage(i)">
+        <img :src="im" :alt="'photo_'+i" @click="clickPhotoInput(i)" class="photo-img">
         <input type="file" :name="'photo'+i" :id="'photo_input_' + i"
                @input="sendToCropper($event, i)">
       </div>
@@ -25,7 +28,7 @@
 
     </div>
 
-    <div class="color-error">
+    <div class="color-error" :class="{transparent: selectedColors.length <= 5}">
       Допустимо добавление не более 5 цветов
     </div>
     <div class="colors">
@@ -74,15 +77,33 @@
         this.$store.state.host + "/static/img/shared/no_img.png",
         this.$store.state.host + "/static/img/shared/no_img.png",
       ],
+      selectedColors: [],
     }},
     mounted() {
       this.$store.dispatch('COLORS_GET');
+    },
+    computed: {
+      atLeastOnePhoto() {
+        let ans = false;
+        for (let image of this.images) {
+          if (image !== this.defaultImage) {
+            ans = true; break;
+          }
+        }
+        return ans;
+      },
+      validated() {
+        return (this.selectedColors.length <= 5) &&
+          (this.selectedColors.length > 0) &&
+          (this.atLeastOnePhoto)
+      }
     },
     methods: {
       acceptCropper() {
         // cropper должен сработать
         this.cropperShown = false;
-        this.images[this.imageIndex] = this.$refs.cropper.getCroppedCanvas().toDataURL();
+        this.$set(this.images, this.imageIndex, this.$refs.cropper.getCroppedCanvas().toDataURL());
+
         // это для того, чтобы можно работало повторное открытие файла
         document.getElementById('photo_input_' + this.imageIndex).value = '';
       },
@@ -94,6 +115,20 @@
       },
       inverseColorSelection (color) {
         this.$store.dispatch('COLORS_INVERSE_CHECKED', color);
+
+        if (color.checked === true) {
+          if (!this.selectedColors.includes(color.id)) {
+            this.selectedColors.push(color.id);
+          }
+        } else {
+          if (this.selectedColors.includes(color.id)) {
+            this.selectedColors = this.selectedColors.filter((x)=>{return x!== color.id });
+          }
+        }
+
+      },
+      clearImage(imageIndex) {
+        this.$set(this.images, imageIndex, this.defaultImage);
       },
       clickPhotoInput(number) {
         window.document.getElementById('photo_input_'+number).click();
@@ -127,17 +162,33 @@
       line-height: 24px
     .photos
       text-align: center
+      .clear-me
+        width: 24px
+        height: 24px
+        position: absolute
+        background: white
+        margin: 55px 0 0 140px
+        border: 1px solid gray
+        box-shadow: none
+        display: none
       .photo
         display: inline-block
         cursor: pointer
-        img
+        &:hover
+          .clear-me
+            display: block
+        .photo-img
           width: 155px
           height: 155px
-          margin: 50px 20px
+          margin: 50px 20px 20px 20px
           border: 1px solid transparent
+          box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25)
           &:hover
             border: 1px solid gray
             background: #F5F5F5
+
+
+
       input[type=file]
         display: none
 
@@ -189,5 +240,11 @@
         padding: 5px
         min-width: 100px
         display: block
+  .color-error
+    text-align: center
+    color: red
+
+  .transparent
+    opacity: 0
 
 </style>
