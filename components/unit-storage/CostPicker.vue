@@ -4,15 +4,21 @@
       <div class="bail line">
         <label for="bail-value">Залог</label>
         <input type="text" name="bail-value" id="bail-value"
+               :class="{invalid: !bailValid}"
+               autocomplete="off"
                v-model="bail">
       </div>
       <div class="costs">
+        <div class="no-cost" v-if="costs.length===0">
+          Нет тарифов
+        </div>
         <div class="cost" v-for="(cost, ci) in costs" :key="'cost_'+ ci">
           <div class="text" v-if="cost.type === 'hour'">
             <div class="column">
               От {{ cost.duration }} {{ hoursText(cost.duration) }} - {{ cost.cost }} р/час
             </div>
-            <div class="column">
+            <div class="column"
+                 @click="deleteCost(ci)">
               удалить
             </div>
           </div>
@@ -20,7 +26,8 @@
             <div class="column">
               От {{ cost.duration }} {{ daysText(cost.duration) }} - {{ cost.cost }} р/день
             </div>
-            <div class="column">
+            <div class="column"
+                 @click="deleteCost(ci)">
               удалить
             </div>
           </div>
@@ -45,18 +52,22 @@
         <div class="from">
           <label for="from">От</label>
           <input type="text" id="from" v-model="newFrom"
+                 autocomplete="off"
                  :class="{invalid: !newFromValid}">
-          <label for="from">ч.</label>
+          <label for="from" v-if="newCostMode==='hour'">ч.</label>
+          <label for="from" v-if="newCostMode==='day'">д.</label>
         </div>
         <div class="new-cost-value">
           <label for="new-cost-value">Цена</label>
           <input type="text" id="new-cost-value" v-model="newCost"
+                 autocomplete="off"
                  :class="{invalid: !newCostValid}">
           <label for="new-cost-value">р.</label>
         </div>
       </div>
       <div class="new-cost-add line">
-        <span :class="{disabled: !(newCostValid && newFromValid)}">Добавить</span>
+        <span :class="{disabled: !(newCostValid && newFromValid)}"
+              @click="addNewCost">Добавить</span>
       </div>
     </div>
 </template>
@@ -66,17 +77,34 @@
       name: "CostPicker",
       data: function () { return {
         costs: [
-          {type: 'day', duration: 3, cost: 100},
-          {type: 'hour', duration: 10, cost: 20},
+          //{type: 'day', duration: 3, cost: 100},
+          //{type: 'hour', duration: 10, cost: 20},
         ],  // список цен для товара
         newCostMode: 'hour',
         bail: 100,
+        bailValid: true,
         newFrom: 1,
         newFromValid: true,
         newCostValid: true,
         newCost: 1
       }},
+      computed: {
+        validated() {
+          // введены все нужные значения и они корректны
+          return (this.costs.length > 0) && (this.bailValid);
+        }
+      },
       watch: {
+        bail(newValue) {
+          let intBail = parseInt(newValue);
+
+          if (!isNaN(intBail)) {
+            this.bail = intBail;
+            this.bailValid = true;
+          } else {
+            this.bailValid = false;
+          }
+        },
         newFrom(newValue) {
           let intValue = parseInt(newValue);
 
@@ -95,9 +123,31 @@
           } else {
             this.newCostValid = false;
           }
+          this.$emit('validatedChanged');
         }
       },
       methods: {
+        deleteCost(costIndex) {
+          //удалить стоимость и указанным индексом
+          this.costs.splice(costIndex, 1);
+          console.log(costIndex);
+          console.log(this.costs);
+        },
+        addNewCost() {
+          // добавить новый пункт с ценами
+          if (!(this.newFromValid && this.newCostValid)) {
+            alert("Введены некорректные данные");
+            return;
+          }
+
+          this.costs.push({
+            type: this.newCostMode,
+            duration: this.newFrom,
+            cost: this.newCost,
+          });
+
+          this.$emit('validatedChanged');
+        },
         newCostModeSet(newValue) {
           this.newCostMode = newValue;
         },
@@ -150,6 +200,11 @@
     .costs
       width: 456px
       margin: 10px auto
+      .no-cost
+        text-align: center
+        margin: 24px 0 0 0
+        font-size: 18px
+        color: gray
       .cost
         margin: 15px 0 15px 0
         .text

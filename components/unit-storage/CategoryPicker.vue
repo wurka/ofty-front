@@ -65,6 +65,7 @@
                 alt="info.png">
             </label>
             <Picker ref="materialPicker"
+                    id="materials"
                     @valueChanged="validateAllParameters"/>
           </div>
           <div class="line">
@@ -145,6 +146,8 @@
         inputCount: 1,
         inputName: '',
         inputCommentary: '',
+        selectedGroup: undefined,
+        demoParameters: [],
       }
     },
     mounted() {
@@ -321,6 +324,28 @@
         } else {
           this.validated = false;
         }
+
+        if (this.validated === false) {
+          this.selectedGroup = undefined;  // если что-то не валидно - считаем, что ничего не выбрано
+        } else {
+          let names = [];
+          for (let g of this.navigatorGroups) {
+            names.push(g.name);
+          }
+
+          this.selectedGroup = {
+            'group-image': this.parentGroup["group-image"],
+            'group-size-image': this.parentGroup["group-size-image"],
+            'id': this.parentGroup.id,
+            'names': names
+          }
+
+          this.demoParameters = this.parameters;
+          for (let parameter of this.demoParameters) {
+            parameter.value = document.getElementById('pv_'+parameter.id).value;
+          }
+        }
+
         this.$emit("validatedChanged");
       },
       parameterChanged(event) {

@@ -2,11 +2,12 @@
   <div class="photo-and-color-picker-layout">
     <div class="title">
       Загрузите фотографию товара и выберите цвета (максимально 5 цветов)
-      {{validated}}
     </div>
     <div class="photos">
       <div class="photo" v-for="(im, i) in images" :key="'photo_' + i">
         <img :src="$store.state.host+'/static/img/shared/minus.png'" alt="x" class="clear-me"
+             v-if="im !== defaultImage"
+             title="Удалить эту фотографию"
              @click="clearImage(i)">
         <img :src="im" :alt="'photo_'+i" @click="clickPhotoInput(i)" class="photo-img">
         <input type="file" :name="'photo'+i" :id="'photo_input_' + i"
@@ -78,6 +79,7 @@
         this.$store.state.host + "/static/img/shared/no_img.png",
       ],
       selectedColors: [],
+      demoColors: [],
     }},
     mounted() {
       this.$store.dispatch('COLORS_GET');
@@ -106,12 +108,16 @@
 
         // это для того, чтобы можно работало повторное открытие файла
         document.getElementById('photo_input_' + this.imageIndex).value = '';
+
+        this.$emit('validatedChanged');
       },
       closeCropper() {
         // отменить кроппер (спрятать и не резать)
         this.cropperShown = false;
         // это для того, чтобы можно работало повторное открытие файла
         document.getElementById('photo_input_' + this.imageIndex).value = '';
+
+        this.$emit('validatedChanged');
       },
       inverseColorSelection (color) {
         this.$store.dispatch('COLORS_INVERSE_CHECKED', color);
@@ -119,16 +125,21 @@
         if (color.checked === true) {
           if (!this.selectedColors.includes(color.id)) {
             this.selectedColors.push(color.id);
+            this.demoColors.push(color);
           }
         } else {
           if (this.selectedColors.includes(color.id)) {
             this.selectedColors = this.selectedColors.filter((x)=>{return x!== color.id });
+            this.demoColors = this.demoColors.filter((x)=>{return x.id!== color.id });
           }
         }
 
+        this.$emit('validatedChanged');
       },
       clearImage(imageIndex) {
         this.$set(this.images, imageIndex, this.defaultImage);
+
+        this.$emit('validatedChanged');
       },
       clickPhotoInput(number) {
         window.document.getElementById('photo_input_'+number).click();
@@ -171,6 +182,9 @@
         border: 1px solid gray
         box-shadow: none
         display: none
+        &:hover
+          background: #F5F5F5
+          border: 1px solid black
       .photo
         display: inline-block
         cursor: pointer

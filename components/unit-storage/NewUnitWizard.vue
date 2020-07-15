@@ -6,20 +6,23 @@
         @click="goStep(i)">{{i}}
       </div>
     </div>
-    <div class="step-1" v-if="step === 1">
+    <div class="step-1" v-show="step === 1">
       <CategoryPicker ref="CategoryPicker" @validatedChanged="checkNextStepAvailable"/>
     </div>
-    <div class="step-2" v-if="step === 2">
-      <PhotoAndColorPicker ref="photoPicker" @validatedChanged="checkNextStepAvailable"/>
+    <div class="step-2" v-show="step === 2">
+      <PhotoAndColorPicker ref="PhotoAndColorPicker" @validatedChanged="checkNextStepAvailable"/>
     </div>
-    <div class="step-3" v-if="step === 3">
-      <CostPicker ref="costPicker" @validatedChanged="checkNextStepAvailable"/>
+    <div class="step-3" v-show="step === 3">
+      <CostPicker ref="CostPicker" @validatedChanged="checkNextStepAvailable"/>
+    </div>
+    <div class="step-4" v-show="step === 4">
+      <Summary ref="Summary"/>
     </div>
     <div class="buttons">
       <input type="button" class="button" value="Отмена" @click="emitHide">
       <input
         :class="{'disabled' : !nextStepAvailable }"
-        type="button" class="button" value="Подтвердить" @click="goNext">
+        type="button" class="button" value="Далее" @click="goNext">
     </div>
   </div>
 </template>
@@ -28,15 +31,16 @@
   import CategoryPicker from "~/components/unit-storage/CategoryPicker";
   import PhotoAndColorPicker from "~/components/unit-storage/PhotoAndColorPicker";
   import CostPicker from "~/components/unit-storage/CostPicker";
+  import Summary from "~/components/unit-storage/Summary";
 
   export default {
     name: "NewUnitWizard",
-    components: {PhotoAndColorPicker, CategoryPicker, CostPicker},
+    components: {PhotoAndColorPicker, CategoryPicker, CostPicker, Summary},
     data: function () {
       return {
         isMounted: false,
         shown: true,
-        step: 1,
+        step: 3,
         nextStepAvailable: false,
       }
     },
@@ -49,13 +53,33 @@
         if (!this.isMounted) {
           this.nextStepAvailable = false;
         }
+        let summary = this.$refs.Summary;
 
         if (this.step === 1) {
           this.nextStepAvailable = this.$refs['CategoryPicker'].validated;
-        } else if (this.step === 1) {
-          this.nextStepAvailable = this.$refs['PhotoAndColorPicker'].validated;
+          let sg = this.$refs.CategoryPicker.selectedGroup;
+          summary.groups = sg === undefined ? [] : sg.names;
+          summary.groupId = sg === undefined ? 0 : sg.id;
+          summary.typeImage = sg === undefined ?
+            this.$store.host + '/static/img/shared/no_image.png' : sg['group-size-image'];
+          summary.parameters = sg === undefined ? [] : this.$refs['CategoryPicker'].demoParameters;
+        } else if (this.step === 2) {
+          let picker = this.$refs['PhotoAndColorPicker'];
+          this.nextStepAvailable = picker.validated;
+          if (!picker.validated) {
+            summary.colors = [];
+            summary.photos = [];
+          } else {
+            summary.colors = picker.demoColors;
+            summary.photos = picker.images.filter((i)=>{return i !== picker.defaultImage;});
+          }
+        } else if (this.step === 3) {
+          this.nextStepAvailable = this.$refs['CostPicker'].validated;
+          summary.costs = this.$refs.CostPicker.costs;
+        } else if (this.step === 4) {
+          this.nextStepAvailable = this.$refs['Summary'].validated;
         } else {
-          this.nextStepAvailable = false;
+            this.nextStepAvailable = false;
         }
 
 
@@ -77,9 +101,11 @@
       },
       goStep(step_number) {
         this.step = step_number;
+        this.checkNextStepAvailable();
       },
       goNext() {
         this.step += 1;
+        this.checkNextStepAvailable();
       },
       emitHide() {
         this.$emit('hide-add-decor');
