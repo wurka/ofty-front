@@ -13,18 +13,9 @@
           Нет тарифов
         </div>
         <div class="cost" v-for="(cost, ci) in costs" :key="'cost_'+ ci">
-          <div class="text" v-if="cost.type === 'hour'">
+          <div class="text">
             <div class="column">
-              От {{ cost.duration }} {{ hoursText(cost.duration) }} - {{ cost.cost }} р/час
-            </div>
-            <div class="column"
-                 @click="deleteCost(ci)">
-              удалить
-            </div>
-          </div>
-          <div class="text" v-if="cost.type === 'day'">
-            <div class="column">
-              От {{ cost.duration }} {{ daysText(cost.duration) }} - {{ cost.cost }} р/день
+              {{ cost.text }}
             </div>
             <div class="column"
                  @click="deleteCost(ci)">
@@ -133,6 +124,12 @@
           console.log(costIndex);
           console.log(this.costs);
         },
+        getCostText(mode, duration, value) {
+          return 'От ' + duration + ' ' +
+            (mode === 'day'?
+              this.daysText(duration) : this.hoursText(duration)) +
+            ' - ' + value + (mode === 'day' ? ' р/день' : ' р/час');
+        },
         addNewCost() {
           // добавить новый пункт с ценами
           if (!(this.newFromValid && this.newCostValid)) {
@@ -140,11 +137,14 @@
             return;
           }
 
-          this.costs.push({
+          let newCost = {
             type: this.newCostMode,
             duration: this.newFrom,
             cost: this.newCost,
-          });
+            text: this.getCostText(this.newCostMode, this.newFrom, this.newCost)
+          }
+
+          this.costs.push(newCost);
 
           this.$emit('validatedChanged');
         },

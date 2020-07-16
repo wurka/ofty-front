@@ -34,14 +34,39 @@
       <div class="colors">
         <div class="color" v-for="(color, ci) in colors" :key="'color_'+ci">
           <div class="simple-color"
-               v-if="color['rgb _hex'] !== ''"
+               v-if="color['rgb_hex'] !== ''"
                :style="'background: #' + color['rgb_hex']" />
           <div class="texture-color"
                v-if="color['texture'] !== ''"
                :style="'background: url('+color['texture']+')'"/>
         </div>
       </div>
-      <div class="costs">costs</div>
+      <div class="costs">
+        <div class="hourly-costs">
+          <div class="title">
+            Почасовая аренда
+          </div>
+          <div class="empty" v-if="hourlyCosts.length===0">
+            не доступна
+          </div>
+          <div class="cost" v-for="(cost, ci) in hourlyCosts"
+               :key="'h_cost_'+ci">
+            {{ cost.text }}
+          </div>
+        </div>
+        <div class="daily-costs">
+          <div class="title">
+            Посуточная аренда
+          </div>
+          <div class="empty" v-if="dailyCosts.length===0">
+            не доступна
+          </div>
+          <div class="cost" v-for="(cost, ci) in dailyCosts"
+               :key="'d_cost_'+ci">
+            {{ cost.text }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -56,7 +81,12 @@
         groupId: [],
         photos: [],
         colors: [],
+        bail: 0,
         costs: [],
+        weight: 0,
+        commentary: 0,
+        count: 0,
+        name: "noname",
       }},
       computed: {
         validated() {
@@ -66,6 +96,12 @@
             (this.colors.length > 0) &&
             (this.costs.length > 0)
           )
+        },
+        dailyCosts() {
+          return this.costs.filter((c)=>{return c.type==='day'});
+        },
+        hourlyCosts() {
+          return this.costs.filter((c)=>{return c.type==='hour'});
         }
       }
     }
@@ -118,6 +154,22 @@
         height: 30px
         width: 155px
         border: 1px solid black
+    .costs
+      display: flex
+      width: 500px
+      margin: auto
+      .title
+        font-size: 18px
+        text-align: left
+      .daily-costs
+        flex-grow: 1
+      .hourly-costs
+        flex-grow: 1
+      .empty
+        margin: 5px 0 0 15px
+      .cost
+        margin: 5px 0 0 15px
+
 
 
 </style>

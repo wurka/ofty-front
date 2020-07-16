@@ -22,7 +22,7 @@
       <input type="button" class="button" value="Отмена" @click="emitHide">
       <input
         :class="{'disabled' : !nextStepAvailable }"
-        type="button" class="button" value="Далее" @click="goNext">
+        type="button" class="button" :value="goAheadText" @click="goNext">
     </div>
   </div>
 </template>
@@ -32,6 +32,7 @@
   import PhotoAndColorPicker from "~/components/unit-storage/PhotoAndColorPicker";
   import CostPicker from "~/components/unit-storage/CostPicker";
   import Summary from "~/components/unit-storage/Summary";
+  import axios from "axios";
 
   export default {
     name: "NewUnitWizard",
@@ -40,12 +41,17 @@
       return {
         isMounted: false,
         shown: true,
-        step: 3,
+        step: 1,
         nextStepAvailable: false,
       }
     },
     mounted() {
       this.isMounted = true;
+    },
+    computed: {
+      goAheadText() {
+        return this.step===4 ? 'Создать' : 'Далее';
+      }
     },
     methods: {
       checkNextStepAvailable(){
@@ -57,12 +63,17 @@
 
         if (this.step === 1) {
           this.nextStepAvailable = this.$refs['CategoryPicker'].validated;
-          let sg = this.$refs.CategoryPicker.selectedGroup;
+          let picker = this.$refs.CategoryPicker,
+            sg = this.$refs.CategoryPicker.selectedGroup;
           summary.groups = sg === undefined ? [] : sg.names;
           summary.groupId = sg === undefined ? 0 : sg.id;
           summary.typeImage = sg === undefined ?
             this.$store.host + '/static/img/shared/no_image.png' : sg['group-size-image'];
-          summary.parameters = sg === undefined ? [] : this.$refs['CategoryPicker'].demoParameters;
+          summary.parameters = sg === undefined ? [] : picker.demoParameters;
+          summary.weight = picker.inputWeight;
+          summary.commentary = picker.inputCommentary;
+          summary.name = picker.inputName;
+          summary.count = picker.inputCount;
         } else if (this.step === 2) {
           let picker = this.$refs['PhotoAndColorPicker'];
           this.nextStepAvailable = picker.validated;
@@ -76,6 +87,7 @@
         } else if (this.step === 3) {
           this.nextStepAvailable = this.$refs['CostPicker'].validated;
           summary.costs = this.$refs.CostPicker.costs;
+          summary.bail = this.$refs.CostPicker.bail;
         } else if (this.step === 4) {
           this.nextStepAvailable = this.$refs['Summary'].validated;
         } else {
@@ -93,19 +105,52 @@
         this.$emit('scrollDisable');
         document.body.className='scrollDisable';
       },
-      validateStep() {
-        // проверить, что все данные на текущем шаге введены верно
-        if (this.step === 1) {
-
-        }
-      },
       goStep(step_number) {
         this.step = step_number;
         this.checkNextStepAvailable();
       },
       goNext() {
-        this.step += 1;
-        this.checkNextStepAvailable();
+        if (this.step <= 3) {
+          this.step += 1;
+          this.checkNextStepAvailable();
+        } else {
+          // конец шагов (надо создавать, а не переходить)
+          let vm = this,
+            sum = this.$refs.Summary,
+            fd = new FormData(),
+            colors = sum.colors.map((c)=>c.id),
+            // переработать массив в словарь
+            parameters = Object.assign({},
+              ...sum.parameters.map((x)=>({[x.id]: x.value}))),
+            materials = this.$refs.CategoryPicker.selectedMaterials.map(
+              (x)=>(x.id)),
+            sets = [],
+            keywords = [];
+          fd.append('weight', sum.weight);
+          fd.append('bail', sum.bail);
+          fd.append('count', sum.count);
+          fd.append('title', sum.name);
+          fd.append('costs', sum.costs);
+          fd.append('unit-group', sum.groupId);
+          fd.append('unit-colors', JSON.stringify(colors));
+          fd.append('parameters', JSON.stringify(parameters));
+          fd.append('unit-materials', JSON.stringify(materials));
+          fd.append('sets', JSON.stringify(sets));
+          fd.append('keywords', JSON.stringify(keywords));
+          fd.append('description', sum.commentary);
+          fd.append('published', JSON.stringify(true));
+          sum.photos.forEach((p, i)=>{
+            fd.append('photo'+(i+1), p);
+          });
+
+
+          axios
+            .post(this.$store.state.host + "/units/add-new-unit", fd,{headers: {
+                "X-CSRFToken": vm.$store.state.csrf.csrf
+              }})
+            .then((response)=>{alert('ok')})
+            .catch((error)=>{console.log(error.response)});
+        }
       },
       emitHide() {
         this.$emit('hide-add-decor');
