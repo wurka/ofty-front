@@ -40,13 +40,18 @@
     data: function () {
       return {
         isMounted: false,
-        shown: true,
+        shown: false,
         step: 1,
         nextStepAvailable: false,
       }
     },
     mounted() {
       this.isMounted = true;
+      window.onbeforeunload = function () {
+        if (this.shown) {
+          return "Данные о товаре будут потеряны. Всё-равно  уйти?";
+        }
+      };
     },
     computed: {
       goAheadText() {
@@ -54,6 +59,18 @@
       }
     },
     methods: {
+        dataURItoBlob(dataURI) {
+          let byteString = atob(dataURI.split(',')[1]),
+            mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0],
+            ab = new ArrayBuffer(byteString.length),
+            ia = new Uint8Array(ab);
+
+          for (let i = 0; i < byteString.length; i++){
+            ia[i] = byteString.charCodeAt(i);
+          }
+          let blob = new Blob([ab], {type: mimeString});
+          return blob;
+        },
       checkNextStepAvailable(){
         // защита от неинициализированных $refs
         if (!this.isMounted) {
@@ -97,6 +114,7 @@
 
       },
       show : function(params){
+        this.step = 1;
         this.shown=true;
         if (params){
           this.editParams = params;
@@ -130,7 +148,7 @@
           fd.append('bail', sum.bail);
           fd.append('count', sum.count);
           fd.append('title', sum.name);
-          fd.append('costs', sum.costs);
+          fd.append('costs', JSON.stringify(sum.costs));
           fd.append('unit-group', sum.groupId);
           fd.append('unit-colors', JSON.stringify(colors));
           fd.append('parameters', JSON.stringify(parameters));
@@ -140,7 +158,7 @@
           fd.append('description', sum.commentary);
           fd.append('published', JSON.stringify(true));
           sum.photos.forEach((p, i)=>{
-            fd.append('photo'+(i+1), p);
+            fd.append('photo'+(i+1), this.dataURItoBlob(p));
           });
 
 
@@ -211,7 +229,4 @@
       &:active
         outline: none
         background: #C4C4C4
-
-
-
 </style>

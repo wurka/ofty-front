@@ -153,9 +153,6 @@
     mounted() {
       this.loadGroups().then(this.validateAllParameters);
       this.getAllMaterials();
-      window.onbeforeunload = function () {
-        return "Данные о товаре будут потеряны. Всё-равно  уйти?";
-      };
       this.isMounted = true;
     },
     watch: {
