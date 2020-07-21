@@ -1,5 +1,6 @@
 <template>
   <div class="Page" v-if="shown">
+    <Deanonymizer/>
     <site-header/>
     <storage-site-body/>
   </div>
@@ -8,13 +9,14 @@
 <script>
   import SiteHeader from "~/components/shared/SiteHeader";
   import StorageSiteBody from "../components/unit-storage/StorageSiteBody";
+  import Deanonymizer from "~/components/Deanonymizer";
 
   export default {
     name: "NewPage",
     components: {
       StorageSiteBody,
-
-      SiteHeader},
+      SiteHeader,
+      Deanonymizer},
     data:function () {
       return{
         shown:false,

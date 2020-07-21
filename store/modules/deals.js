@@ -17,9 +17,9 @@ const mutations = {
 const actions = {
   DEALS_GET(context) {
     axios
-      .get(host() + "/orders/get-my-deals", {params: {
+      .get(host + "/orders/get-my-deals", {params: {
           page: 1
-        }})
+      }})
       .then((response)=>{
         let new_orders = response.data;
         context.commit('DEALS_SET', new_orders);

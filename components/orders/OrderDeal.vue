@@ -6,6 +6,10 @@
         <OfficeMenu/>
       </div>
       <div class="content-panel">
+        <div class="empty-source" v-if="source.length===0">
+          <div class="text"
+          >Пока что никто ничего у вас не заказал.</div>
+        </div>
         <div class="order" v-for="order in source" :key="order.id">
           <div class="flex">
             <div class="status-time">

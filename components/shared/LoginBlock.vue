@@ -510,7 +510,6 @@
     background-color: white
     position: fixed
     box-shadow: $shadow
-    margin-left: -700px
     width: 750px
     margin-top: 50px
     text-align: right

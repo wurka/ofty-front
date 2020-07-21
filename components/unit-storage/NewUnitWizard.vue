@@ -118,7 +118,6 @@
         this.shown=true;
         if (params){
           this.editParams = params;
-          this.fillParams();
         }
         this.$emit('scrollDisable');
         document.body.className='scrollDisable';

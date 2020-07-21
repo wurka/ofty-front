@@ -17,7 +17,7 @@ const mutations = {
 const actions = {
   ORDERS_GET(context) {
     axios
-      .get(host() + "/orders/get-my-orders", {params: {
+      .get(host + "/orders/get-my-orders", {params: {
           page: 1
         }})
       .then((response)=>{
