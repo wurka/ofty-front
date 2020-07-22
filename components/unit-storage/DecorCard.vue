@@ -13,7 +13,8 @@
       </div>
       <div class="RightPanel">
         <div class="TopPanel">
-          <div class="DecorName">{{params.title}}</div>
+          <div class="DecorName">[[{{onEdit}}]]{{params.title}}</div>
+          <div class="DecorNameEdit"><input type="text" v-model="update.title"></div>
           <div class="col col1">
             <div class="line" v-for="p in params.parameters" :key="p.id">
               <div class="name">{{p.name}} = </div> <div class="val">{{p.value}} {{p.dimension}}</div>
@@ -55,7 +56,7 @@
         </div>
         <div class="Btns">
           <div class="status">Заказов нет</div>
-          <div class="btn" @click="$emit('edit-decor', params)">Редактировать</div>
+          <div class="btn" @click="goEdit">Редактировать</div>
           <div v-if="posted" class="btn" @click="unpublish">Отменить публикацию</div>
           <div v-else class="btn" @click="publish">Опубликовать</div>
           <div class="btn" @click="$refs.alert.shown=true">Удалить</div>
@@ -84,39 +85,46 @@
 <script>
     import BtnBar from "~/components/shared/BtnBar";
     import MyAlert from "../shared/MyAlert";
-    var ax;
+    let ax;
 
     export default {
-        name: "DecorCard",
-        components: {MyAlert, BtnBar},
-        props: ["params"],
-          data: function () {
-              return {
-                posted: this.params['published'],
-                host:this.$store.state.host,
-                shown:true,
-                alertParams:{
-                  text:'Вы уверены, что хотите удалить этот товар?',
-                  btns:[{name:'ok', text:'Удалить'},{name:'close', text:'Отмена'}]
-                },
-              }
+      name: "DecorCard",
+      components: {MyAlert, BtnBar},
+      props: ["params"],
+      data: function () {
+        return {
+          update: {
+            title: 'hz',
           },
-        computed:{
-          materialArr:function () {
-            let arr = [];
-            for (let m in this.params['unit-materials']){
-              arr.push(this.params['unit-materials'][m].name);
-            }
-            return arr;
+          onEdit: false,
+          posted: this.params['published'],
+          host: this.$store.state.host,
+          shown: true,
+          alertParams: {
+            text:'Вы уверены, что хотите удалить этот товар?',
+            btns:[{name:'ok', text:'Удалить'},{name:'close', text:'Отмена'}]
           },
-          mat:function () {
-            let ans = this.materialArr.join(', ');
-            if (ans.length>6)ans=ans.substring(0,5)+'...';
-            return ans;
+        }
+      },
+      computed:{
+        materialArr:function () {
+          let arr = [];
+          for (let m in this.params['unit-materials']){
+            arr.push(this.params['unit-materials'][m].name);
           }
+          return arr;
         },
-      methods:{
-        publish:function () {
+        mat:function () {
+          let ans = this.materialArr.join(', ');
+          if (ans.length>6)ans=ans.substring(0,5)+'...';
+          return ans;
+        }
+      },
+      methods: {
+        goEdit() {
+          this.onEdit = true;
+        },
+        publish: function () {
           var vm = this;
           ax.get("/shared/get-csrf-token")
             .then(function (data1) {
