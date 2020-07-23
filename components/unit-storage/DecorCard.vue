@@ -13,27 +13,38 @@
       </div>
       <div class="RightPanel">
         <div class="TopPanel">
-          <div class="DecorName">[[{{onEdit}}]]{{params.title}}</div>
-          <div class="DecorNameEdit"><input type="text" v-model="update.title"></div>
+          <div class="DecorName" v-if="!onEdit">{{params.title}}</div>
+          <div class="DecorNameEdit" v-if="onEdit">
+            <input type="text" v-model="params.title">
+          </div>
           <div class="col col1">
             <div class="line" v-for="p in params.parameters" :key="p.id">
-              <div class="name">{{p.name}} = </div> <div class="val">{{p.value}} {{p.dimension}}</div>
+              <div class="name">{{p.name}} = </div>
+              <div class="val" v-if="!onEdit">{{p.value}} {{p.dimension}}</div>
+              <div class="val edit" v-if="onEdit">
+                <input type="text" v-model="p.value"> {{p.dimension}}
+              </div>
             </div>
           </div>
           <div class="col col2">
             <div class="line">
               <div class="name">Материал: </div><div class="val text">{{mat}}</div>
             </div>
-            <div class="line">
+            <div class="line" @click="openColorEditor">
               <div class="name">Цвет: </div>
+              <PhotoAndColorPicker :shown="pickerOpened && onEdit" ref="PhotoAndColorPicker"/>
               <div class="val">
-                <div class="colorBar">
+                <div class="colorBar" :class="{edit: onEdit}">
                   <div class="color" v-for="c in params['unit-colors']" :key="c.id" :style="makeColorStyle(c)"></div>
                 </div>
               </div>
             </div>
             <div class="line">
-              <div class="name">Вес: </div> <div class="val">{{params.weight}} кг</div>
+              <div class="name">Вес: </div>
+              <div class="val" v-if="!onEdit">{{params.weight}} кг</div>
+              <div class="val edit" v-if="onEdit">
+                <input type="text" v-model="params.weight">кг
+              </div>
             </div>
             <div class="line count">
               <div class="name">Количество: </div> <div class="val">{{params.count}} шт</div>
@@ -41,22 +52,16 @@
           </div>
           <div class="col col3">
             <div class="line">
-              <div class="name">Первый день: </div> <div class="val">{{params['first-day-cost']}} р/сут</div>
-            </div>
-            <div class="line">
-              <div class="name">Аренда от: </div> <div class="val">{{params['rent-min-days']}} сут</div>
-            </div>
-            <div class="line">
-              <div class="name">Аренда: </div> <div class="val">{{params['day-cost']}} р/сут</div>
-            </div>
-            <div class="line">
-              <div class="name">Залог: </div> <div class="val">{{params.bail}} р</div>
+              <div class="name">Тарифные планы</div>
             </div>
           </div>
         </div>
         <div class="Btns">
           <div class="status">Заказов нет</div>
-          <div class="btn" @click="goEdit">Редактировать</div>
+          <div class="btn" @click="goEdit">
+            <span v-if="!onEdit">Редактировать</span>
+            <span v-else>Применить</span>
+          </div>
           <div v-if="posted" class="btn" @click="unpublish">Отменить публикацию</div>
           <div v-else class="btn" @click="publish">Опубликовать</div>
           <div class="btn" @click="$refs.alert.shown=true">Удалить</div>
@@ -85,17 +90,16 @@
 <script>
     import BtnBar from "~/components/shared/BtnBar";
     import MyAlert from "../shared/MyAlert";
+    import PhotoAndColorPicker from "./PhotoAndColorPicker";
     let ax;
 
     export default {
       name: "DecorCard",
-      components: {MyAlert, BtnBar},
+      components: {PhotoAndColorPicker, MyAlert, BtnBar},
       props: ["params"],
       data: function () {
         return {
-          update: {
-            title: 'hz',
-          },
+          pickerOpened: false,
           onEdit: false,
           posted: this.params['published'],
           host: this.$store.state.host,
@@ -121,11 +125,18 @@
         }
       },
       methods: {
+        openColorEditor() {
+          console.log(this.params['unit-colors'])
+          let colorIds = this.params['unit-colors'].map(c=>c.id);
+          this.$refs.PhotoAndColorPicker.setColorsById(colorIds);
+          this.pickerOpened = true;
+        },
         goEdit() {
-          this.onEdit = true;
+          this.onEdit = !this.onEdit;
+          this.pickerOpened = false;
         },
         publish: function () {
-          var vm = this;
+          let vm = this;
           ax.get("/shared/get-csrf-token")
             .then(function (data1) {
                 console.log(data1.data);
@@ -159,7 +170,7 @@
             )
         },
         unpublish:function () {
-          var vm = this;
+          let vm = this;
           ax.get("/shared/get-csrf-token")
             .then(function (data1) {
                 console.log(data1.data);
@@ -245,11 +256,18 @@
   $myblue: #182b93
   $shadow: 0px 2px 5px rgba(0, 0, 0, 0.5)
   .DecorCard
+    font-family: Tahoma, serif
     background-color: $lgray
     //border: solid  1px
     box-shadow: $shadow
     width: 847px
     margin-bottom: 20px
+    border: 1px solid transparent
+    input
+      border: 1px solid lightgray
+      padding: 0
+      box-sizing: content-box
+      width: auto
     .alert
       margin: 40px 0 0 150px
       position: absolute
@@ -263,6 +281,12 @@
         display: inline-block
         vertical-align: top
         margin-bottom: 10px
+        border: 1px solid transparent
+        &.edit
+          border: none
+          input
+            width: 35px
+            font-size: 15.5px
 
       .text
         display: inline-block
@@ -270,6 +294,10 @@
       .colorBar
         vertical-align: top
         display: inline-block
+        border: 1px solid transparent
+        padding: 0 3px
+        &.edit
+          border-color: lightgray
         //height: 10px
         .color
           height: 10px
@@ -307,10 +335,15 @@
         display: inline-block
         min-height: 200px
         .DecorName
+          border: 1px solid transparent
+        .DecorName, .DecorNameEdit
           font-size: 24px
           //font-weight: bold
           margin-top: 10px
           //margin: 10px
+          input
+            font-size: 24px
+            font-family: Tahoma, serif
         .col
           margin-top: 30px
           margin-right: 13px
@@ -320,7 +353,7 @@
           overflow-y: auto
         .col1
           //margin: 30px -5px 0 0
-          max-width: 82px
+          max-width: 115px
         .col2
           //margin: 30px 10px 0 20px
           max-width: 135px
@@ -346,9 +379,10 @@
         margin-top: 10px
         margin-right: 15px
         .btn
+          user-select: none
           display: block
           border: solid lightgrey 1px
-          padding: 10px 0px 10px 0px
+          padding: 10px 0 10px 0
           margin-bottom: 10px
           text-align: center
           width: 171px
@@ -383,7 +417,7 @@
         .DecorName
           font-size: 18px
           font-weight: normal
-          margin: 0px
+          margin: 0
           display: none
         .col
           margin: 0
@@ -402,5 +436,12 @@
         display: none
       .BotPanel
         display: none
+
+  .photo-and-color-picker-layout
+    position: absolute
+    margin-left: -350px
+    background: white
+    border: 1px solid gray
+    min-width: 900px
 
 </style>

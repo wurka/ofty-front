@@ -1,9 +1,12 @@
 <template>
-  <div class="photo-and-color-picker-layout">
-    <div class="title">
+  <div class="photo-and-color-picker-layout" v-if="shown">
+    <div class="title" v-if="$props.usePhotoSelector">
       Загрузите фотографию товара и выберите цвета (максимально 5 цветов)
     </div>
-    <div class="photos">
+    <div class="title" v-else>
+      Выберите до 5 цветов
+    </div>
+    <div class="photos" v-if="$props.usePhotoSelector">
       <div class="photo" v-for="(im, i) in images" :key="'photo_' + i">
         <img :src="$store.state.host+'/static/img/shared/minus.png'" alt="x" class="clear-me"
              v-if="im !== defaultImage"
@@ -55,6 +58,9 @@
           </div>
         </div>
       </div>
+      <div class="buttons">
+        <input type="button" value="OK" @click="closeMe()">
+      </div>
     </div>
   </div>
 </template>
@@ -67,6 +73,11 @@
   export default {
     name: "PhotoAndColorPicker",
     components: {VueCropper},
+    props: {
+      shown: {type: Boolean, default: true},
+      usePhotoSelector: {type: Boolean, default: false},
+      showButtons: {type: Boolean, default: false},
+    },
     data: function(){ return {
       cropperShown: false,
       imageIndex: 0,
@@ -101,6 +112,9 @@
       }
     },
     methods: {
+      closeMe() {
+        this.$props.shown = false;
+      },
       acceptCropper() {
         // cropper должен сработать
         this.cropperShown = false;
@@ -118,6 +132,10 @@
         document.getElementById('photo_input_' + this.imageIndex).value = '';
 
         this.$emit('validatedChanged');
+      },
+      setColorsById(colorIds) {
+        this.selectedColors = colorIds;
+        this.demoColors = this.demoColors.filter((x)=>{return colorIds.contains(x.id) });
       },
       inverseColorSelection (color) {
         this.$store.dispatch('COLORS_INVERSE_CHECKED', color);
@@ -254,6 +272,14 @@
         padding: 5px
         min-width: 100px
         display: block
+  .buttons
+    text-align: center
+    margin: 20px
+    input
+      background: white
+      border: 1px solid gray
+      padding: 5px 30px
+      font-family: Tahoma, serif
   .color-error
     text-align: center
     color: red

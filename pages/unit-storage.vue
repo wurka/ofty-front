@@ -47,7 +47,7 @@
     .hidden
       display: none
     .btn
-      cursor: pointer
+      cursor: default
   body.scrollDisable
     overflow-y: scroll
     //max-height: 100vh
