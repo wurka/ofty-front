@@ -113,7 +113,8 @@
     },
     methods: {
       closeMe() {
-        this.$props.shown = false;
+        console.log(this.demoColors);
+        this.$emit('colorsSelected', this.demoColors);
       },
       acceptCropper() {
         // cropper должен сработать
@@ -134,8 +135,26 @@
         this.$emit('validatedChanged');
       },
       setColorsById(colorIds) {
-        this.selectedColors = colorIds;
-        this.demoColors = this.demoColors.filter((x)=>{return colorIds.contains(x.id) });
+        console.log('oops');
+        // установить свойство checked в тех цветах, которые указаны (id) в аргументе
+        this.$store.commit('COLORS_SELECT_BY_IDS', colorIds);
+        this.$set(this.selectedColors, []);
+
+        [
+          this.$store.state.unit.colors.group1,
+          this.$store.state.unit.colors.group2,
+          this.$store.state.unit.colors.group3,
+          this.$store.state.unit.colors.group4,
+          this.$store.state.unit.colors.group5,
+        ].forEach((group)=>{
+          group.forEach((color)=>{
+            if (color.checked === true) {
+              this.selectedColors.push(color.id);
+              this.demoColors.push(color);
+            }
+          })
+        });
+
       },
       inverseColorSelection (color) {
         this.$store.dispatch('COLORS_INVERSE_CHECKED', color);

@@ -22,6 +22,14 @@ const mutations = {
   UNIT_SET(state, payload) {
     state.unit = payload;
   },
+  COLORS_SELECT_BY_IDS(state, payload) {
+    for (let i=1; i<=5; i++) {
+      let group = state.colors['group'+i];
+      group.forEach((color)=>{
+        color.checked = payload.includes(color.id);
+      })
+    }
+  },
   COLORS_SET(state, payload) {
     // присваимвание свойства checked для каждого цвета
     [

@@ -5,7 +5,12 @@
       <div v-else v-for="card in cardArr" :key="card.id" :class="[(!detalized && card.type=='unit') ? 'inline' : '']">
         <div v-if="card.type==='header1'" class="group">{{card.text}}</div>
         <div v-if="card.type==='header2'" class="subgroup">{{card.text}}</div>
-        <decor-card  v-if="card.type==='unit'" @delete="reloadCards" @edit-decor="editDecor" :params="card" :class="[detalized ? '' : 'min']"></decor-card>
+        <DecorCard
+          v-if="card.type==='unit'"
+          @delete="reloadCards"
+          @edit-decor="editDecor"
+          :params="card"
+          :class="[detalized ? '' : 'min']"/>
       </div>
 
     </div>

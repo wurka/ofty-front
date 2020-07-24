@@ -32,7 +32,11 @@
             </div>
             <div class="line" @click="openColorEditor">
               <div class="name">Цвет: </div>
-              <PhotoAndColorPicker :shown="pickerOpened && onEdit" ref="PhotoAndColorPicker"/>
+              <PhotoAndColorPicker
+                :shown="pickerOpened && onEdit"
+                ref="PhotoAndColorPicker"
+                @colorsSelected="setNewColors"
+              />
               <div class="val">
                 <div class="colorBar" :class="{edit: onEdit}">
                   <div class="color" v-for="c in params['unit-colors']" :key="c.id" :style="makeColorStyle(c)"></div>
@@ -97,8 +101,12 @@
       name: "DecorCard",
       components: {PhotoAndColorPicker, MyAlert, BtnBar},
       props: ["params"],
+      mounted() {
+        this.parameters = this.params;
+      },
       data: function () {
         return {
+          parameters: {},
           pickerOpened: false,
           onEdit: false,
           posted: this.params['published'],
@@ -125,11 +133,17 @@
         }
       },
       methods: {
+        setNewColors(newColors) {
+          console.log(1);
+          console.log(newColors);
+          this.$set(this.params['unit-colors'], newColors);
+        },
         openColorEditor() {
-          console.log(this.params['unit-colors'])
-          let colorIds = this.params['unit-colors'].map(c=>c.id);
-          this.$refs.PhotoAndColorPicker.setColorsById(colorIds);
-          this.pickerOpened = true;
+          if (!this.pickerOpened) {
+            let colorIds = this.params['unit-colors'].map(c=>c.id);
+            this.$refs.PhotoAndColorPicker.setColorsById(colorIds);
+            this.pickerOpened = true;
+          }
         },
         goEdit() {
           this.onEdit = !this.onEdit;
