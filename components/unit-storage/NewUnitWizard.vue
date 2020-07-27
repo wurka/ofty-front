@@ -165,8 +165,13 @@
             .post(this.$store.state.host + "/units/add-new-unit", fd,{headers: {
                 "X-CSRFToken": vm.$store.state.csrf.csrf
               }})
-            .then((response)=>{alert('ok')})
-            .catch((error)=>{console.log(error.response)});
+            .then((response)=>{
+              alert('ok')
+            })
+            .catch((error)=>{
+              alert('Не удалось добавить товар :(');
+              console.log(error.response);
+            })
         }
       },
       emitHide() {

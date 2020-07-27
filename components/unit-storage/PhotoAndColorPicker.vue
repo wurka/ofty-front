@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="buttons">
+      <div class="buttons" v-if="showButtons">
         <input type="button" value="OK" @click="closeMe()">
       </div>
     </div>
@@ -75,7 +75,7 @@
     components: {VueCropper},
     props: {
       shown: {type: Boolean, default: true},
-      usePhotoSelector: {type: Boolean, default: false},
+      usePhotoSelector: {type: Boolean, default: true},
       showButtons: {type: Boolean, default: false},
     },
     data: function(){ return {
