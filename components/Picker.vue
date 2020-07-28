@@ -25,7 +25,7 @@
     </div>
     <div class="search" v-show="searchMode">
       <input type="text"
-             placeholder="поиск..."
+             placeholder="поиск.."
              ref="searchInput"
              @input="updateVariants">
       <div class="variants shown-variants" v-show="searchMode">
@@ -79,8 +79,15 @@
     },
     methods: {
       activateSearchMode() {
+        let input = this.$refs.searchInput;
         this.searchMode = true;
+        input.value = "";
         this.updateVariants();
+
+        window.requestAnimationFrame(()=>{
+          input.focus();
+        });
+
       },
       deactivateSearchMode() {
         this.searchMode = false

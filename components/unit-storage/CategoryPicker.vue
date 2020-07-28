@@ -142,8 +142,8 @@
         validated: false,  // true => все исходные данные введены верно
         isMounted: false,
         pickBarShown: false,
-        inputWeight: 1,
-        inputCount: 1,
+        inputWeight: '1',
+        inputCount: '1',
         inputName: '',
         inputCommentary: '',
         selectedGroup: undefined,
@@ -163,7 +163,8 @@
       inputName() {
         this.validateAllParameters();
       },
-      inputWeight() {
+      inputWeight(newValue) {
+        this.inputWeight = newValue.toString().replace(/,/g, '.');
         this.validateAllParameters();
       }
     },
@@ -180,9 +181,17 @@
           if (isNaN(int_val)) {
             return false;
           }
-          return ((int_val > 0) && (int_val < 3000));
+          // допустимый диапазон
+          return  (
+            (int_val > 0) &&
+            (int_val < 3000) &&
+            // проверка на невалидные суффиксы
+            (int_val.toString() === this.inputWeight)
+          );
+        } else {
+          return false;
         }
-        return false;
+
       },
       validCount() {
         if (this.inputCount) {
