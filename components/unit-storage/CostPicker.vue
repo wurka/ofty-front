@@ -53,7 +53,8 @@
           <input type="text" id="new-cost-value" v-model="newCost"
                  autocomplete="off"
                  :class="{invalid: !newCostValid}">
-          <label for="new-cost-value">р.</label>
+          <label for="new-cost-value" v-if="newCostMode==='hour'">р./час</label>
+          <label for="new-cost-value" v-if="newCostMode==='day'">р./сут.</label>
         </div>
       </div>
       <div class="new-cost-add line">

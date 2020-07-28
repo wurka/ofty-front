@@ -34,8 +34,9 @@
               <div class="name">Цвет: </div>
               <PhotoAndColorPicker
                 :shown="pickerOpened && onEdit"
+                :showButtons="true"
                 ref="PhotoAndColorPicker"
-                @colorsSelected="setNewColors"
+                @colorsSelected="setNewColors(newColors)"
               />
               <div class="val">
                 <div class="colorBar" :class="{edit: onEdit}">
@@ -136,13 +137,17 @@
         setNewColors(newColors) {
           console.log(1);
           console.log(newColors);
-          this.$set(this.params['unit-colors'], newColors);
+          console.log(this.pickerOpened);
+          this.pickerOpened = false;
+          console.log(this.pickerOpened);
+          //this.$set(this.params['unit-colors'], newColors);
         },
         openColorEditor() {
           if (!this.pickerOpened) {
             let colorIds = this.params['unit-colors'].map(c=>c.id);
             this.$refs.PhotoAndColorPicker.setColorsById(colorIds);
             this.pickerOpened = true;
+            console.log('opened!');
           }
         },
         goEdit() {

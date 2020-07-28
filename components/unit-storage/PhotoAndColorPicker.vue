@@ -1,5 +1,8 @@
 <template>
   <div class="photo-and-color-picker-layout" v-if="shown">
+    <div class="loading" v-if="loading">
+      Обработка изображения
+    </div>
     <div class="title" v-if="$props.usePhotoSelector">
       Загрузите фотографию товара и выберите цвета (максимально 5 цветов)
     </div>
@@ -34,6 +37,7 @@
 
     <div class="color-error" :class="{transparent: selectedColors.length <= 5}">
       Допустимо добавление не более 5 цветов
+      {{selectedColors}}
     </div>
     <div class="colors">
       <div class="group" :id="'group'+i_group" v-for="i_group in 5" :key="'group#' + i_group">
@@ -79,6 +83,7 @@
       showButtons: {type: Boolean, default: false},
     },
     data: function(){ return {
+      loading: false,
       cropperShown: false,
       imageIndex: 0,
       defaultImage: this.$store.state.host + "/static/img/shared/no_img.png",
@@ -135,7 +140,6 @@
         this.$emit('validatedChanged');
       },
       setColorsById(colorIds) {
-        console.log('oops');
         // установить свойство checked в тех цветах, которые указаны (id) в аргументе
         this.$store.commit('COLORS_SELECT_BY_IDS', colorIds);
         this.$set(this.selectedColors, []);
@@ -182,23 +186,62 @@
         window.document.getElementById('photo_input_'+number).click();
       },
       sendToCropper(event, imageIndex) {
+        this.loading = true;
         this.imageIndex = imageIndex;
         this.cropperShown = false;
 
-        let input = event.target,
-          vm = this;
-        if (input.files&&input.files[0]) {
-          let reader = new FileReader();
-          reader.onloadend = function (e) {
-            vm.$refs.cropper.replace(e.target.result);
+        // долгие расчёты - на следующий кадр
+        window.requestAnimationFrame(()=>{
+          let input = event.target,
+            vm = this;
+          if (input.files&&input.files[0]) {
+            let reader = new FileReader();
+            reader.onloadend = function (e) {
+              let src = e.target.result,
+                img = new Image(),
+                canvas = document.createElement('canvas');
+              img.onload = ()=>{
+                const width=img.naturalWidth,
+                  height=img.naturalHeight,
+                  square=Math.max(width, height);
+                if ((height < 300) || (width < 300)) {
+                  console.log(height, width);
+                  vm.cropperShown = false;
+                  vm.loading = false;
+                  alert('Изображение должно быть не меньше 300х300 пикселей.');
+                  return;
+                }
+                canvas.width=square;
+                canvas.height=square;
+
+                let ctx = canvas.getContext('2d');
+                ctx.drawImage(
+                  img, (square-width)/2,
+                  (square-height)/2, width, height);
+
+                const data = ctx.canvas.toDataURL(img, 1.0);
+
+                //vm.$refs.cropper.replace(src);
+                vm.$refs.cropper.replace(data);
+                vm.loading = false;
+              }
+              img.src = src;
+            }
+            reader.readAsDataURL(input.files[0]);
+            this.cropperShown = true;
           }
-          reader.readAsDataURL(input.files[0]);
-          this.cropperShown = true;
-        }
+        });
+
+
       }
     }
   }
 </script>
+
+<style lang="sass">
+  .cropper-crop-box
+    overflow: hidden
+</style>
 
 <style scoped lang="sass">
   .photo-and-color-picker-layout
@@ -210,6 +253,7 @@
       line-height: 24px
     .photos
       text-align: center
+      user-select: none
       .clear-me
         width: 24px
         height: 24px
@@ -302,8 +346,21 @@
   .color-error
     text-align: center
     color: red
+    user-select: none
 
   .transparent
     opacity: 0
+
+  .loading
+    position: fixed
+    background: rgba(255, 255, 255, 0.8)
+    font-family: Philosopher, serif
+    font-size: 38px
+    text-align: center
+    width: 100vw
+    height: 100vh
+    top: 0
+    left: 0
+    padding: 300px 0 0 0
 
 </style>
