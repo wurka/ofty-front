@@ -313,11 +313,13 @@
         // или текущая группа - не активная
         if (this.parentGroup.active) {
           this.validated = true;
-          this.$refs['parameter-input'].forEach((item)=>{
-            if (item.classList.contains('invalid')) {
-              this.validated = false;
-            }
-          });
+          if (this.$refs['parameter-input'] !== undefined) {
+            this.$refs['parameter-input'].forEach((item)=>{
+              if (item.classList.contains('invalid')) {
+                this.validated = false;
+              }
+            });
+          }
 
           // проверка материалов
           this.validated = this.validated && this.$refs.materialPicker.isValid;

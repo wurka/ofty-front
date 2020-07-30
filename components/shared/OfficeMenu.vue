@@ -6,7 +6,7 @@
     <a class="menu-item" href="/office/deals">Запросы от клиентов</a>
     <a class="menu-item" href="/unit-storage">Мой декор</a>
     <div class="menu-item disabled">Оплата</div>
-    <div class="menu-item disabled">Мои коллекции</div>
+    <div class="menu-item" href="/sets">Мои коллекции</div>
   </div>
 </template>
 
