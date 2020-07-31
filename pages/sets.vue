@@ -17,13 +17,11 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
 </template>
 
 <script>
-
   import SiteHeader from "~/components/shared/SiteHeader";
   import OfficeMenu from "~/components/shared/OfficeMenu";
   import SearchBar from "../components/shared/SearchBar";
@@ -37,6 +35,9 @@
       onSearch(val) {
         console.log(val);
       }
+    },
+    mounted() {
+      this.$store.dispatch('GET_MY_SETS');
     }
   }
 </script>

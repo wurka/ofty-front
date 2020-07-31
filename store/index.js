@@ -5,6 +5,7 @@ import deals from './modules/deals'
 import basket from './modules/basket'
 import csrf from './modules/csrf'
 import unit from './modules/unit'
+import sets from './modules/sets'
 
 //Vue.use(Vuex);
 
@@ -38,7 +39,8 @@ const store = () => new Vuex.Store({
     orders,
     deals,
     basket,
-    csrf
+    csrf,
+    sets,
   }
 });
 
